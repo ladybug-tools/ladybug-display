@@ -1,2 +1,1 @@
-ladybug-geometry
-pydantic
+ladybug-core>=0.39.65
