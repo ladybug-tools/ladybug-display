@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>ladybug_display.geometry3d.ray module &#8212; ladybug-display  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ladybug_display.geometry3d.sphere module" href="ladybug_display.geometry3d.sphere.html" />
+    <link rel="prev" title="ladybug_display.geometry3d.polyline module" href="ladybug_display.geometry3d.polyline.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          ladybug-display</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="ladybug_display.html">ladybug_display package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ladybug_display.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ladybug_display.geometry2d.html">ladybug_display.geometry2d package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ladybug_display.geometry2d.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry2d.arc.html">ladybug_display.geometry2d.arc module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry2d.line.html">ladybug_display.geometry2d.line module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry2d.mesh.html">ladybug_display.geometry2d.mesh module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry2d.point.html">ladybug_display.geometry2d.point module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry2d.polygon.html">ladybug_display.geometry2d.polygon module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry2d.polyline.html">ladybug_display.geometry2d.polyline module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry2d.ray.html">ladybug_display.geometry2d.ray module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry2d.vector.html">ladybug_display.geometry2d.vector module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ladybug_display.geometry2d.html#module-ladybug_display.geometry2d">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="reference internal" href="ladybug_display.geometry3d.html">ladybug_display.geometry3d package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="ladybug_display.geometry3d.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.arc.html">ladybug_display.geometry3d.arc module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.cone.html">ladybug_display.geometry3d.cone module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.cylinder.html">ladybug_display.geometry3d.cylinder module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.face.html">ladybug_display.geometry3d.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.line.html">ladybug_display.geometry3d.line module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.mesh.html">ladybug_display.geometry3d.mesh module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.plane.html">ladybug_display.geometry3d.plane module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.point.html">ladybug_display.geometry3d.point module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.polyface.html">ladybug_display.geometry3d.polyface module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.polyline.html">ladybug_display.geometry3d.polyline module</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="#">ladybug_display.geometry3d.ray module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.sphere.html">ladybug_display.geometry3d.sphere module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.vector.html">ladybug_display.geometry3d.vector module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ladybug_display.geometry3d.html#module-ladybug_display.geometry3d">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ladybug_display.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ladybug_display.altnumber.html">ladybug_display.altnumber module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ladybug_display.typing.html">ladybug_display.typing module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ladybug_display.html#module-ladybug_display">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="ladybug_display.html">ladybug_display package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ladybug_display.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ladybug_display.geometry2d.html">ladybug_display.geometry2d package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="ladybug_display.geometry3d.html">ladybug_display.geometry3d package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="ladybug_display.geometry3d.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.arc.html">ladybug_display.geometry3d.arc module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.cone.html">ladybug_display.geometry3d.cone module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.cylinder.html">ladybug_display.geometry3d.cylinder module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.face.html">ladybug_display.geometry3d.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.line.html">ladybug_display.geometry3d.line module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.mesh.html">ladybug_display.geometry3d.mesh module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.plane.html">ladybug_display.geometry3d.plane module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.point.html">ladybug_display.geometry3d.point module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.polyface.html">ladybug_display.geometry3d.polyface module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.polyline.html">ladybug_display.geometry3d.polyline module</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="#">ladybug_display.geometry3d.ray module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.sphere.html">ladybug_display.geometry3d.sphere module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.vector.html">ladybug_display.geometry3d.vector module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ladybug_display.geometry3d.html#module-ladybug_display.geometry3d">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ladybug_display.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ladybug_display.html#module-ladybug_display">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="ladybug_display.geometry3d.polyline.html" title="Previous Chapter: ladybug_display.geometry3d.polyline module"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; ladybug_displ...</span>
+    </a>
+  </li>
+  <li>
+    <a href="ladybug_display.geometry3d.sphere.html" title="Next Chapter: ladybug_display.geometry3d.sphere module"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">ladybug_displ... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/ladybug_display.geometry3d.ray.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="ladybug_display.html">ladybug_display package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ladybug_display.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ladybug_display.geometry2d.html">ladybug_display.geometry2d package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="ladybug_display.geometry3d.html">ladybug_display.geometry3d package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="ladybug_display.geometry3d.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.arc.html">ladybug_display.geometry3d.arc module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.cone.html">ladybug_display.geometry3d.cone module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.cylinder.html">ladybug_display.geometry3d.cylinder module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.face.html">ladybug_display.geometry3d.face module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.line.html">ladybug_display.geometry3d.line module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.mesh.html">ladybug_display.geometry3d.mesh module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.plane.html">ladybug_display.geometry3d.plane module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.point.html">ladybug_display.geometry3d.point module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.polyface.html">ladybug_display.geometry3d.polyface module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.polyline.html">ladybug_display.geometry3d.polyline module</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="#">ladybug_display.geometry3d.ray module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.sphere.html">ladybug_display.geometry3d.sphere module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ladybug_display.geometry3d.vector.html">ladybug_display.geometry3d.vector module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ladybug_display.geometry3d.html#module-ladybug_display.geometry3d">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ladybug_display.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ladybug_display.html#module-ladybug_display">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <section id="module-ladybug_display.geometry3d.ray">
+<span id="ladybug-display-geometry3d-ray-module"></span><h1>ladybug_display.geometry3d.ray module<a class="headerlink" href="#module-ladybug_display.geometry3d.ray" title="Permalink to this headline">¶</a></h1>
+<p>A ray that can be displayed in 3D space.</p>
+<dl class="py class">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D">
+<em class="property">class </em><code class="sig-prename descclassname">ladybug_display.geometry3d.ray.</code><code class="sig-name descname">DisplayRay3D</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ladybug_display/geometry3d/ray.html#DisplayRay3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ladybug_display.geometry3d._base._SingleColorBase3D</span></code></p>
+<p>A ray in 3D space with display properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geometry</strong> – A ladybug-geometry Ray3D object.</p></li>
+<li><p><strong>color</strong> – A ladybug Color object. If None, a default black color will be
+used. (Default: None).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Properties:</dt><dd><ul class="simple">
+<li><p>geometry</p></li>
+<li><p>color</p></li>
+<li><p>p</p></li>
+<li><p>v</p></li>
+<li><p>user_data</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.ToString">
+<code class="sig-name descname">ToString</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.ToString" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.duplicate">
+<code class="sig-name descname">duplicate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.duplicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a copy of this object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ladybug_display/geometry3d/ray.html#DisplayRay3D.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a DisplayRay3D from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – A dictionary representation of an DisplayRay3D object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.move">
+<code class="sig-name descname">move</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">moving_vec</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move this geometry along a vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>moving_vec</strong> – A ladybug_geometry Vector with the direction and distance
+to move the geometry.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.reflect">
+<code class="sig-name descname">reflect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plane</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.reflect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reflect this geometry across a plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>plane</strong> – A ladybug_geometry Plane across which the object will
+be reflected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.reverse">
+<code class="sig-name descname">reverse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ladybug_display/geometry3d/ray.html#DisplayRay3D.reverse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.reverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reverse this DisplayRay3D.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.rotate">
+<code class="sig-name descname">rotate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span></em>, <em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate this geometry by a certain angle around an axis and origin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axis</strong> – A ladybug_geometry Vector3D axis representing the axis of rotation.</p></li>
+<li><p><strong>angle</strong> – An angle for rotation in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.rotate_xy">
+<code class="sig-name descname">rotate_xy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">angle</span></em>, <em class="sig-param"><span class="n">origin</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.rotate_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate this geometry counterclockwise in the world XY plane by an angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle</strong> – An angle in degrees.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point3D for the origin around which the
+object will be rotated.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.scale">
+<code class="sig-name descname">scale</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale this geometry by a factor from an origin point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>factor</strong> – A number representing how much the object should be scaled.</p></li>
+<li><p><strong>origin</strong> – A ladybug_geometry Point representing the origin from which
+to scale. If None, it will be scaled from the World origin.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/ladybug_display/geometry3d/ray.html#DisplayRay3D.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return DisplayRay3D as a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.color">
+<em class="property">property </em><code class="sig-name descname">color</code><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set a color for this object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.geometry">
+<em class="property">property </em><code class="sig-name descname">geometry</code><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a ladybug_geometry object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.p">
+<em class="property">property </em><code class="sig-name descname">p</code><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a Point3D representing the base of the ray.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.user_data">
+<em class="property">property </em><code class="sig-name descname">user_data</code><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.user_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set an optional dictionary for additional meta data for this object.</p>
+<p>This will be None until it has been set. All keys and values of this
+dictionary should be of a standard Python type to ensure correct
+serialization of the object to/from JSON (eg. str, float, int, list, dict)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="ladybug_display.geometry3d.ray.DisplayRay3D.v">
+<em class="property">property </em><code class="sig-name descname">v</code><a class="headerlink" href="#ladybug_display.geometry3d.ray.DisplayRay3D.v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a Vector3D representing the direction of the ray.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2022, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
