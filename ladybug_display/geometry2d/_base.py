@@ -110,7 +110,7 @@ class _LineCurveBase2D(_SingleColorBase2D):
         geometry: A ladybug-geometry object.
         color: A ladybug Color object. If None, a default black color will be
             used. (Default: None).
-        line_width: Number for line width in pixels (for the screen) or  millimeters
+        line_width: Number for line width in pixels (for the screen) or millimeters
             (in print). This can also be the Default object to indicate that the
             default settings of the interface should be used.
         line_type: Get or set text to indicate the type of line to display.

@@ -3,6 +3,8 @@ from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug.color import Color
 
 from ._base import _SingleColorBase3D
+from ladybug_display.altnumber import default
+from ladybug_display.typing import float_positive
 
 
 class DisplayPoint3D(_SingleColorBase3D):
@@ -12,22 +14,27 @@ class DisplayPoint3D(_SingleColorBase3D):
         geometry: A ladybug-geometry Point3D object.
         color: A ladybug Color object. If None, a default black color will be
             used. (Default: None).
+        radius: Number for radius in pixels (for the screen) or millimeters
+            (in print). This can also be the Default object to indicate that the
+            default settings of the interface should be used.
 
     Properties:
         * geometry
         * color
+        * radius
         * x
         * y
         * z
         * user_data
     """
-    __slots__ = ()
+    __slots__ = ('_radius',)
 
-    def __init__(self, geometry, color=None):
+    def __init__(self, geometry, color=None, radius=default):
         """Initialize base with shade object."""
         assert isinstance(geometry, Point3D), '\
             Expected ladybug_geometry Point3D. Got {}'.format(type(geometry))
         _SingleColorBase3D.__init__(self, geometry, color)
+        self.radius = radius
 
     @classmethod
     def from_dict(cls, data):
@@ -40,10 +47,24 @@ class DisplayPoint3D(_SingleColorBase3D):
             'Expected DisplayPoint3D dictionary. Got {}.'.format(data['type'])
         color = Color.from_dict(data['color']) if 'color' in data and data['color'] \
             is not None else None
+        rad = default if 'radius' not in data or \
+            data['radius'] == default.to_dict() else data['radius']
         geo = cls(Point3D.from_dict(data['geometry']), color)
         if 'user_data' in data and data['user_data'] is not None:
             geo.user_data = data['user_data']
         return geo
+
+    @property
+    def radius(self):
+        """Get or set a number for the radius of this object."""
+        return self._radius
+
+    @radius.setter
+    def radius(self, value):
+        if value == default:
+            self._radius = default
+        else:
+            self._radius = float_positive(value, 'point radius')
 
     @property
     def x(self):
@@ -69,12 +90,13 @@ class DisplayPoint3D(_SingleColorBase3D):
         base = {'type': 'DisplayPoint3D'}
         base['geometry'] = self._geometry.to_dict()
         base['color'] = self.color.to_dict()
+        base['radius'] = default.to_dict() if self.radius == default else self.radius
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
 
     def __copy__(self):
-        new_g = DisplayPoint3D(self.geometry, self.color)
+        new_g = DisplayPoint3D(self.geometry, self.color, self.radius)
         new_g._user_data = None if self.user_data is None else self.user_data.copy()
         return new_g
 
