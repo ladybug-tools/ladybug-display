@@ -40,8 +40,11 @@ class VisualizationSet(object):
     """A visualization set containing analysis and context geometry to be visualized.
 
     Args:
-        analysis_geometry: An AnalysisGeometry object for spatial data that should be
-            displayed in the visualization. (Default: None).
+        analysis_geometry: A list of AnalysisGeometry objects for spatial data that is
+            displayed in the visualization. Multiple AnalysisGeometry objects can
+            be used to specify different related studies that were run to create
+            the visualization (eg. a radiation study of windows next to a daylight
+            study of interior floor plates). (Default: None).
         context_geometry: An optional list of ladybug-geometry or ladybug-display
             objects that gives context to the analysis geometry or other aspects
             of the visualization. Typically, these will display in wireframe around
@@ -53,8 +56,11 @@ class VisualizationSet(object):
         * context_geometry
         * min_point
         * max_point
+        * user_data
     """
-    __slots__ = ('_analysis_geometry', '_context_geometry', '_min_point', '_max_point')
+    __slots__ = (
+        '_analysis_geometry', '_context_geometry',
+        '_min_point', '_max_point', '_user_data')
 
     WIREFRAME_MAP = {
         Vector2D: (DisplayVector2D, None),
@@ -86,6 +92,7 @@ class VisualizationSet(object):
         self.context_geometry = context_geometry
         self._min_point = None
         self._max_point = None
+        self._user_data = None
 
     @classmethod
     def from_dict(cls, data):
@@ -106,24 +113,33 @@ class VisualizationSet(object):
         assert data['type'] == 'VisualizationSet', \
             'Expected VisualizationSet, Got {}.'.format(data['type'])
         # re-serialize the context and analysis geometry
-        a_geo = AnalysisGeometry.from_dict(data['analysis_geometry']) \
+        a_geo = tuple(AnalysisGeometry.from_dict(g) for g in data['analysis_geometry']) \
             if 'analysis_geometry' in data and \
             data['analysis_geometry'] is not None else None
         c_geos = tuple(dict_to_object(geo) for geo in data['context_geometry']) \
             if 'context_geometry' in data and data['context_geometry'] is not None \
             else None
-        return cls(a_geo, c_geos)
+        new_obj = cls(a_geo, c_geos)
+        if 'user_data' in data and data['user_data'] is not None:
+            new_obj.user_data = data['user_data']
+        return new_obj
 
     @property
     def analysis_geometry(self):
-        """Get or set an AnalysisGeometry specification for this object."""
+        """Get or set a tuple of AnalysisGeometry for spatial data in the visualization.
+        """
         return self._analysis_geometry
 
     @analysis_geometry.setter
     def analysis_geometry(self, value):
         if value is not None:
-            assert isinstance(value, AnalysisGeometry), 'Expected AnalysisGeometry for' \
+            assert isinstance(value, (list, tuple)), 'Expected list or tuple for' \
                 ' VisualizationSet analysis_geometry. Got {}.'.format(type(value))
+            if not isinstance(value, tuple):
+                value = tuple(value)
+            for geo in value:
+                assert isinstance(geo, AnalysisGeometry), 'Expected AnalysisGeometry ' \
+                    'for VisualizationSet analysis_geometry. Got {}.'.format(type(value))
         self._analysis_geometry = value
 
     @property
@@ -168,13 +184,33 @@ class VisualizationSet(object):
             self._calculate_min_max()
         return self._max_point
 
-    def graphic_container(self, data_index=None, min_point=None, max_point=None):
+    @property
+    def user_data(self):
+        """Get or set an optional dictionary for additional meta data for this object.
+
+        This will be None until it has been set. All keys and values of this
+        dictionary should be of a standard Python type to ensure correct
+        serialization of the object to/from JSON (eg. str, float, int, list, dict)
+        """
+        return self._user_data
+
+    @user_data.setter
+    def user_data(self, value):
+        if value is not None:
+            assert isinstance(value, dict), 'Expected dictionary for ' \
+                'object user_data. Got {}.'.format(type(value))
+        self._user_data = value
+
+    def graphic_container(self, geo_index=0, data_index=None,
+                          min_point=None, max_point=None):
         """Get a Ladybug GraphicContainer object, which can be used to draw legends.
 
         Note that this object must have analysis_geometry assigned to it in order
         to get a data collection.
 
         Args:
+            geo_index: Integer for the index of the analysis_geometry for which a
+                GraphicContainer will be returned. (Default: 0).
             data_index: Integer for the index of the data set for which a
                 GraphicContainer will be returned. If None, the active_data set
                 will be used. (Default: None).
@@ -194,16 +230,17 @@ class VisualizationSet(object):
         min_point = self.min_point if min_point is None else min_point
         max_point = self.max_point if max_point is None else max_point
         # return the Graphic Container for the correct data set
-        data_index = self.analysis_geometry.active_data \
+        data_index = self.analysis_geometry[geo_index].active_data \
             if data_index is None else data_index
-        dat_set = self.analysis_geometry.data_sets[data_index]
+        dat_set = self.analysis_geometry[geo_index].data_sets[data_index]
         return dat_set.graphic_container(min_point, max_point)
 
     def to_dict(self):
         """Get VisualizationSet as a dictionary."""
         base = {'type': 'VisualizationSet'}
         if self.analysis_geometry is not None:
-            base['analysis_geometry'] = self.analysis_geometry.to_dict()
+            base['analysis_geometry'] = \
+                [a_geo.to_dict() for a_geo in self.analysis_geometry]
         if self.context_geometry is not None:
             base['context_geometry'] = \
                 [d_geo.to_dict() for d_geo in self.context_geometry]
@@ -226,8 +263,9 @@ class VisualizationSet(object):
         """Calculate maximum and minimum Point3D for this object."""
         all_geo = []
         if self.analysis_geometry is not None:
-            for geo in self.analysis_geometry.geometry:
-                all_geo.append(geo)
+            for a_geo in self.analysis_geometry:
+                for geo in a_geo.geometry:
+                    all_geo.append(geo)
         if self.context_geometry is not None:
             for d_geo in self.context_geometry:
                 all_geo.append(d_geo.geometry)
@@ -238,11 +276,23 @@ class VisualizationSet(object):
         """Overwrite .NET ToString."""
         return self.__repr__()
 
+    def __len__(self):
+        """Return number of analysis geometries on the object."""
+        return len(self.analysis_geometry)
+
+    def __getitem__(self, key):
+        """Return one of the analysis geometries."""
+        return self.analysis_geometry[key]
+
+    def __iter__(self):
+        """Iterate through the data sets."""
+        return iter(self.analysis_geometry)
+
     def __repr__(self):
         """VisualizationSet representation."""
         base_str = 'Visualization Set'
         if self.analysis_geometry is not None:
-            base_str = base_str + ' ({} data sets)'.format(len(self.analysis_geometry))
+            base_str = base_str + ' ({} geometries)'.format(len(self.analysis_geometry))
         if self.context_geometry is not None:
             base_str = base_str + ' ({} contexts)'.format(len(self.context_geometry))
         return base_str
@@ -256,9 +306,8 @@ class AnalysisGeometry(object):
             the input data_sets. The length of this list should usually be equal to the
             total number of values in each data_set, indicating that each geometry
             gets a single color. Alternatively, if all of the geometry objects are
-            meshes or polyfaces, the number of values in the data can be equal to the
-            total number of faces across the meshes/polyfaces or the total number of
-            vertices across the meshes/polyfaces.
+            meshes, the number of values in the data can be equal to the total number
+            of faces across the meshes or the total number of vertices across the meshes.
         data_sets: A list of VisualizationData objects representing the data sets
             that are associated with the input geometry.
         active_data: An integer to denote which of the input data_sets should be
@@ -270,9 +319,12 @@ class AnalysisGeometry(object):
         * active_data
         * min_point
         * max_point
+        * matching_method
+        * user_data
     """
-    __slots__ = ('_geometry', '_data_sets', '_active_data',
-                 '_possible_lengths', '_min_point', '_max_point')
+    __slots__ = (
+        '_geometry', '_data_sets', '_active_data', '_min_point', '_max_point',
+        '_possible_lengths', '_matching_method', '_user_data')
 
     def __init__(self, geometry, data_sets, active_data=0):
         """Initialize AnalysisGeometry."""
@@ -281,6 +333,7 @@ class AnalysisGeometry(object):
         if not isinstance(data_sets, tuple):
             data_sets = tuple(data_sets)
         self._possible_lengths = self._possible_data_lengths(geometry)
+        self._matching_method = None
         for dat in data_sets:
             self._check_data_set(dat)
         self._geometry = geometry
@@ -288,6 +341,7 @@ class AnalysisGeometry(object):
         self.active_data = active_data
         self._min_point = None
         self._max_point = None
+        self._user_data = None
 
     @classmethod
     def from_dict(cls, data):
@@ -313,7 +367,10 @@ class AnalysisGeometry(object):
         dts = tuple(VisualizationData.from_dict(dt) for dt in data['data_sets'])
         # re-serialize the data type and unit
         act_dt = data['active_data'] if 'active_data' in data else 0
-        return cls(geos, dts, act_dt)
+        new_obj = cls(geos, dts, act_dt)
+        if 'user_data' in data and data['user_data'] is not None:
+            new_obj.user_data = data['user_data']
+        return new_obj
 
     @property
     def geometry(self):
@@ -348,6 +405,35 @@ class AnalysisGeometry(object):
         if self._max_point is None:
             self._calculate_min_max()
         return self._max_point
+
+    @property
+    def matching_method(self):
+        """Get text for the method by which the data is matched to the geometry.
+
+        This will be one of the following.
+
+        * geometries - One value is assigned for each geometry
+        * faces - One value is assigned per each face of the Mesh
+        * vertices - One value is assigned per each vertex of the Mesh
+        """
+        return self._matching_method
+
+    @property
+    def user_data(self):
+        """Get or set an optional dictionary for additional meta data for this object.
+
+        This will be None until it has been set. All keys and values of this
+        dictionary should be of a standard Python type to ensure correct
+        serialization of the object to/from JSON (eg. str, float, int, list, dict)
+        """
+        return self._user_data
+
+    @user_data.setter
+    def user_data(self, value):
+        if value is not None:
+            assert isinstance(value, dict), 'Expected dictionary for ' \
+                'object user_data. Got {}.'.format(type(value))
+        self._user_data = value
 
     def add_data_set(self, data, insert_index=None):
         """Add a data set to this AnalysisGeometry object.
@@ -403,52 +489,54 @@ class AnalysisGeometry(object):
         data_index = self.active_data if data_index is None else data_index
         return self.data_sets[data_index].graphic_container(min_point, max_point)
 
-    def matching_method(self, data_index=None):
-        """Get text for the method by which the data is matched to the geometry.
-
-        This will be one of the following.
-
-        * geometry - One value is assigned for each geometry
-        * face - One value is assigned per each face of the Mesh/Polyface
-        * vertex - One value is assigned per each vertex of the Mesh/Polyface
-
-        Args:
-            data_index: Integer for the index of the data set which is being evaluated.
-                If None, the active_data set will be used. (Default: None).
-        """
-        data_index = self.active_data if data_index is None else data_index
-        dat_set = self.data_sets[data_index]
-        geo_len, face_len, vert_len = self._possible_lengths
-        if len(dat_set) == geo_len:
-            return 'geometry'
-        if len(dat_set) == face_len:
-            return 'face'
-        if len(dat_set) == vert_len:
-            return 'vertex'
-
     def to_dict(self):
         """Get AnalysisGeometry as a dictionary."""
-        return {
+        base = {
             'type': 'AnalysisGeometry',
             'geometry': [geo.to_dict() for geo in self.geometry],
             'data_sets': [ds.to_dict() for ds in self.data_sets],
             'active_data': self.active_data
         }
+        if self.user_data is not None:
+            base['user_data'] = self.user_data
+        return base
 
     def _check_data_set(self, data_set):
         """Check that a data set is compatible with the geometry."""
         assert isinstance(data_set, VisualizationData), 'Expected VisualizationData ' \
             'for AnalysisGeometry. Got {}.'.format(type(data_set))
-        pl = self._possible_lengths
-        if pl[1] == 0 and pl[2] == 0:
-            assert len(data_set) == pl[0], 'Expected number of data set values ' \
-                '({}) to align with the number of geometries ({}).'.format(
-                    len(data_set.values), pl[0])
+        if self._matching_method is None:  # first data set to be matched
+            pl = self._possible_lengths
+            if pl[1] == 0 and pl[2] == 0:
+                assert len(data_set) == pl[0], 'Expected number of data set values ' \
+                    '({}) to align with the number of geometries ({}).'.format(
+                        len(data_set.values), pl[0])
+            else:
+                assert len(data_set) in pl, 'Expected number of data set values ' \
+                    '({}) to align with the number of geometries ({}), the number of ' \
+                    'geometry faces ({}), or the number of geometry vertices ' \
+                    '({}).'.format(len(data_set.values), pl[0], pl[1], pl[2])
+            self._matching_method = self._matching_type(data_set)[0]
         else:
-            assert len(data_set) in pl, 'Expected number of data set values ' \
-                '({}) to align with the number of geometries ({}), the number of ' \
-                'geometry faces ({}), or the number of geometry vertices ({}).'.format(
-                    len(data_set.values), pl[0], pl[1], pl[2])
+            assert self._matching_type(data_set)[0] == self._matching_method, \
+                'Expected number of data set values ({}) to align with the number ' \
+                'of {} ({}).'.format(len(data_set.values), self._matching_method,
+                                     self._matching_type(data_set)[1])
+
+    def _matching_type(self, dat_set):
+        """Get text and number of values for the method by which data and geometry match.
+
+        Args:
+            dat_set: A data set which will have its length evaluated in relation to
+                this object's geometry.
+        """
+        geo_len, face_len, vert_len = self._possible_lengths
+        if len(dat_set) == geo_len:
+            return 'geometries', geo_len
+        if len(dat_set) == face_len:
+            return 'faces', face_len
+        if len(dat_set) == vert_len:
+            return 'vertices', vert_len
 
     def _calculate_min_max(self):
         """Calculate maximum and minimum Point3D for this object."""
@@ -461,9 +549,6 @@ class AnalysisGeometry(object):
         for geo in geometry:
             if isinstance(geo, (Mesh2D, Mesh3D)):
                 geo_count_1 += len(geo.faces)
-                geo_count_2 += len(geo.vertices)
-            elif isinstance(geo, Polyface3D):
-                geo_count_1 += len(geo.face_indices)
                 geo_count_2 += len(geo.vertices)
             else:
                 assert isinstance(geo, GEOMETRY_UNION), 'Expected ladybug geometry ' \
@@ -515,14 +600,16 @@ class VisualizationData(object):
         * data_type
         * min_point
         * max_point
+        * user_data
     """
-    __slots__ = ('_legend', '_legend_parameters', '_data_type', '_unit')
+    __slots__ = ('_legend', '_legend_parameters', '_data_type', '_unit', '_user_data')
 
     def __init__(self, values, legend_parameters=None, data_type=None, unit=None):
         """Initialize VisualizationData."""
         # set up the legend using the values and legend parameters
         self._legend = Legend(values, legend_parameters)
         self._legend_parameters = legend_parameters
+        self._user_data = None
 
         # set default legend parameters based on input data_type and unit
         self._data_type = data_type
@@ -594,7 +681,10 @@ class VisualizationData(object):
         if 'data_type' in data and data['data_type'] is not None:
             data_type = DataTypeBase.from_dict(data['data_type'])
         unit = data['unit'] if 'unit' in data else None
-        return cls(data['values'], legend_parameters, data_type, unit)
+        new_obj = cls(data['values'], legend_parameters, data_type, unit)
+        if 'user_data' in data and data['user_data'] is not None:
+            new_obj.user_data = data['user_data']
+        return new_obj
 
     @property
     def values(self):
@@ -626,6 +716,23 @@ class VisualizationData(object):
         """Get a List of colors associated with the assigned values."""
         return self._legend.value_colors
 
+    @property
+    def user_data(self):
+        """Get or set an optional dictionary for additional meta data for this object.
+
+        This will be None until it has been set. All keys and values of this
+        dictionary should be of a standard Python type to ensure correct
+        serialization of the object to/from JSON (eg. str, float, int, list, dict)
+        """
+        return self._user_data
+
+    @user_data.setter
+    def user_data(self, value):
+        if value is not None:
+            assert isinstance(value, dict), 'Expected dictionary for ' \
+                'object user_data. Got {}.'.format(type(value))
+        self._user_data = value
+
     def graphic_container(self, min_point, max_point):
         """Get a Ladybug GraphicContainer object, which can be used to a draw legend.
 
@@ -640,7 +747,7 @@ class VisualizationData(object):
             self._data_type, self._unit)
 
     def to_dict(self):
-        """Get graphic container as a dictionary."""
+        """Get visualization data as a dictionary."""
         base = {
             'type': 'VisualizationData',
             'values': self.values
@@ -651,6 +758,8 @@ class VisualizationData(object):
             base['data_type'] = self.data_type.to_dict()
         if self.unit:
             base['unit'] = self.unit
+        if self.user_data is not None:
+            base['user_data'] = self.user_data
         return base
 
     def __len__(self):
