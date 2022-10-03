@@ -19,11 +19,11 @@ def test_init_visualization_set():
     mesh3d = Mesh3D.from_mesh2d(mesh2d)
     data = VisualizationData([0, 1, 2, 3])
     a_geo = AnalysisGeometry([mesh3d], [data])
-    vis_set = VisualizationSet(a_geo, [context])
+    vis_set = VisualizationSet([a_geo], [context])
 
     str(vis_set)  # Test the GraphicContainer representation
 
-    assert a_geo.matching_method() == 'face'
+    assert a_geo.matching_method == 'faces'
     assert len(data) == 4
     assert data[0] == 0
     assert data[-1] == 3
@@ -60,7 +60,7 @@ def test_init_visualization_set_legend_parameters():
     legend_par.text_height = 0.15
     data = VisualizationData([-1, 0, 1, 2], legend_par)
     a_geo = AnalysisGeometry([mesh3d], [data])
-    vis_set = VisualizationSet(a_geo, [context])
+    vis_set = VisualizationSet([a_geo], [context])
 
     graphic_con = vis_set.graphic_container()
     assert not graphic_con.legend_parameters.is_base_plane_default
@@ -81,7 +81,7 @@ def test_to_from_dict():
     mesh3d = Mesh3D.from_mesh2d(mesh2d)
     data = VisualizationData([0, 1, 2, 3])
     a_geo = AnalysisGeometry([mesh3d], [data])
-    vis_set = VisualizationSet(a_geo, [context])
+    vis_set = VisualizationSet([a_geo], [context])
 
     vis_set_dict = vis_set.to_dict()
     new_vis_set = VisualizationSet.from_dict(vis_set_dict)
