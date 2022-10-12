@@ -14,7 +14,7 @@ def test_display_sphere_init():
     str(sp)  # test the string representation of the line segment
 
     assert sp.color == grey
-    assert sp.display_mode == 'Shaded'
+    assert sp.display_mode == 'Surface'
     assert sp.center == Point3D(2, 0, 2)
     assert sp.radius == 3
     assert sp.min.z == -1

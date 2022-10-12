@@ -1,5 +1,5 @@
 # coding=utf-8
-from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
+from ladybug_geometry.geometry2d.pointvector import Point2D
 from ladybug_geometry.geometry2d.polygon import Polygon2D
 from ladybug.color import Color
 from ladybug_display.geometry2d.polygon import DisplayPolygon2D
@@ -13,7 +13,7 @@ def test_display_p_gon2d_init():
     str(p_gon)  # test the string representation of the p_gon
 
     assert p_gon.color == grey
-    assert p_gon.display_mode == 'Shaded'
+    assert p_gon.display_mode == 'Surface'
     assert isinstance(p_gon.vertices, tuple)
     assert len(p_gon.vertices) == 4
     for point in p_gon.vertices:

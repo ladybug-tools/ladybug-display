@@ -120,8 +120,8 @@ class _SingleColorModeBase3D(_SingleColorBase3D):
         geometry: A ladybug-geometry object.
         color: A ladybug Color object. If None, a default black color will be
             used. (Default: None).
-        display_mode: Text to indicate the display mode (shaded, wireframe, etc.).
-            Choose from the following. (Default: Shaded).
+        display_mode: Text to indicate the display mode (surface, wireframe, etc.).
+            Choose from the following. (Default: Surface).
 
     Properties:
         * geometry
@@ -131,7 +131,7 @@ class _SingleColorModeBase3D(_SingleColorBase3D):
     """
     __slots__ = ('_display_mode',)
 
-    def __init__(self, geometry, color=None, display_mode='Shaded'):
+    def __init__(self, geometry, color=None, display_mode='Surface'):
         """Initialize object."""
         _SingleColorBase3D.__init__(self, geometry, color)
         self.display_mode = display_mode

@@ -15,7 +15,7 @@ def test_polyface3d_init_solid():
     polyface = DisplayPolyface3D(Polyface3D(pts, face_indices), [grey])
 
     assert polyface.colors == (grey,)
-    assert polyface.display_mode == 'Shaded'
+    assert polyface.display_mode == 'Surface'
     assert len(polyface.vertices) == 8
     assert len(polyface.face_indices) == 6
     assert len(polyface.faces) == 6

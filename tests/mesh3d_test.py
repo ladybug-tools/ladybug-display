@@ -13,7 +13,7 @@ def test_display_mesh3d_init():
     mesh = DisplayMesh3D(Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)]), [grey])
 
     assert mesh.colors == (grey,)
-    assert mesh.display_mode == 'Shaded'
+    assert mesh.display_mode == 'Surface'
     assert len(mesh.vertices) == 5
     assert len(mesh.faces) == 2
     assert mesh.area == 6

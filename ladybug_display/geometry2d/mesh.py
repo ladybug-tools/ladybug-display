@@ -14,13 +14,13 @@ class DisplayMesh2D(_DisplayBase2D):
         colors: A list of colors that correspond to either the faces of the mesh
             or the vertices of the mesh. It can also be a single color for the
             entire mesh. (Default: None).
-        display_mode: Text to indicate the display mode (shaded, wireframe, etc.).
-            Choose from the following. (Default: Shaded).
+        display_mode: Text to indicate the display mode (surface, wireframe, etc.).
+            Choose from the following. (Default: Surface).
 
-            * Shaded
             * Surface
             * SurfaceWithEdges
             * Wireframe
+            * Points
 
     Properties:
         * geometry
@@ -38,7 +38,7 @@ class DisplayMesh2D(_DisplayBase2D):
     """
     __slots__ = ('_colors', '_display_mode')
 
-    def __init__(self, geometry, colors=None, display_mode='Shaded'):
+    def __init__(self, geometry, colors=None, display_mode='Surface'):
         """Initialize base with shade object."""
         assert isinstance(geometry, Mesh2D), '\
             Expected ladybug_geometry Mesh2D. Got {}'.format(type(geometry))
@@ -58,7 +58,7 @@ class DisplayMesh2D(_DisplayBase2D):
         colors = [Color.from_dict(c) for c in data['colors']] if 'colors' in data \
             and data['colors'] is not None else None
         d_mode = data['display_mode'] if 'display_mode' in data and \
-            data['display_mode'] is not None else 'Shaded'
+            data['display_mode'] is not None else 'Surface'
         geo = cls(Mesh2D.from_dict(data['geometry']), colors, d_mode)
         if 'user_data' in data and data['user_data'] is not None:
             geo.user_data = data['user_data']

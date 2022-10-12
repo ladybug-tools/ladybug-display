@@ -14,13 +14,13 @@ class DisplayFace3D(_SingleColorModeBase3D):
         geometry: A ladybug-geometry Face3D.
         color: A ladybug Color object. If None, a default black color will be
             used. (Default: None).
-        display_mode: Text to indicate the display mode (shaded, wireframe, etc.).
-            Choose from the following. (Default: Shaded).
+        display_mode: Text to indicate the display mode (surface, wireframe, etc.).
+            Choose from the following. (Default: Surface).
 
-            * Shaded
             * Surface
             * SurfaceWithEdges
             * Wireframe
+            * Points
 
     Properties:
         * geometry
@@ -39,7 +39,7 @@ class DisplayFace3D(_SingleColorModeBase3D):
     """
     __slots__ = ()
 
-    def __init__(self, geometry, color=None, display_mode='Shaded'):
+    def __init__(self, geometry, color=None, display_mode='Surface'):
         """Initialize object."""
         assert isinstance(geometry, Face3D), '\
             Expected ladybug_geometry Face3D. Got {}'.format(type(geometry))
@@ -57,7 +57,7 @@ class DisplayFace3D(_SingleColorModeBase3D):
         color = Color.from_dict(data['color']) if 'color' in data and data['color'] \
             is not None else None
         d_mode = data['display_mode'] if 'display_mode' in data and \
-            data['display_mode'] is not None else 'Shaded'
+            data['display_mode'] is not None else 'Surface'
         geo = cls(Face3D.from_dict(data['geometry']), color, d_mode)
         if 'user_data' in data and data['user_data'] is not None:
             geo.user_data = data['user_data']

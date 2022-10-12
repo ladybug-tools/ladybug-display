@@ -15,7 +15,7 @@ def test_display_face3d_init():
     str(face)  # test the string representation of the face
 
     assert face.color == grey
-    assert face.display_mode == 'Shaded'
+    assert face.display_mode == 'Surface'
     assert isinstance(face.vertices, tuple)
     assert len(face.vertices) == 4
     for point in face.vertices:
