@@ -187,6 +187,40 @@ class VisualizationSet(_VisualizationBase):
             new_obj.user_data = data['user_data']
         return new_obj
 
+    @classmethod
+    def from_single_analysis_geo(
+            cls, identifier, geometry, values, legend_parameters=None,
+            data_type=None, unit=None):
+        """Create an VisualizationSet from a raw geometry object and a list of values.
+
+        Args:
+            identifier: Text string for a unique object ID. Must be less than 100
+                characters and not contain spaces or special characters.
+            geometry: A list of ladybug-geometry objects that is aligned with the
+                values. The length of this list should usually be equal to the total
+                number of values in each data_set, indicating that each geometry gets
+                a single color. Alternatively, if all of the geometry objects are
+                meshes, the number of values in the data can be equal to the total
+                number of faces across the meshes or the total number of vertices
+                across the meshes.
+            values: A list of numerical values that will be used to generate the
+                visualization colors.
+            legend_parameters: An Optional LegendParameters object to override default
+                parameters of the legend. None indicates that default legend parameters
+                will be used. (Default: None).
+            data_type: Optional DataType from the ladybug datatype subpackage (ie.
+                Temperature()) , which will be used to assign default legend properties.
+                If None, the legend associated with this object will contain no units
+                unless a unit below is specified. (Default: None).
+            unit: Optional text string for the units of the values. (ie. "C"). If None
+                or empty, the default units of the data_type will be used. If no data
+                type is specified in this case, this will simply be an empty
+                string. (Default: None).
+        """
+        viz_data = VisualizationData(values, legend_parameters, data_type, unit)
+        a_geo = AnalysisGeometry('{}_Geometry'.format(identifier), geometry, [viz_data])
+        return cls(identifier, (a_geo,))
+
     @property
     def geometry(self):
         """Get or set a tuple of AnalysisGeometry and ContextGeometry objects."""
@@ -199,9 +233,7 @@ class VisualizationSet(_VisualizationBase):
         if not isinstance(value, tuple):
             value = tuple(value)
         for geo in value:
-            assert isinstance(geo, (AnalysisGeometry, ContextGeometry)), 'Expected ' \
-                'AnalysisGeometry or ContextGeometry for VisualizationSet geometry. ' \
-                'Got {}.'.format(type(value))
+            self._check_geometry(geo)
         self._geometry = value
 
     @property
@@ -217,6 +249,35 @@ class VisualizationSet(_VisualizationBase):
         if self._max_point is None:
             self._calculate_min_max()
         return self._max_point
+
+    def add_geometry(self, geometry, insert_index=None):
+        """Add a data set to this AnalysisGeometry object.
+
+        Args:
+            data: A VisualizationData object to be added to this AnalysisGeometry.
+            insert_index: An integer for the index at which the data should be
+                inserted. If None, the data will be appended to the end. (Default: None).
+        """
+        self._check_geometry(geometry)
+        if insert_index is None:
+            self._geometry = self._geometry + (geometry,)
+        else:
+            geos_list = list(self._geometry)
+            geos_list.insert(insert_index, geometry)
+            self._geometry = tuple(geos_list)
+
+    def remove_geometry(self, geo_index):
+        """Remove a geometry object from this VisualizationSet.
+
+        Args:
+            geo_index: An integer for the geometry index to be removed.
+        """
+        assert geo_index < len(self._geometry), 'geo_index ({}) must be less than ' \
+            'the number of items in the data_sets ({}).'.format(
+                geo_index, len(self._geometry))
+        geos_list = list(self._geometry)
+        geos_list.pop(geo_index)
+        self._geometry = tuple(geos_list)
 
     def check_duplicate_identifiers(self, raise_exception=True, detailed=False):
         """Check that there are no duplicate geometry object identifiers in the set.
@@ -300,6 +361,12 @@ class VisualizationSet(_VisualizationBase):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def _check_geometry(self, geo):
+        """Check that the geometry object is valid."""
+        assert isinstance(geo, (AnalysisGeometry, ContextGeometry)), 'Expected ' \
+            'AnalysisGeometry or ContextGeometry for VisualizationSet geometry. ' \
+            'Got {}.'.format(type(geo))
 
     def _calculate_min_max(self):
         """Calculate maximum and minimum Point3D for this object."""
@@ -841,8 +908,6 @@ class VisualizationMetaData(object):
     Properties:
         * legend_parameters
         * data_type
-        * min_point
-        * max_point
         * user_data
     """
     __slots__ = ('_legend_parameters', '_data_type', '_unit', '_user_data')
@@ -1004,8 +1069,6 @@ class VisualizationData(VisualizationMetaData):
         * values
         * legend_parameters
         * data_type
-        * min_point
-        * max_point
         * user_data
     """
     __slots__ = ('_legend', '_legend_parameters', '_data_type', '_unit', '_user_data')
