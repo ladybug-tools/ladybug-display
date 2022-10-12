@@ -1,5 +1,6 @@
 # coding=utf-8
 from __future__ import division
+import collections
 
 from ladybug.legend import Legend, LegendParameters, LegendParametersCategorized
 from ladybug.graphic import GraphicContainer
@@ -19,7 +20,8 @@ from .geometry3d import DisplayVector3D, DisplayPoint3D, \
 from ladybug_geometry.bounding import bounding_box
 from ladybug_geometry.dictutil import geometry_dict_to_object
 
-from .typing import int_in_range
+from ._base import DISPLAY_MODES
+from .typing import int_in_range, valid_string
 from .dictutil import dict_to_object
 
 GEOMETRY_UNION = (
@@ -36,31 +38,320 @@ DISPLAY_UNION = (
 )
 
 
-class VisualizationSet(object):
+class _VisualizationBase(object):
+    """A base class for visualization objects.
+
+    Args:
+        identifier: Text string for a unique object ID. Must be less than 100
+            characters and not contain spaces or special characters.
+
+    Properties:
+        * identifier
+        * display_name
+        * full_id
+        * user_data
+    """
+    __slots__ = ('_identifier', '_display_name', '_user_data')
+
+    def __init__(self, identifier):
+        """Initialize base object."""
+        self.identifier = identifier
+        self._display_name = None
+        self._user_data = None
+
+    @property
+    def identifier(self):
+        """Get or set a text string for the unique object identifier.
+
+        This identifier remains constant as the object is mutated, copied, and
+        serialized to different formats.
+        """
+        return self._identifier
+
+    @identifier.setter
+    def identifier(self, value):
+        self._identifier = valid_string(value, 'visualization object identifier')
+
+    @property
+    def display_name(self):
+        """Get or set text for the object name without any character restrictions.
+
+        This is typically used to set the layer of the object in the interface that
+        renders the VisualizationSet. A :: in the display_name can be used to denote
+        sub-layers following a convention of ParentLayer::SubLayer.
+
+        If not set, the display_name will be equal to the object identifier.
+        """
+        if self._display_name is None:
+            return self._identifier
+        return self._display_name
+
+    @display_name.setter
+    def display_name(self, value):
+        if value is not None:
+            try:
+                value = str(value)
+            except UnicodeEncodeError:  # Python 2 machine lacking the character set
+                pass  # keep it as unicode
+        self._display_name = value
+
+    @property
+    def full_id(self):
+        """Get a string with both the object display_name and identifier.
+
+        This is formatted as display_name[identifier].
+
+        This is useful in error messages to give users an easy means of finding
+        invalid objects within models. If there is no display_name assigned,
+        only the identifier will be returned.
+        """
+        if self._display_name is None:
+            return self._identifier
+        else:
+            return '{}[{}]'.format(self._display_name, self._identifier)
+
+    @property
+    def user_data(self):
+        """Get or set an optional dictionary for additional meta data for this object.
+
+        This will be None until it has been set. All keys and values of this
+        dictionary should be of a standard Python type to ensure correct
+        serialization of the object to/from JSON (eg. str, float, int, list, dict)
+        """
+        return self._user_data
+
+    @user_data.setter
+    def user_data(self, value):
+        if value is not None:
+            assert isinstance(value, dict), 'Expected dictionary for visualization ' \
+                'object user_data. Got {}.'.format(type(value))
+        self._user_data = value
+
+
+class VisualizationSet(_VisualizationBase):
     """A visualization set containing analysis and context geometry to be visualized.
 
     Args:
-        analysis_geometry: A list of AnalysisGeometry objects for spatial data that is
-            displayed in the visualization. Multiple AnalysisGeometry objects can
-            be used to specify different related studies that were run to create
-            the visualization (eg. a radiation study of windows next to a daylight
-            study of interior floor plates). (Default: None).
-        context_geometry: An optional list of ladybug-geometry or ladybug-display
-            objects that gives context to the analysis geometry or other aspects
-            of the visualization. Typically, these will display in wireframe around
-            the geometry, though the properties of display geometry can be used to
-            customize the visualization. (Default: None).
+        identifier: Text string for a unique object ID. Must be less than 100
+            characters and not contain spaces or special characters.
+        geometry: A list of AnalysisGeometry and ContextGeometry objects to display
+            in the visualization. Each geometry object will typically be translated
+            to its own layer within the interface that renders the VisualizationSet.
 
     Properties:
-        * analysis_geometry
-        * context_geometry
+        * identifier
+        * display_name
+        * geometry
         * min_point
         * max_point
         * user_data
     """
-    __slots__ = (
-        '_analysis_geometry', '_context_geometry',
-        '_min_point', '_max_point', '_user_data')
+    __slots__ = ('_geometry', '_min_point', '_max_point')
+
+    def __init__(self, identifier, geometry):
+        """Initialize VisualizationSet."""
+        _VisualizationBase.__init__(self, identifier)  # process the identifier
+        self.geometry = geometry
+        self._min_point = None
+        self._max_point = None
+
+    @classmethod
+    def from_dict(cls, data):
+        """Create an VisualizationSet from a dictionary.
+
+        Args:
+            data: A python dictionary in the following format
+
+        .. code-block:: python
+
+            {
+            "type": "VisualizationSet",
+            "identifier": "",  # unique object identifier
+            "geometry": []  # list of AnalysisGeometry and ContextGeometry objects
+            }
+        """
+        # check the type key
+        assert data['type'] == 'VisualizationSet', \
+            'Expected VisualizationSet, Got {}.'.format(data['type'])
+        # re-serialize the context and analysis geometry
+        geos = []
+        for geo_data in data['geometry']:
+            if geo_data['type'] == 'AnalysisGeometry':
+                geos.append(AnalysisGeometry.from_dict(geo_data))
+            else:
+                geos.append(ContextGeometry.from_dict(geo_data))
+        new_obj = cls(data['identifier'], geos)
+        if 'display_name' in data and data['display_name'] is not None:
+            new_obj.display_name = data['display_name']
+        if 'user_data' in data and data['user_data'] is not None:
+            new_obj.user_data = data['user_data']
+        return new_obj
+
+    @property
+    def geometry(self):
+        """Get or set a tuple of AnalysisGeometry and ContextGeometry objects."""
+        return self._geometry
+
+    @geometry.setter
+    def geometry(self, value):
+        assert isinstance(value, (list, tuple)), 'Expected list or tuple for' \
+            ' VisualizationSet geometry. Got {}.'.format(type(value))
+        if not isinstance(value, tuple):
+            value = tuple(value)
+        for geo in value:
+            assert isinstance(geo, (AnalysisGeometry, ContextGeometry)), 'Expected ' \
+                'AnalysisGeometry or ContextGeometry for VisualizationSet geometry. ' \
+                'Got {}.'.format(type(value))
+        self._geometry = value
+
+    @property
+    def min_point(self):
+        """A Point3D for the minimum bounding box vertex around all of the geometry."""
+        if self._min_point is None:
+            self._calculate_min_max()
+        return self._min_point
+
+    @property
+    def max_point(self):
+        """A Point3D for the maximum bounding box vertex around all of the geometry."""
+        if self._max_point is None:
+            self._calculate_min_max()
+        return self._max_point
+
+    def check_duplicate_identifiers(self, raise_exception=True, detailed=False):
+        """Check that there are no duplicate geometry object identifiers in the set.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if duplicate identifiers are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        detailed = False if raise_exception else detailed
+        obj_id_iter = (obj.identifier for obj in self.geometry)
+        dup = [t for t, c in collections.Counter(obj_id_iter).items() if c > 1]
+        if len(dup) != 0:
+            if detailed:
+                err_list = []
+                for dup_id in dup:
+                    msg = 'There is a duplicated geometry identifier: {}'.format(dup_id)
+                    dup_dict = {
+                        'type': 'ValidationError',
+                        'element_type': 'Geometry',
+                        'element_id': dup_id,
+                        'element_name': dup_id,
+                        'message': msg
+                    }
+                    err_list.append(dup_dict)
+                return err_list
+            msg = 'The following duplicated Geometry identifiers were found:\n{}'.format(
+                '\n'.join(dup))
+            if raise_exception:
+                raise ValueError(msg)
+            return msg
+        return [] if detailed else ''
+
+    def graphic_container(self, geo_index=0, data_index=None,
+                          min_point=None, max_point=None):
+        """Get a Ladybug GraphicContainer object, which can be used to draw legends.
+
+        Args:
+            geo_index: Integer for the index of the geometry for which a
+                GraphicContainer will be returned. Note that this index must refer
+                to an analysis geometry in order to produce a valid graphic
+                container. (Default: 0).
+            data_index: Integer for the index of the data set for which a
+                GraphicContainer will be returned. If None, the active_data set
+                will be used. (Default: None).
+            min_point: An optional Point3D to denote the minimum bounding box
+                for the graphic container. If None, this object's own min_point
+                will be used, which corresponds to the bounding box around
+                the geometry. (Default: None).
+            max_point: An optional Point3D to denote the maximum bounding box
+                for the graphic container. If None, this object's own max_point
+                will be used, which corresponds to the bounding box around
+                the geometry. (Default: None).
+        """
+        # check to be sure that there is analysis geometry
+        geo_obj = self.geometry[geo_index]
+        assert isinstance(geo_obj, AnalysisGeometry), 'VisualizationSet geo_index ' \
+            'must refer to an  AnalysisGeometry in order to use ' \
+            'graphic_container method.'
+        # ensure that min and max points always make sense
+        min_point = self.min_point if min_point is None else min_point
+        max_point = self.max_point if max_point is None else max_point
+        # return the Graphic Container for the correct data set
+        data_index = geo_obj.active_data if data_index is None else data_index
+        dat_set = geo_obj.data_sets[data_index]
+        return dat_set.graphic_container(min_point, max_point)
+
+    def to_dict(self):
+        """Get VisualizationSet as a dictionary."""
+        base = {
+            'type': 'VisualizationSet',
+            'identifier': self.identifier,
+            'geometry': [geo_obj.to_dict() for geo_obj in self.geometry]
+        }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
+        if self.user_data is not None:
+            base['user_data'] = self.user_data
+        return base
+
+    def _calculate_min_max(self):
+        """Calculate maximum and minimum Point3D for this object."""
+        all_geo = []
+        for geo_obj in self.geometry:
+            all_geo.append(geo_obj.min_point)
+            all_geo.append(geo_obj.max_point)
+        if len(all_geo) != 0:
+            self._min_point, self._max_point = bounding_box(all_geo)
+
+    def ToString(self):
+        """Overwrite .NET ToString."""
+        return self.__repr__()
+
+    def __len__(self):
+        """Return number of geometries on the object."""
+        return len(self.geometry)
+
+    def __getitem__(self, key):
+        """Return one of the geometries."""
+        return self.geometry[key]
+
+    def __iter__(self):
+        """Iterate through the geometries."""
+        return iter(self.geometry)
+
+    def __repr__(self):
+        """VisualizationSet representation."""
+        return 'Visualization Set: {}'.format(self.display_name)
+
+
+class ContextGeometry(_VisualizationBase):
+    """An object representing context geometry to display.
+
+    Args:
+        identifier: Text string for a unique object ID. Must be less than 100
+            characters and not contain spaces or special characters.
+        geometry: A list of ladybug-geometry or ladybug-display objects that gives
+            context to analysis geometry or other aspects of the visualization.
+            Typically, these will display in wireframe around the geometry, though
+            the properties of display geometry can be used to customize the
+            visualization.
+
+    Properties:
+        * identifier
+        * display_name
+        * geometry
+        * min_point
+        * max_point
+        * user_data
+    """
+    __slots__ = ('_geometry', '_min_point', '_max_point')
 
     WIREFRAME_MAP = {
         Vector2D: (DisplayVector2D, None),
@@ -86,17 +377,16 @@ class VisualizationSet(object):
         Cylinder: (DisplayCylinder, None, 'Wireframe')
     }
 
-    def __init__(self, analysis_geometry=None, context_geometry=None):
-        """Initialize VisualizationSet."""
-        self.analysis_geometry = analysis_geometry
-        self.context_geometry = context_geometry
+    def __init__(self, identifier, geometry):
+        """Initialize ContextGeometry."""
+        _VisualizationBase.__init__(self, identifier)  # process the identifier
+        self.geometry = geometry
         self._min_point = None
         self._max_point = None
-        self._user_data = None
 
     @classmethod
     def from_dict(cls, data):
-        """Create an VisualizationSet from a dictionary.
+        """Create an ContextGeometry from a dictionary.
 
         Args:
             data: A python dictionary in the following format
@@ -104,71 +394,48 @@ class VisualizationSet(object):
         .. code-block:: python
 
             {
-            "type": "VisualizationSet",
-            "analysis_geometry": {},  # an AnalysisGeometry specification
-            "context_geometry": []  # list of ladybug-display geometry objects
+            "type": "ContextGeometry",
+            "identifier": "",  # unique object identifier
+            "geometry": []  # list of ladybug-display geometry objects
             }
         """
         # check the type key
-        assert data['type'] == 'VisualizationSet', \
-            'Expected VisualizationSet, Got {}.'.format(data['type'])
-        # re-serialize the context and analysis geometry
-        a_geo = tuple(AnalysisGeometry.from_dict(g) for g in data['analysis_geometry']) \
-            if 'analysis_geometry' in data and \
-            data['analysis_geometry'] is not None else None
-        c_geos = tuple(dict_to_object(geo) for geo in data['context_geometry']) \
-            if 'context_geometry' in data and data['context_geometry'] is not None \
-            else None
-        new_obj = cls(a_geo, c_geos)
+        assert data['type'] == 'ContextGeometry', \
+            'Expected ContextGeometry, Got {}.'.format(data['type'])
+        # re-serialize the object
+        geos = tuple(dict_to_object(geo) for geo in data['geometry'])
+        new_obj = cls(data['identifier'], geos)
+        if 'display_name' in data and data['display_name'] is not None:
+            new_obj.display_name = data['display_name']
         if 'user_data' in data and data['user_data'] is not None:
             new_obj.user_data = data['user_data']
         return new_obj
 
     @property
-    def analysis_geometry(self):
-        """Get or set a tuple of AnalysisGeometry for spatial data in the visualization.
-        """
-        return self._analysis_geometry
-
-    @analysis_geometry.setter
-    def analysis_geometry(self, value):
-        if value is not None:
-            assert isinstance(value, (list, tuple)), 'Expected list or tuple for' \
-                ' VisualizationSet analysis_geometry. Got {}.'.format(type(value))
-            if not isinstance(value, tuple):
-                value = tuple(value)
-            for geo in value:
-                assert isinstance(geo, AnalysisGeometry), 'Expected AnalysisGeometry ' \
-                    'for VisualizationSet analysis_geometry. Got {}.'.format(type(value))
-        self._analysis_geometry = value
-
-    @property
-    def context_geometry(self):
+    def geometry(self):
         """Get or set a tuple of ladybug_display geometry objects for context.
 
         When setting this property, it is also acceptable to include raw
         ladybug_geometry objects in the list and they will automatically be
         converted into a wireframe representation as a ladybug-display object.
         """
-        return self._context_geometry
+        return self._geometry
 
-    @context_geometry.setter
-    def context_geometry(self, value):
-        if value is not None:
-            assert isinstance(value, (list, tuple)), 'Expected list or tuple for' \
-                ' VisualizationSet context_geometry. Got {}.'.format(type(value))
-            processed_value = []
-            for geo in value:
-                if isinstance(geo, DISPLAY_UNION):
-                    processed_value.append(geo)
-                elif isinstance(geo, GEOMETRY_UNION):
-                    processed_value.append(self.geometry_to_wireframe(geo))
-                else:
-                    raise ValueError(
-                        'Expected ladybug-geometry or ladybug-display object for '
-                        'context_geometry. Got {}.'.format(type(geo)))
-            value = tuple(processed_value)
-        self._context_geometry = value
+    @geometry.setter
+    def geometry(self, value):
+        assert isinstance(value, (list, tuple)), 'Expected list or tuple for' \
+            ' ContextGeometry geometry. Got {}.'.format(type(value))
+        processed_value = []
+        for geo in value:
+            if isinstance(geo, DISPLAY_UNION):
+                processed_value.append(geo)
+            elif isinstance(geo, GEOMETRY_UNION):
+                processed_value.append(self.geometry_to_wireframe(geo))
+            else:
+                raise ValueError(
+                    'Expected ladybug-geometry or ladybug-display object for '
+                    'ContextGeometry. Got {}.'.format(type(geo)))
+        self._geometry = tuple(processed_value)
 
     @property
     def min_point(self):
@@ -184,66 +451,17 @@ class VisualizationSet(object):
             self._calculate_min_max()
         return self._max_point
 
-    @property
-    def user_data(self):
-        """Get or set an optional dictionary for additional meta data for this object.
-
-        This will be None until it has been set. All keys and values of this
-        dictionary should be of a standard Python type to ensure correct
-        serialization of the object to/from JSON (eg. str, float, int, list, dict)
-        """
-        return self._user_data
-
-    @user_data.setter
-    def user_data(self, value):
-        if value is not None:
-            assert isinstance(value, dict), 'Expected dictionary for ' \
-                'object user_data. Got {}.'.format(type(value))
-        self._user_data = value
-
-    def graphic_container(self, geo_index=0, data_index=None,
-                          min_point=None, max_point=None):
-        """Get a Ladybug GraphicContainer object, which can be used to draw legends.
-
-        Note that this object must have analysis_geometry assigned to it in order
-        to get a data collection.
-
-        Args:
-            geo_index: Integer for the index of the analysis_geometry for which a
-                GraphicContainer will be returned. (Default: 0).
-            data_index: Integer for the index of the data set for which a
-                GraphicContainer will be returned. If None, the active_data set
-                will be used. (Default: None).
-            min_point: An optional Point3D to denote the minimum bounding box
-                for the graphic container. If None, this object's own min_point
-                will be used, which corresponds to the bounding box around
-                the geometry. (Default: None).
-            max_point: An optional Point3D to denote the maximum bounding box
-                for the graphic container. If None, this object's own max_point
-                will be used, which corresponds to the bounding box around
-                the geometry. (Default: None).
-        """
-        # check to be sure that there is analysis geometry
-        assert self.analysis_geometry is not None, 'VisualizationSet must have ' \
-            'analysis_geometry in order to use graphic_container method.'
-        # ensure that min and max points always make sense
-        min_point = self.min_point if min_point is None else min_point
-        max_point = self.max_point if max_point is None else max_point
-        # return the Graphic Container for the correct data set
-        data_index = self.analysis_geometry[geo_index].active_data \
-            if data_index is None else data_index
-        dat_set = self.analysis_geometry[geo_index].data_sets[data_index]
-        return dat_set.graphic_container(min_point, max_point)
-
     def to_dict(self):
-        """Get VisualizationSet as a dictionary."""
-        base = {'type': 'VisualizationSet'}
-        if self.analysis_geometry is not None:
-            base['analysis_geometry'] = \
-                [a_geo.to_dict() for a_geo in self.analysis_geometry]
-        if self.context_geometry is not None:
-            base['context_geometry'] = \
-                [d_geo.to_dict() for d_geo in self.context_geometry]
+        """Get ContextGeometry as a dictionary."""
+        base = {
+            'type': 'ContextGeometry',
+            'identifier': self.identifier,
+            'geometry': [geo.to_dict() for geo in self.geometry]
+        }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
+        if self.user_data is not None:
+            base['user_data'] = self.user_data
         return base
 
     @staticmethod
@@ -254,54 +472,43 @@ class VisualizationSet(object):
             geometry: A raw ladybug-geometry object to be converted to a wireframe
                 ladybug-display object.
         """
-        conv_info = VisualizationSet.WIREFRAME_MAP[geometry.__class__]
+        conv_info = ContextGeometry.WIREFRAME_MAP[geometry.__class__]
         new_class, wire_args = conv_info[0], list(conv_info[1:])
         wire_args.insert(0, geometry)
         return new_class(*wire_args)
 
     def _calculate_min_max(self):
         """Calculate maximum and minimum Point3D for this object."""
-        all_geo = []
-        if self.analysis_geometry is not None:
-            for a_geo in self.analysis_geometry:
-                for geo in a_geo.geometry:
-                    all_geo.append(geo)
-        if self.context_geometry is not None:
-            for d_geo in self.context_geometry:
-                all_geo.append(d_geo.geometry)
-        if len(all_geo) != 0:
-            self._min_point, self._max_point = bounding_box(all_geo)
+        lb_geos = [d_geo.geometry for d_geo in self.geometry]
+        self._min_point, self._max_point = bounding_box(lb_geos)
+
+    def __len__(self):
+        """Return number of geometries on the object."""
+        return len(self.geometry)
+
+    def __getitem__(self, key):
+        """Return one of the geometries."""
+        return self.geometry[key]
+
+    def __iter__(self):
+        """Iterate through the geometries."""
+        return iter(self.geometry)
 
     def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
 
-    def __len__(self):
-        """Return number of analysis geometries on the object."""
-        return len(self.analysis_geometry)
-
-    def __getitem__(self, key):
-        """Return one of the analysis geometries."""
-        return self.analysis_geometry[key]
-
-    def __iter__(self):
-        """Iterate through the data sets."""
-        return iter(self.analysis_geometry)
-
     def __repr__(self):
-        """VisualizationSet representation."""
-        base_str = 'Visualization Set'
-        if self.analysis_geometry is not None:
-            base_str = base_str + ' ({} geometries)'.format(len(self.analysis_geometry))
-        if self.context_geometry is not None:
-            base_str = base_str + ' ({} contexts)'.format(len(self.context_geometry))
-        return base_str
+        """AnalysisGeometry representation."""
+        return 'Context Geometry: {}'.format(self.display_name)
 
 
-class AnalysisGeometry(object):
+class AnalysisGeometry(_VisualizationBase):
     """An object where multiple data streams correspond to the same geometry.
 
     Args:
+        identifier: Text string for a unique object ID. Must be less than 100
+            characters and not contain spaces or special characters.
         geometry: A list of ladybug-geometry objects that is aligned with the values in
             the input data_sets. The length of this list should usually be equal to the
             total number of values in each data_set, indicating that each geometry
@@ -312,22 +519,34 @@ class AnalysisGeometry(object):
             that are associated with the input geometry.
         active_data: An integer to denote which of the input data_sets should be
             displayed by default. (Default: 0).
+        display_mode: Text to indicate the display mode (surface, wireframe, etc.).
+            Choose from the following. (Default: Surface).
+
+            * Surface
+            * SurfaceWithEdges
+            * Wireframe
+            * Points
 
     Properties:
+        * identifier
+        * display_name
         * geometry
         * data_sets
         * active_data
+        * display_mode
         * min_point
         * max_point
         * matching_method
         * user_data
     """
     __slots__ = (
-        '_geometry', '_data_sets', '_active_data', '_min_point', '_max_point',
-        '_possible_lengths', '_matching_method', '_user_data')
+        '_geometry', '_data_sets', '_active_data', '_display_mode',
+        '_min_point', '_max_point', '_possible_lengths', '_matching_method')
 
-    def __init__(self, geometry, data_sets, active_data=0):
+    def __init__(self, identifier, geometry, data_sets,
+                 active_data=0, display_mode='Surface'):
         """Initialize AnalysisGeometry."""
+        _VisualizationBase.__init__(self, identifier)  # process the identifier
         if not isinstance(geometry, tuple):
             geometry = tuple(geometry)
         if not isinstance(data_sets, tuple):
@@ -339,9 +558,9 @@ class AnalysisGeometry(object):
         self._geometry = geometry
         self._data_sets = data_sets
         self.active_data = active_data
+        self.display_mode = display_mode
         self._min_point = None
         self._max_point = None
-        self._user_data = None
 
     @classmethod
     def from_dict(cls, data):
@@ -354,9 +573,11 @@ class AnalysisGeometry(object):
 
             {
             "type": "AnalysisGeometry",
+            "identifier": "",  # unique object identifier
             "geometry": [],  # list of geometry objects
             "data_sets": [],  # list of data sets associated with the geometry
-            "active_data": 0  # integer for the index of the active data set
+            "active_data": 0,  # integer for the index of the active data set
+            "display_mode": "Surface"  # text for the display mode of the data
             }
         """
         # check the type key
@@ -367,7 +588,10 @@ class AnalysisGeometry(object):
         dts = tuple(VisualizationData.from_dict(dt) for dt in data['data_sets'])
         # re-serialize the data type and unit
         act_dt = data['active_data'] if 'active_data' in data else 0
-        new_obj = cls(geos, dts, act_dt)
+        d_mode = data['display_mode'] if 'display_mode' in data else 'Surface'
+        new_obj = cls(data['identifier'], geos, dts, act_dt, d_mode)
+        if 'display_name' in data and data['display_name'] is not None:
+            new_obj.display_name = data['display_name']
         if 'user_data' in data and data['user_data'] is not None:
             new_obj.user_data = data['user_data']
         return new_obj
@@ -391,6 +615,24 @@ class AnalysisGeometry(object):
     @active_data.setter
     def active_data(self, value):
         self._active_data = int_in_range(value, 0, len(self._data_sets), 'active_data')
+
+    @property
+    def display_mode(self):
+        """Get or set text to indicate the display mode."""
+        return self._display_mode
+
+    @display_mode.setter
+    def display_mode(self, value):
+        clean_input = value.lower()
+        for key in DISPLAY_MODES:
+            if key.lower() == clean_input:
+                value = key
+                break
+        else:
+            raise ValueError(
+                'display_mode {} is not recognized.\nChoose from the '
+                'following:\n{}'.format(value, DISPLAY_MODES))
+        self._display_mode = value
 
     @property
     def min_point(self):
@@ -493,10 +735,14 @@ class AnalysisGeometry(object):
         """Get AnalysisGeometry as a dictionary."""
         base = {
             'type': 'AnalysisGeometry',
+            'identifier': self.identifier,
             'geometry': [geo.to_dict() for geo in self.geometry],
             'data_sets': [ds.to_dict() for ds in self.data_sets],
-            'active_data': self.active_data
+            'active_data': self.active_data,
+            'display_mode': self.display_mode
         }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
@@ -573,7 +819,7 @@ class AnalysisGeometry(object):
 
     def __repr__(self):
         """AnalysisGeometry representation."""
-        return 'Analysis Geometry ({} data sets)'.format(len(self))
+        return 'Analysis Geometry: {}'.format(self.display_name)
 
 
 class VisualizationData(object):

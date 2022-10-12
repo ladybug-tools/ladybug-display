@@ -1,4 +1,5 @@
 """Collection of methods for type input checking."""
+import re
 import math
 
 try:
@@ -8,6 +9,22 @@ except AttributeError:
     # python 2
     INFPOS = float('inf')
     INFNEG = float('-inf')
+
+
+def valid_string(value, input_name=''):
+    """Check that a string is valid as an identifier."""
+    try:
+        illegal_match = re.search(r'[^.A-Za-z0-9_-]', value)
+    except TypeError:
+        raise TypeError('Input {} must be a text string. Got {}: {}.'.format(
+            input_name, type(value), value))
+    assert illegal_match is None, 'Illegal character "{}" found in {}'.format(
+        illegal_match.group(0), input_name)
+    assert len(value) > 0, 'Input {} "{}" contains no characters.'.format(
+        input_name, value)
+    assert len(value) <= 100, 'Input {} "{}" must be less than 100 characters.'.format(
+        input_name, value)
+    return value
 
 
 def _number_check(value, input_name):

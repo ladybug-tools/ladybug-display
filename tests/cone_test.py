@@ -15,7 +15,7 @@ def test_cone_init():
     str(c)  # test the string representation of the cone
 
     assert c.color == grey
-    assert c.display_mode == 'Shaded'
+    assert c.display_mode == 'Surface'
     assert c.vertex == Point3D(2, 0, 2)
     assert c.axis == Vector3D(0, 2, 2)
     assert c.height == c.axis.magnitude

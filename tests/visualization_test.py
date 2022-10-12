@@ -8,20 +8,20 @@ from ladybug_geometry.geometry3d.polyface import Polyface3D
 from ladybug.graphic import GraphicContainer
 from ladybug.legend import Legend, LegendParameters
 
-from ladybug_display.visualization import VisualizationSet, AnalysisGeometry, \
-    VisualizationData
+from ladybug_display.visualization import VisualizationSet, ContextGeometry, \
+    AnalysisGeometry, VisualizationData
 
 
 def test_init_visualization_set():
     """Test the initialization of VisualizationSet objects."""
-    context = Polyface3D.from_box(2, 4, 2, base_plane=Plane(o=Point3D(0, 2, 0)))
+    con_geo = Polyface3D.from_box(2, 4, 2, base_plane=Plane(o=Point3D(0, 2, 0)))
+    context = ContextGeometry('Building_Massing', [con_geo])
     mesh2d = Mesh2D.from_grid(num_x=2, num_y=2)
     mesh3d = Mesh3D.from_mesh2d(mesh2d)
     data = VisualizationData([0, 1, 2, 3])
-    a_geo = AnalysisGeometry([mesh3d], [data])
-    vis_set = VisualizationSet([a_geo], [context])
-
-    str(vis_set)  # Test the GraphicContainer representation
+    a_geo = AnalysisGeometry('Test_Results', [mesh3d], [data])
+    vis_set = VisualizationSet('Test_Set', [a_geo, context])
+    str(vis_set)
 
     assert a_geo.matching_method == 'faces'
     assert len(data) == 4
@@ -50,7 +50,8 @@ def test_init_visualization_set():
 
 def test_init_visualization_set_legend_parameters():
     """Test the initialization of VisualizationSet objects with a LegendParameters."""
-    context = Polyface3D.from_box(2, 4, 2, base_plane=Plane(o=Point3D(0, 2, 0)))
+    con_geo = Polyface3D.from_box(2, 4, 2, base_plane=Plane(o=Point3D(0, 2, 0)))
+    context = ContextGeometry('Building_Massing', [con_geo])
     mesh2d = Mesh2D.from_grid(num_x=2, num_y=2)
     mesh3d = Mesh3D.from_mesh2d(mesh2d)
     legend_par = LegendParameters(base_plane=Plane(o=Point3D(2, 2, 0)))
@@ -59,8 +60,8 @@ def test_init_visualization_set_legend_parameters():
     legend_par.segment_width = 0.5
     legend_par.text_height = 0.15
     data = VisualizationData([-1, 0, 1, 2], legend_par)
-    a_geo = AnalysisGeometry([mesh3d], [data])
-    vis_set = VisualizationSet([a_geo], [context])
+    a_geo = AnalysisGeometry('Test_Results', [mesh3d], [data])
+    vis_set = VisualizationSet('Test_Set', [a_geo, context])
 
     graphic_con = vis_set.graphic_container()
     assert not graphic_con.legend_parameters.is_base_plane_default
@@ -76,12 +77,13 @@ def test_init_visualization_set_legend_parameters():
 
 def test_to_from_dict():
     """Test the to/from dict methods."""
-    context = Polyface3D.from_box(2, 4, 2, base_plane=Plane(o=Point3D(0, 2, 0)))
+    con_geo = Polyface3D.from_box(2, 4, 2, base_plane=Plane(o=Point3D(0, 2, 0)))
+    context = ContextGeometry('Building_Massing', [con_geo])
     mesh2d = Mesh2D.from_grid(num_x=2, num_y=2)
     mesh3d = Mesh3D.from_mesh2d(mesh2d)
     data = VisualizationData([0, 1, 2, 3])
-    a_geo = AnalysisGeometry([mesh3d], [data])
-    vis_set = VisualizationSet([a_geo], [context])
+    a_geo = AnalysisGeometry('Test_Results', [mesh3d], [data])
+    vis_set = VisualizationSet('Test_Set', [a_geo, context])
 
     vis_set_dict = vis_set.to_dict()
     new_vis_set = VisualizationSet.from_dict(vis_set_dict)

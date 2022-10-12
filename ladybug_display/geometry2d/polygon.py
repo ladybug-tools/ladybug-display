@@ -13,13 +13,13 @@ class DisplayPolygon2D(_SingleColorBase2D):
         geometry: A ladybug-geometry Polygon2D object.
         color: A ladybug Color object. If None, a default black color will be
             used. (Default: None).
-        display_mode: Text to indicate the display mode (shaded, wireframe, etc.).
-            Choose from the following. (Default: Shaded).
+        display_mode: Text to indicate the display mode (surface, wireframe, etc.).
+            Choose from the following. (Default: Surface).
 
-            * Shaded
             * Surface
             * SurfaceWithEdges
             * Wireframe
+            * Points
 
     Properties:
         * geometry
@@ -39,7 +39,7 @@ class DisplayPolygon2D(_SingleColorBase2D):
     """
     __slots__ = ('_display_mode',)
 
-    def __init__(self, geometry, color=None, display_mode='Shaded'):
+    def __init__(self, geometry, color=None, display_mode='Surface'):
         """Initialize base with shade object."""
         assert isinstance(geometry, Polygon2D), '\
             Expected ladybug_geometry Polygon2D. Got {}'.format(type(geometry))
@@ -58,7 +58,7 @@ class DisplayPolygon2D(_SingleColorBase2D):
         color = Color.from_dict(data['color']) if 'color' in data and data['color'] \
             is not None else None
         d_mode = data['display_mode'] if 'display_mode' in data and \
-            data['display_mode'] is not None else 'Shaded'
+            data['display_mode'] is not None else 'Surface'
         geo = cls(Polygon2D.from_dict(data['geometry']), color, d_mode)
         if 'user_data' in data and data['user_data'] is not None:
             geo.user_data = data['user_data']
