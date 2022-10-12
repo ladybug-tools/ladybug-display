@@ -822,12 +822,10 @@ class AnalysisGeometry(_VisualizationBase):
         return 'Analysis Geometry: {}'.format(self.display_name)
 
 
-class VisualizationData(object):
-    """Represents a data set for visualization with legend parameters and data type.
+class VisualizationMetaData(object):
+    """Represents the metadata for visualization with legend parameters and data type.
 
     Args:
-        values: A list of numerical values that will be used to generate the
-            visualization colors.
         legend_parameters: An Optional LegendParameters object to override default
             parameters of the legend. None indicates that default legend parameters
             will be used. (Default: None).
@@ -841,19 +839,16 @@ class VisualizationData(object):
             string. (Default: None).
 
     Properties:
-        * values
         * legend_parameters
         * data_type
         * min_point
         * max_point
         * user_data
     """
-    __slots__ = ('_legend', '_legend_parameters', '_data_type', '_unit', '_user_data')
+    __slots__ = ('_legend_parameters', '_data_type', '_unit', '_user_data')
 
-    def __init__(self, values, legend_parameters=None, data_type=None, unit=None):
-        """Initialize VisualizationData."""
-        # set up the legend using the values and legend parameters
-        self._legend = Legend(values, legend_parameters)
+    def __init__(self, legend_parameters=None, data_type=None, unit=None):
+        """Initialize VisualizationMetaData."""
         self._legend_parameters = legend_parameters
         self._user_data = None
 
@@ -893,6 +888,133 @@ class VisualizationData(object):
             assert isinstance(unit, str), \
                 'Expected string for unit. Got {}.'.format(type(unit))
             self.legend_parameters.title = unit
+
+    @classmethod
+    def from_dict(cls, data):
+        """Create VisualizationMetaData from a dictionary.
+
+        Args:
+            data: A python dictionary in the following format
+
+        .. code-block:: python
+
+            {
+            "type": "VisualizationMetaData",
+            "legend_parameters": {},  # optional LegendParameter specification
+            "data_type": {},  # optional DataType object
+            "unit": "C"  # optional text for the units
+            }
+        """
+        # check the type key
+        assert data['type'] == 'VisualizationMetaData', \
+            'Expected VisualizationMetaData, Got {}.'.format(data['type'])
+        # re-serialize the legend parameters
+        legend_parameters = None
+        if 'legend_parameters' in data and data['legend_parameters'] is not None:
+            if data['legend_parameters']['type'] == 'LegendParametersCategorized':
+                legend_parameters = LegendParametersCategorized.from_dict(
+                    data['legend_parameters'])
+            else:
+                legend_parameters = LegendParameters.from_dict(data['legend_parameters'])
+        # re-serialize the data type and unit
+        data_type = None
+        if 'data_type' in data and data['data_type'] is not None:
+            data_type = DataTypeBase.from_dict(data['data_type'])
+        unit = data['unit'] if 'unit' in data else None
+        new_obj = cls(legend_parameters, data_type, unit)
+        if 'user_data' in data and data['user_data'] is not None:
+            new_obj.user_data = data['user_data']
+        return new_obj
+
+    @property
+    def legend_parameters(self):
+        """Get the legend parameters assigned to this data set."""
+        return self._legend_parameters
+
+    @property
+    def data_type(self):
+        """Get the data_type input to this object (if it exists)."""
+        return self._data_type
+
+    @property
+    def unit(self):
+        """Get the unit input to this object (if it exists)."""
+        return self._unit
+
+    @property
+    def user_data(self):
+        """Get or set an optional dictionary for additional meta data for this object.
+
+        This will be None until it has been set. All keys and values of this
+        dictionary should be of a standard Python type to ensure correct
+        serialization of the object to/from JSON (eg. str, float, int, list, dict)
+        """
+        return self._user_data
+
+    @user_data.setter
+    def user_data(self, value):
+        if value is not None:
+            assert isinstance(value, dict), 'Expected dictionary for ' \
+                'object user_data. Got {}.'.format(type(value))
+        self._user_data = value
+
+    def to_dict(self):
+        """Get visualization data as a dictionary."""
+        base = {
+            'type': 'VisualizationMetaData'
+        }
+        if self._legend_parameters is not None:
+            base['legend_parameters'] = self._legend_parameters.to_dict()
+        if self.data_type is not None:
+            base['data_type'] = self.data_type.to_dict()
+        if self.unit:
+            base['unit'] = self.unit
+        if self.user_data is not None:
+            base['user_data'] = self.user_data
+        return base
+
+    def ToString(self):
+        """Overwrite .NET ToString."""
+        return self.__repr__()
+
+    def __repr__(self):
+        """VisualizationMetaData representation."""
+        return 'Visualization MetaData'
+
+
+class VisualizationData(VisualizationMetaData):
+    """Represents a data set for visualization with legend parameters and data type.
+
+    Args:
+        values: A list of numerical values that will be used to generate the
+            visualization colors.
+        legend_parameters: An Optional LegendParameters object to override default
+            parameters of the legend. None indicates that default legend parameters
+            will be used. (Default: None).
+        data_type: Optional DataType from the ladybug datatype subpackage (ie.
+            Temperature()) , which will be used to assign default legend properties.
+            If None, the legend associated with this object will contain no units
+            unless a unit below is specified. (Default: None).
+        unit: Optional text string for the units of the values. (ie. "C"). If None
+            or empty, the default units of the data_type will be used. If no data
+            type is specified in this case, this will simply be an empty
+            string. (Default: None).
+
+    Properties:
+        * values
+        * legend_parameters
+        * data_type
+        * min_point
+        * max_point
+        * user_data
+    """
+    __slots__ = ('_legend', '_legend_parameters', '_data_type', '_unit', '_user_data')
+
+    def __init__(self, values, legend_parameters=None, data_type=None, unit=None):
+        """Initialize VisualizationData."""
+        # set up the legend using the values and legend parameters
+        VisualizationMetaData.__init__(self, legend_parameters, data_type, unit)
+        self._legend = Legend(values, legend_parameters)
 
     @classmethod
     def from_dict(cls, data):
@@ -938,21 +1060,6 @@ class VisualizationData(object):
         return self._legend.values
 
     @property
-    def legend_parameters(self):
-        """Get the legend parameters assigned to this data set."""
-        return self._legend._legend_par
-
-    @property
-    def data_type(self):
-        """Get the data_type input to this object (if it exists)."""
-        return self._data_type
-
-    @property
-    def unit(self):
-        """Get the unit input to this object (if it exists)."""
-        return self._unit
-
-    @property
     def legend(self):
         """Get the legend assigned to this data set."""
         return self._legend
@@ -961,23 +1068,6 @@ class VisualizationData(object):
     def value_colors(self):
         """Get a List of colors associated with the assigned values."""
         return self._legend.value_colors
-
-    @property
-    def user_data(self):
-        """Get or set an optional dictionary for additional meta data for this object.
-
-        This will be None until it has been set. All keys and values of this
-        dictionary should be of a standard Python type to ensure correct
-        serialization of the object to/from JSON (eg. str, float, int, list, dict)
-        """
-        return self._user_data
-
-    @user_data.setter
-    def user_data(self, value):
-        if value is not None:
-            assert isinstance(value, dict), 'Expected dictionary for ' \
-                'object user_data. Got {}.'.format(type(value))
-        self._user_data = value
 
     def graphic_container(self, min_point, max_point):
         """Get a Ladybug GraphicContainer object, which can be used to a draw legend.
