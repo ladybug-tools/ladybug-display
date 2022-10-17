@@ -7,7 +7,7 @@ from ladybug_display.geometry2d import DisplayVector2D, DisplayPoint2D, \
 from ladybug_display.geometry3d import DisplayVector3D, DisplayPoint3D, \
     DisplayRay3D, DisplayPlane, DisplayLineSegment3D, DisplayPolyline3D, DisplayArc3D, \
     DisplayFace3D, DisplayMesh3D, DisplayPolyface3D, DisplaySphere, DisplayCone, \
-    DisplayCylinder
+    DisplayCylinder, DisplayText3D
 
 
 def dict_to_object(display_dict, raise_exception=True):
@@ -42,7 +42,8 @@ def dict_to_object(display_dict, raise_exception=True):
         'DisplayFace3D': DisplayFace3D,
         'DisplaySphere': DisplaySphere,
         'DisplayCone': DisplayCone,
-        'DisplayCylinder': DisplayCylinder
+        'DisplayCylinder': DisplayCylinder,
+        'DisplayText3D': DisplayText3D
     }
 
     # Get the ladybug_geometry object 'Type'

@@ -13,3 +13,4 @@ from .polyface import DisplayPolyface3D
 from .sphere import DisplaySphere
 from .cone import DisplayCone
 from .cylinder import DisplayCylinder
+from .text import DisplayText3D

@@ -49,7 +49,7 @@ class DisplayPoint3D(_SingleColorBase3D):
             is not None else None
         rad = default if 'radius' not in data or \
             data['radius'] == default.to_dict() else data['radius']
-        geo = cls(Point3D.from_dict(data['geometry']), color)
+        geo = cls(Point3D.from_dict(data['geometry']), color, rad)
         if 'user_data' in data and data['user_data'] is not None:
             geo.user_data = data['user_data']
         return geo

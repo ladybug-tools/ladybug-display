@@ -16,7 +16,7 @@ from .geometry2d import DisplayVector2D, DisplayPoint2D, \
 from .geometry3d import DisplayVector3D, DisplayPoint3D, \
     DisplayRay3D, DisplayPlane, DisplayLineSegment3D, DisplayPolyline3D, DisplayArc3D, \
     DisplayFace3D, DisplayMesh3D, DisplayPolyface3D, DisplaySphere, DisplayCone, \
-    DisplayCylinder
+    DisplayCylinder, DisplayText3D
 from ladybug_geometry.bounding import bounding_box
 from ladybug_geometry.dictutil import geometry_dict_to_object
 
@@ -34,7 +34,7 @@ DISPLAY_UNION = (
     DisplayPolyline2D, DisplayArc2D, DisplayPolygon2D, DisplayMesh2D,
     DisplayVector3D, DisplayPoint3D, DisplayRay3D, DisplayPlane, DisplayLineSegment3D,
     DisplayPolyline3D, DisplayArc3D, DisplayFace3D, DisplayMesh3D,
-    DisplayPolyface3D, DisplaySphere, DisplayCone, DisplayCylinder
+    DisplayPolyface3D, DisplaySphere, DisplayCone, DisplayCylinder, DisplayText3D
 )
 
 
