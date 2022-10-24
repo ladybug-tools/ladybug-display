@@ -1,6 +1,6 @@
 # coding: utf-8
 """Base class for all geometry objects."""
-LINE_TYPES = ('Continuous', 'Dashed', 'Dotted', 'DashDot', 'Center', 'Border', 'Hidden')
+LINE_TYPES = ('Continuous', 'Dashed', 'Dotted', 'DashDot')
 DISPLAY_MODES = ('Surface', 'SurfaceWithEdges', 'Wireframe', 'Points')
 
 

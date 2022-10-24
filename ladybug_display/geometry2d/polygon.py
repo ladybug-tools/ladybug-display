@@ -2,29 +2,33 @@
 from ladybug_geometry.geometry2d.polygon import Polygon2D
 from ladybug.color import Color
 
-from .._base import DISPLAY_MODES
-from ._base import _SingleColorBase2D
+from ladybug_display.altnumber import default
+from ._base import _LineCurveBase2D
 
 
-class DisplayPolygon2D(_SingleColorBase2D):
+class DisplayPolygon2D(_LineCurveBase2D):
     """A polygon in 2D space with display properties.
 
     Args:
         geometry: A ladybug-geometry Polygon2D object.
         color: A ladybug Color object. If None, a default black color will be
             used. (Default: None).
-        display_mode: Text to indicate the display mode (surface, wireframe, etc.).
-            Choose from the following. (Default: Surface).
+        line_width: Number for line width in pixels (for the screen) or  millimeters
+            (in print). This can also be the Default object to indicate that the
+            default settings of the interface should be used.
+        line_type: Get or set text to indicate the type of line to display. 
+            Choose from the following. (Default: "Continuous")
 
-            * Surface
-            * SurfaceWithEdges
-            * Wireframe
-            * Points
+            * Continuous
+            * Dashed
+            * Dotted
+            * DashDot
 
     Properties:
         * geometry
         * color
-        * display_mode
+        * line_width
+        * line_type
         * vertices
         * segments
         * min
@@ -37,14 +41,13 @@ class DisplayPolygon2D(_SingleColorBase2D):
         * is_self_intersecting
         * user_data
     """
-    __slots__ = ('_display_mode',)
+    __slots__ = ()
 
-    def __init__(self, geometry, color=None, display_mode='Surface'):
+    def __init__(self, geometry, color=None, line_width=default, line_type='Continuous'):
         """Initialize base with shade object."""
         assert isinstance(geometry, Polygon2D), '\
             Expected ladybug_geometry Polygon2D. Got {}'.format(type(geometry))
-        _SingleColorBase2D.__init__(self, geometry, color)
-        self.display_mode = display_mode
+        _LineCurveBase2D.__init__(self, geometry, color)
 
     @classmethod
     def from_dict(cls, data):
@@ -57,30 +60,14 @@ class DisplayPolygon2D(_SingleColorBase2D):
             'Expected DisplayPolygon2D dictionary. Got {}.'.format(data['type'])
         color = Color.from_dict(data['color']) if 'color' in data and data['color'] \
             is not None else None
-        d_mode = data['display_mode'] if 'display_mode' in data and \
-            data['display_mode'] is not None else 'Surface'
-        geo = cls(Polygon2D.from_dict(data['geometry']), color, d_mode)
+        lw = default if 'line_width' not in data or \
+            data['line_width'] == default.to_dict() else data['line_width']
+        lt = data['line_type'] if 'line_type' in data and data['line_type'] \
+            is not None else 'Continuous'
+        geo = cls(Polygon2D.from_dict(data['geometry']), color, lw, lt)
         if 'user_data' in data and data['user_data'] is not None:
             geo.user_data = data['user_data']
         return geo
-
-    @property
-    def display_mode(self):
-        """Get or set text to indicate the display mode."""
-        return self._display_mode
-
-    @display_mode.setter
-    def display_mode(self, value):
-        clean_input = value.lower()
-        for key in DISPLAY_MODES:
-            if key.lower() == clean_input:
-                value = key
-                break
-        else:
-            raise ValueError(
-                'display_mode {} is not recognized.\nChoose from the '
-                'following:\n{}'.format(value, DISPLAY_MODES))
-        self._display_mode = value
 
     @property
     def vertices(self):
@@ -137,13 +124,16 @@ class DisplayPolygon2D(_SingleColorBase2D):
         base = {'type': 'DisplayPolygon2D'}
         base['geometry'] = self._geometry.to_dict()
         base['color'] = self.color.to_dict()
-        base['display_mode'] = self.display_mode
+        base['line_width'] = default.to_dict() if \
+            self.line_width == default else self.line_width
+        base['line_type'] = self.line_type
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
 
     def __copy__(self):
-        new_g = DisplayPolygon2D(self.geometry, self.color, self.display_mode)
+        new_g = DisplayPolygon2D(
+            self.geometry, self.color, self.line_width, self.line_type)
         new_g._user_data = None if self.user_data is None else self.user_data.copy()
         return new_g
 
