@@ -120,9 +120,6 @@ class _LineCurveBase2D(_SingleColorBase2D):
             * Dashed
             * Dotted
             * DashDot
-            * Center
-            * Border
-            * Hidden
 
     Properties:
         * geometry

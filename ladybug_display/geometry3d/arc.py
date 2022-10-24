@@ -25,9 +25,6 @@ class DisplayArc3D(_LineCurveBase3D):
             * Dashed
             * Dotted
             * DashDot
-            * Center
-            * Border
-            * Hidden
 
     Properties:
         * geometry

@@ -172,9 +172,6 @@ class _LineCurveBase3D(_SingleColorBase3D):
             * Dashed
             * Dotted
             * DashDot
-            * Center
-            * Border
-            * Hidden
 
     Properties:
         * geometry

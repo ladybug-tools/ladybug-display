@@ -265,6 +265,8 @@ class VisualizationSet(_VisualizationBase):
             geos_list = list(self._geometry)
             geos_list.insert(insert_index, geometry)
             self._geometry = tuple(geos_list)
+        self._min_point = None
+        self._max_point = None
 
     def remove_geometry(self, geo_index):
         """Remove a geometry object from this VisualizationSet.
@@ -278,6 +280,8 @@ class VisualizationSet(_VisualizationBase):
         geos_list = list(self._geometry)
         geos_list.pop(geo_index)
         self._geometry = tuple(geos_list)
+        self._min_point = None
+        self._max_point = None
 
     def check_duplicate_identifiers(self, raise_exception=True, detailed=False):
         """Check that there are no duplicate geometry object identifiers in the set.

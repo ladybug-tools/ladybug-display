@@ -23,9 +23,6 @@ class DisplayPolyline2D(_LineCurveBase2D):
             * Dashed
             * Dotted
             * DashDot
-            * Center
-            * Border
-            * Hidden
 
     Properties:
         * geometry
@@ -79,7 +76,7 @@ class DisplayPolyline2D(_LineCurveBase2D):
     def segments(self):
         """Get a tuple of LineSegment2D for the segments of the polyline."""
         return self._geometry.segments
-    
+
     @property
     def interpolated(self):
         """Get a boolean for whether the polyline should be interpreted as interpolated.
