@@ -912,6 +912,7 @@ class VisualizationMetaData(object):
     Properties:
         * legend_parameters
         * data_type
+        * unit
         * user_data
     """
     __slots__ = ('_legend_parameters', '_data_type', '_unit', '_user_data')
@@ -919,44 +920,9 @@ class VisualizationMetaData(object):
     def __init__(self, legend_parameters=None, data_type=None, unit=None):
         """Initialize VisualizationMetaData."""
         self._legend_parameters = legend_parameters
-        self._user_data = None
-
-        # set default legend parameters based on input data_type and unit
         self._data_type = data_type
         self._unit = unit
-        if data_type is not None:
-            assert isinstance(data_type, DataTypeBase), \
-                'data_type should be a ladybug DataType. Got {}'.format(type(data_type))
-            if self.legend_parameters.is_title_default:
-                unit = unit if unit else data_type.units[0]
-                data_type.is_unit_acceptable(unit)
-                self.legend_parameters.title = unit if \
-                    self.legend_parameters.vertical \
-                    else '{} ({})'.format(data_type.name, unit)
-            if data_type.unit_descr is not None and \
-                    self.legend_parameters.ordinal_dictionary is None and not \
-                    isinstance(self.legend_parameters, LegendParametersCategorized):
-                self.legend_parameters.ordinal_dictionary = data_type.unit_descr
-                sorted_keys = sorted(data_type.unit_descr.keys())
-                if self.legend.is_min_default:
-                    self.legend_parameters._min = sorted_keys[0]
-                if self.legend.is_max_default:
-                    self.legend_parameters._max = sorted_keys[-1]
-                assert self.legend_parameters._min <= self.legend_parameters._max, \
-                    'Legend min is greater than legend max. {} > {}.'.format(
-                        self.legend_parameters._min, self.legend_parameters._max)
-                if self.legend_parameters.is_segment_count_default:
-                    try:  # try to set the number of segments to align with ordinal text
-                        min_i = sorted_keys.index(self.legend_parameters.min)
-                        max_i = sorted_keys.index(self.legend_parameters.max)
-                        self.legend_parameters.segment_count = \
-                            len(sorted_keys[min_i:max_i + 1])
-                    except IndexError:
-                        pass
-        elif unit and self.legend_parameters.is_title_default:
-            assert isinstance(unit, str), \
-                'Expected string for unit. Got {}.'.format(type(unit))
-            self.legend_parameters.title = unit
+        self._user_data = None
 
     @classmethod
     def from_dict(cls, data):
@@ -1072,16 +1038,54 @@ class VisualizationData(VisualizationMetaData):
     Properties:
         * values
         * legend_parameters
+        * legend
         * data_type
+        * unit
+        * value_colors
         * user_data
     """
-    __slots__ = ('_legend', '_legend_parameters', '_data_type', '_unit', '_user_data')
+    __slots__ = ('_legend',)
 
     def __init__(self, values, legend_parameters=None, data_type=None, unit=None):
         """Initialize VisualizationData."""
         # set up the legend using the values and legend parameters
         VisualizationMetaData.__init__(self, legend_parameters, data_type, unit)
+
+        # assign defaults to the legend parameter using the values and the data type
         self._legend = Legend(values, legend_parameters)
+        if data_type is not None:
+            assert isinstance(data_type, DataTypeBase), \
+                'data_type should be a ladybug DataType. Got {}'.format(type(data_type))
+            if self.legend_parameters.is_title_default:
+                unit = unit if unit else data_type.units[0]
+                data_type.is_unit_acceptable(unit)
+                self.legend_parameters.title = unit if \
+                    self.legend_parameters.vertical \
+                    else '{} ({})'.format(data_type.name, unit)
+            if data_type.unit_descr is not None and \
+                    self.legend_parameters.ordinal_dictionary is None and not \
+                    isinstance(self.legend_parameters, LegendParametersCategorized):
+                self.legend_parameters.ordinal_dictionary = data_type.unit_descr
+                sorted_keys = sorted(data_type.unit_descr.keys())
+                if self.legend.is_min_default:
+                    self.legend_parameters._min = sorted_keys[0]
+                if self.legend.is_max_default:
+                    self.legend_parameters._max = sorted_keys[-1]
+                assert self.legend_parameters._min <= self.legend_parameters._max, \
+                    'Legend min is greater than legend max. {} > {}.'.format(
+                        self.legend_parameters._min, self.legend_parameters._max)
+                if self.legend_parameters.is_segment_count_default:
+                    try:  # try to set the number of segments to align with ordinal text
+                        min_i = sorted_keys.index(self.legend_parameters.min)
+                        max_i = sorted_keys.index(self.legend_parameters.max)
+                        self.legend_parameters.segment_count = \
+                            len(sorted_keys[min_i:max_i + 1])
+                    except IndexError:
+                        pass
+        elif unit and self.legend_parameters.is_title_default:
+            assert isinstance(unit, str), \
+                'Expected string for unit. Got {}.'.format(type(unit))
+            self.legend_parameters.title = unit
 
     @classmethod
     def from_dict(cls, data):
@@ -1125,6 +1129,11 @@ class VisualizationData(VisualizationMetaData):
     def values(self):
         """Get the values assigned to the data set."""
         return self._legend.values
+
+    @property
+    def legend_parameters(self):
+        """Get the legend parameters assigned to this data set."""
+        return self._legend._legend_par
 
     @property
     def legend(self):
