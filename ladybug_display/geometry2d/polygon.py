@@ -47,7 +47,7 @@ class DisplayPolygon2D(_LineCurveBase2D):
         """Initialize base with shade object."""
         assert isinstance(geometry, Polygon2D), '\
             Expected ladybug_geometry Polygon2D. Got {}'.format(type(geometry))
-        _LineCurveBase2D.__init__(self, geometry, color)
+        _LineCurveBase2D.__init__(self, geometry, color, line_width, line_type)
 
     @classmethod
     def from_dict(cls, data):
