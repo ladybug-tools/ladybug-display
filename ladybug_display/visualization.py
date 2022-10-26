@@ -1,6 +1,13 @@
 # coding=utf-8
 from __future__ import division
+import os
+import sys
+import json
 import collections
+try:  # check if we are in IronPython
+    import cPickle as pickle
+except ImportError:  # wea are in cPython
+    import pickle
 
 from ladybug.legend import Legend, LegendParameters, LegendParametersCategorized
 from ladybug.graphic import GraphicContainer
@@ -127,6 +134,16 @@ class _VisualizationBase(object):
                 'object user_data. Got {}.'.format(type(value))
         self._user_data = value
 
+    def duplicate(self):
+        """Get a copy of this object."""
+        return self.__copy__()
+
+    def __copy__(self):
+        new_obj = _VisualizationBase(self.identifier)
+        new_obj._display_name = self._display_name
+        new_obj._user_data = None if self.user_data is None else self.user_data.copy()
+        return new_obj
+
 
 class VisualizationSet(_VisualizationBase):
     """A visualization set containing analysis and context geometry to be visualized.
@@ -186,6 +203,54 @@ class VisualizationSet(_VisualizationBase):
         if 'user_data' in data and data['user_data'] is not None:
             new_obj.user_data = data['user_data']
         return new_obj
+
+    @classmethod
+    def from_file(cls, hb_file):
+        """Initialize a VisualizationSet from a JSON or pkl file, auto-sensing the type.
+
+        Args:
+            hb_file: Path to either a VisualizationSet JSON or pkl file.
+        """
+        # sense the file type from the first character to avoid maxing memory with JSON
+        # this is needed since queenbee overwrites all file extensions
+        with open(hb_file) as inf:
+            try:
+                first_char = inf.read(1)
+                is_json = True if first_char == '{' else False
+            except UnicodeDecodeError:  # definitely a pkl file
+                is_json = False
+        # load the file using either JSON pathway or pkl
+        if is_json:
+            return cls.from_json(hb_file)
+        return cls.from_pkl(hb_file)
+
+    @classmethod
+    def from_json(cls, json_file):
+        """Initialize a VisualizationSet from a JSON file.
+
+        Args:
+            json_file: Path to VisualizationSet JSON file.
+        """
+        assert os.path.isfile(json_file), 'Failed to find %s' % json_file
+        if (sys.version_info < (3, 0)):
+            with open(json_file) as inf:
+                data = json.load(inf)
+        else:
+            with open(json_file, encoding='utf-8') as inf:
+                data = json.load(inf)
+        return cls.from_dict(data)
+
+    @classmethod
+    def from_pkl(cls, pkl_file):
+        """Initialize a Model from a pkl file.
+
+        Args:
+            pkl_file: Path to pkl file.
+        """
+        assert os.path.isfile(pkl_file), 'Failed to find %s' % pkl_file
+        with open(pkl_file, 'rb') as inf:
+            data = pickle.load(inf)
+        return cls.from_dict(data)
 
     @classmethod
     def from_single_analysis_geo(
@@ -366,6 +431,49 @@ class VisualizationSet(_VisualizationBase):
             base['user_data'] = self.user_data
         return base
 
+    def to_json(self, name, folder, indent=None):
+        """Write VisualizationSet to JSON.
+
+        Args:
+            name: A text string for the name of the JSON file.
+            folder: A text string for the directory where the JSON will be written.
+            indent: A positive integer to set the indentation used in the resulting
+                JSON file. (Default: None).
+        """
+        # create dictionary from the VisualizationSet
+        vs_dict = self.to_dict()
+        # set up a name and folder for the JSON
+        file_name = name if name.lower().endswith('.json') else '{}.json'.format(name)
+        if not os.path.isdir(folder):
+            os.makedirs(folder)
+        vs_file = os.path.join(folder, file_name)
+        # write JSON
+        with open(vs_file, 'w') as fp:
+            json.dump(vs_dict, fp, indent=indent)
+        return vs_file
+
+    def to_pkl(self, name, folder):
+        """Write VisualizationSet to compressed pickle file (pkl).
+
+        Args:
+            name: A text string for the name of the pickle file.
+            folder: A text string for the directory where the pickle file will be
+                written.
+        """
+        # create dictionary from the VisualizationSet
+        vs_dict = self.to_dict()
+        # set up a name and folder for the pkl
+        if name is None:
+            name = self.identifier
+        file_name = name if name.lower().endswith('.pkl') else '{}.pkl'.format(name)
+        if not os.path.isdir(folder):
+            os.makedirs(folder)
+        vs_file = os.path.join(folder, file_name)
+        # write the Model dictionary into a file
+        with open(vs_file, 'wb') as fp:
+            pickle.dump(vs_dict, fp)
+        return vs_file
+
     def _check_geometry(self, geo):
         """Check that the geometry object is valid."""
         assert isinstance(geo, (AnalysisGeometry, ContextGeometry)), 'Expected ' \
@@ -384,6 +492,13 @@ class VisualizationSet(_VisualizationBase):
     def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
+
+    def __copy__(self):
+        new_geo_objs = tuple(obj.duplicate() for obj in self.geometry)
+        new_obj = VisualizationSet(self.identifier, new_geo_objs)
+        new_obj._display_name = self._display_name
+        new_obj._user_data = None if self.user_data is None else self.user_data.copy()
+        return new_obj
 
     def __len__(self):
         """Return number of geometries on the object."""
@@ -552,6 +667,13 @@ class ContextGeometry(_VisualizationBase):
         """Calculate maximum and minimum Point3D for this object."""
         lb_geos = [d_geo.geometry for d_geo in self.geometry]
         self._min_point, self._max_point = bounding_box(lb_geos)
+
+    def __copy__(self):
+        new_geo_objs = tuple(geo.duplicate() for geo in self.geometry)
+        new_obj = ContextGeometry(self.identifier, new_geo_objs)
+        new_obj._display_name = self._display_name
+        new_obj._user_data = None if self.user_data is None else self.user_data.copy()
+        return new_obj
 
     def __len__(self):
         """Return number of geometries on the object."""
@@ -872,6 +994,14 @@ class AnalysisGeometry(_VisualizationBase):
                     'object for AnalysisGeometry. Got {}.'.format(type(geo))
         return (geo_count_0, geo_count_1, geo_count_2)
 
+    def __copy__(self):
+        new_d = tuple(data.duplicate() for data in self.data_sets)
+        new_obj = AnalysisGeometry(
+            self.identifier, self.geometry, new_d, self.active_data, self.display_mode)
+        new_obj._display_name = self._display_name
+        new_obj._user_data = None if self.user_data is None else self.user_data.copy()
+        return new_obj
+
     def __len__(self):
         """Return number of data sets on the object."""
         return len(self.data_sets)
@@ -1173,6 +1303,16 @@ class VisualizationData(VisualizationMetaData):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def duplicate(self):
+        """Get a copy of this object."""
+        return self.__copy__()
+
+    def __copy__(self):
+        new_obj = VisualizationData(
+            self.values, self._legend_parameters, self._data_type, self._unit)
+        new_obj._user_data = None if self.user_data is None else self.user_data.copy()
+        return new_obj
 
     def __len__(self):
         """Return length of values on the object."""
