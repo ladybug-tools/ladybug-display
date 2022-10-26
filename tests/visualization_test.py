@@ -1,4 +1,5 @@
 # coding=utf-8
+import os
 import pytest
 
 from ladybug_geometry.geometry3d.pointvector import Point3D
@@ -7,6 +8,7 @@ from ladybug_geometry.geometry2d.mesh import Mesh2D
 from ladybug_geometry.geometry3d.mesh import Mesh3D
 from ladybug_geometry.geometry3d.polyface import Polyface3D
 
+from ladybug.futil import nukedir
 from ladybug.datatype.temperature import Temperature
 from ladybug.datatype.thermalcondition import PredictedMeanVote
 from ladybug.graphic import GraphicContainer
@@ -92,6 +94,42 @@ def test_to_from_dict():
     vis_set_dict = vis_set.to_dict()
     new_vis_set = VisualizationSet.from_dict(vis_set_dict)
     assert new_vis_set.to_dict() == vis_set_dict
+
+
+def test_to_from_json():
+    """Test the to/from json methods."""
+    con_geo = Polyface3D.from_box(2, 4, 2, base_plane=Plane(o=Point3D(0, 2, 0)))
+    context = ContextGeometry('Building_Massing', [con_geo])
+    mesh2d = Mesh2D.from_grid(num_x=2, num_y=2)
+    mesh3d = Mesh3D.from_mesh2d(mesh2d)
+    data = VisualizationData([0, 1, 2, 3])
+    a_geo = AnalysisGeometry('Test_Results', [mesh3d], [data])
+    vis_set = VisualizationSet('Test_Set', [a_geo, context])
+
+    path = './tests/json'
+    vis_set_json = vis_set.to_json('test', path)
+    assert os.path.isfile(vis_set_json)
+    new_vis_set = VisualizationSet.from_file(vis_set_json)
+    assert isinstance(new_vis_set, VisualizationSet)
+    nukedir(path)
+
+
+def test_to_from_pkl():
+    """Test the to/from pkl methods."""
+    con_geo = Polyface3D.from_box(2, 4, 2, base_plane=Plane(o=Point3D(0, 2, 0)))
+    context = ContextGeometry('Building_Massing', [con_geo])
+    mesh2d = Mesh2D.from_grid(num_x=2, num_y=2)
+    mesh3d = Mesh3D.from_mesh2d(mesh2d)
+    data = VisualizationData([0, 1, 2, 3])
+    a_geo = AnalysisGeometry('Test_Results', [mesh3d], [data])
+    vis_set = VisualizationSet('Test_Set', [a_geo, context])
+
+    path = './tests/pkl'
+    vis_set_pkl = vis_set.to_pkl('test', path)
+    assert os.path.isfile(vis_set_pkl)
+    new_vis_set = VisualizationSet.from_file(vis_set_pkl)
+    assert new_vis_set.to_dict() == vis_set.to_dict()
+    nukedir(path)
 
 
 def test_init_analysis_geometry():
