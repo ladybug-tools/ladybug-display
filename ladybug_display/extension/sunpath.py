@@ -30,8 +30,8 @@ def sunpath_to_vis_set(
             objects to customize the display of the data on the sun path. If a
             list is used, these should align with the input data (one legend
             parameter per data collection).
-        radius: Number for the radius of the sun path. (Default: 100)
-        center_point: Point3D for the center of the sun path. (Default: (0, 0, 0))
+        radius: Number for the radius of the sun path. (Default: 100).
+        center_point: Point3D for the center of the sun path. (Default: (0, 0, 0)).
         solar_time: A boolean to indicate if the sunpath should be drawn with solar
              time hours instead of standard or daylight time. (Default: False)
         daily: Boolean to note whether the sunpath should display only one daily
@@ -69,11 +69,13 @@ def sunpath_to_vis_set(
     # establish the VisualizationSet object
     vis_set = VisualizationSet(
         'Sunpath_{}_{}'.format(int(sunpath.latitude), int(sunpath.longitude)), ())
+    vis_set.display_name = 'Sunpath'
 
     # add the compass to the bottom of the path
     center_2d = Point2D(center_point.x, center_point.y)
     compass = Compass(radius, center_2d, sunpath.north_angle)
-    vis_set.add_geometry(compass_to_vis_set(compass, projection=projection)[0])
+    compass_vis = compass_to_vis_set(compass, z=center_point.z, projection=projection)
+    vis_set.add_geometry(compass_vis[0])
 
     # create a intersection of the input hoys and the data hoys (if provided)
     if data is not None and len(data) > 0 and hoys is not None and len(hoys) > 0:
