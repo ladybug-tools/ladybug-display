@@ -117,7 +117,7 @@ def sunpath_to_vis_set(
                 daily.append(DisplayArc3D(arc, line_width=lw, line_type=lt))
         else:
             # draw arcs and analemmas in the requested projection
-            bp = Plane(o=center_point)
+            bp = Plane(o=Point3D(0, 0, z))
             ana_plin_1 = sunpath.hourly_analemma_polyline2d(
                 projection, center_point, radius, True, solar_time, 1, 6, 4)
             ana_plin_2 = sunpath.hourly_analemma_polyline2d(
@@ -147,7 +147,7 @@ def sunpath_to_vis_set(
                 d_arc = sunpath.day_arc3d(dat.month, dat.day, center_point, radius)
                 daily.append(DisplayArc3D(d_arc))
         else:
-            bp = Plane(o=center_point)
+            bp = Plane(o=Point3D(0, 0, z))
             daily = []
             for dat in dates:
                 d_arc = sunpath.day_polyline2d(
