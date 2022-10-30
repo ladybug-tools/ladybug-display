@@ -67,7 +67,7 @@ def compass_to_vis_set(compass, z=0, custom_angles=None, projection=None, font='
     # generate the labels and tick marks for the azimuths
     if custom_angles is None:
         for line in compass.major_azimuth_ticks:
-            result.append(from_linesegment2d(line, z))
+            result.append(from_linesegment2d(line, z, 2))
         for txt, pt in zip(compass.MAJOR_TEXT, compass.major_azimuth_points):
             txt_pln = Plane(o=Point3D(pt.x, pt.y, z), x=xaxis)
             result.append(
