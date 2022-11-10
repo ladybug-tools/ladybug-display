@@ -107,8 +107,9 @@ def sunpath_to_vis_set(
                 center_point, radius, True, solar_time, 1, 6, 4)
             ana_plin_2 = sunpath.hourly_analemma_polyline3d(
                 center_point, radius, True, solar_time, 7, 12, 4)
-            analemma = [DisplayPolyline3D(pline) for pline in ana_plin_1] + \
-                [DisplayPolyline3D(pline, line_type='Dashed') for pline in ana_plin_2]
+            analemma = [DisplayPolyline3D(pl, line_width=1) for pl in ana_plin_1] + \
+                [DisplayPolyline3D(pl, line_width=1, line_type='Dashed')
+                 for pl in ana_plin_2]
             daily_arc = sunpath.monthly_day_arc3d(center_point, radius)
             daily = []
             for i, arc in enumerate(daily_arc):
@@ -123,9 +124,10 @@ def sunpath_to_vis_set(
             ana_plin_2 = sunpath.hourly_analemma_polyline2d(
                 projection, center_point, radius, True, solar_time, 7, 12, 4)
             analemma = \
-                [DisplayPolyline3D(Polyline3D.from_polyline2d(p, bp))
+                [DisplayPolyline3D(Polyline3D.from_polyline2d(p, bp), line_width=1)
                  for p in ana_plin_1] + \
-                [DisplayPolyline3D(Polyline3D.from_polyline2d(p, bp), line_type='Dashed')
+                [DisplayPolyline3D(
+                    Polyline3D.from_polyline2d(p, bp), line_width=1, line_type='Dashed')
                  for p in ana_plin_2]
             daily_arc = sunpath.monthly_day_polyline2d(
                 projection, center_point, radius, divisions=30)
@@ -145,14 +147,15 @@ def sunpath_to_vis_set(
             daily = []
             for dat in dates:
                 d_arc = sunpath.day_arc3d(dat.month, dat.day, center_point, radius)
-                daily.append(DisplayArc3D(d_arc))
+                daily.append(DisplayArc3D(d_arc, line_width=1))
         else:
             bp = Plane(o=Point3D(0, 0, z))
             daily = []
             for dat in dates:
                 d_arc = sunpath.day_polyline2d(
                     dat.month, dat.day, projection, center_pt, radius, divisions=30)
-                daily.append(DisplayPolyline3D(Polyline3D.from_polyline2d(d_arc, bp)))
+                daily.append(DisplayPolyline3D(
+                    Polyline3D.from_polyline2d(d_arc, bp), line_width=1))
     if len(daily) != 0:
         daily_geo = ContextGeometry('Daily_Arcs', daily)
         daily_geo.display_name = 'Daily Arcs'

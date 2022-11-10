@@ -92,7 +92,7 @@ def compass_to_vis_set(compass, z=0, custom_angles=None, projection=None, font='
         if projection.title() == 'Orthographic':
             for circle in compass.orthographic_altitude_circles:
                 arc_geo = Arc3D.from_arc2d(circle, z)
-                result.append(DisplayArc3D(arc_geo, line_type='Dotted'))
+                result.append(DisplayArc3D(arc_geo, line_width=1, line_type='Dotted'))
             for txt, pt in zip(compass.ALTITUDES, compass.orthographic_altitude_points):
                 txt_pln = Plane(o=Point3D(pt.x, pt.y, z), x=xaxis)
                 d_txt = DisplayText3D(
@@ -101,7 +101,7 @@ def compass_to_vis_set(compass, z=0, custom_angles=None, projection=None, font='
         elif projection.title() == 'Stereographic':
             for circle in compass.stereographic_altitude_circles:
                 arc_geo = Arc3D.from_arc2d(circle, z)
-                result.append(DisplayArc3D(arc_geo, line_type='Dotted'))
+                result.append(DisplayArc3D(arc_geo, line_width=1, line_type='Dotted'))
             for txt, pt in zip(compass.ALTITUDES, compass.stereographic_altitude_points):
                 txt_pln = Plane(o=Point3D(pt.x, pt.y, z), x=xaxis)
                 d_txt = DisplayText3D(
