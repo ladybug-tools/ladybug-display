@@ -13,10 +13,12 @@ class DisplayPolyline3D(_LineCurveBase3D):
         geometry: A ladybug-geometry Polyline3D object.
         color: A ladybug Color object. If None, a default black color will be
             used. (Default: None).
-        line_width: Number for line width in pixels (for the screen) or  millimeters
-            (in print). This can also be the Default object to indicate that the
-            default settings of the interface should be used.
-        line_type: Get or set text to indicate the type of line to display. 
+        line_width: Number for line width in pixels (for the screen). For print,
+            this will be converted a value in millimeters or inches assuming
+            standard web resolution (72 pixels per inch). This can also be the
+            Default object to indicate that the default settings of the
+            interface should be used (typically one pixel).
+        line_type: Get or set text to indicate the type of line to display.
             Choose from the following. (Default: "Continuous")
 
             * Continuous
