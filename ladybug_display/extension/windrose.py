@@ -50,7 +50,7 @@ def wind_rose_to_vis_set(windrose, z=0, frequency_labels=True):
                    windrose.orientation_lines]
     dis_orient = []
     for lin in orient_line:
-        dis_orient.append(DisplayLineSegment3D(lin, line_type='Dotted'))
+        dis_orient.append(DisplayLineSegment3D(lin, line_width=1, line_type='Dotted'))
     orient_geo = ContextGeometry('Orientation_Lines', dis_orient)
     orient_geo.display_name = 'Orientation Lines'
     vis_set.add_geometry(orient_geo)
@@ -61,7 +61,7 @@ def wind_rose_to_vis_set(windrose, z=0, frequency_labels=True):
                  for poly in windrose.frequency_lines[:-1]]
     dis_freq, freq_text = [], []
     for lin in freq_line:
-        dis_freq.append(DisplayPolyline3D(lin, line_type='Dotted'))
+        dis_freq.append(DisplayPolyline3D(lin, line_width=1, line_type='Dotted'))
     if frequency_labels:
         f_int = windrose.frequency_hours
         txt_h = min((windrose.frequency_spacing_distance / 4, txt_h))

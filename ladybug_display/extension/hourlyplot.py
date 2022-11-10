@@ -72,7 +72,7 @@ def hourly_plot_to_vis_set(
     m_pts = hourly_plot.month_label_points3d
     m_text = hourly_plot.month_labels
     for lin in m_lines:
-        dis_month.append(DisplayLineSegment3D(lin))
+        dis_month.append(DisplayLineSegment3D(lin, line_width=1))
     for pt, txt in zip(m_pts, m_text):
         d_txt = DisplayText3D(txt, Plane(o=pt), t_sz, None, font, 'Center', 'Top')
         dis_month_text.append(d_txt)
