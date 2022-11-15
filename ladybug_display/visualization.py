@@ -443,7 +443,9 @@ class VisualizationSet(_VisualizationBase):
         # create dictionary from the VisualizationSet
         vs_dict = self.to_dict()
         # set up a name and folder for the JSON
-        file_name = name if name.lower().endswith('.json') else '{}.json'.format(name)
+        nl = name.lower()
+        file_name = name if nl.endswith('.vsf') or nl.endswith('.json') \
+            else '{}.vsf'.format(name)
         if not os.path.isdir(folder):
             os.makedirs(folder)
         vs_file = os.path.join(folder, file_name)
@@ -463,9 +465,9 @@ class VisualizationSet(_VisualizationBase):
         # create dictionary from the VisualizationSet
         vs_dict = self.to_dict()
         # set up a name and folder for the pkl
-        if name is None:
-            name = self.identifier
-        file_name = name if name.lower().endswith('.pkl') else '{}.pkl'.format(name)
+        nl = name.lower()
+        file_name = name if nl.endswith('.vsf') or nl.endswith('.pkl') \
+            else '{}.vsf'.format(name)
         if not os.path.isdir(folder):
             os.makedirs(folder)
         vs_file = os.path.join(folder, file_name)

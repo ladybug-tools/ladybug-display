@@ -11,7 +11,7 @@ def compass_to_vis_set(compass, z=0, custom_angles=None, projection=None, font='
     """Translate a Ladybug Compass object into Display geometry.
 
     Args:
-        compass: A Ladybug Compass object to be converted to Rhino geometry.
+        compass: A Ladybug Compass object to be converted to display geometry.
         z: A number for the Z-coordinate to be used in translation. (Default: 0)
         custom_angles: An array of numbers between 0 and 360 to be used to
             generate custom angle labels around the compass.
