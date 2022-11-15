@@ -12,9 +12,9 @@ def test_polyface3d_init_solid():
            Point3D(0, 0, 2), Point3D(0, 2, 2), Point3D(2, 2, 2), Point3D(2, 0, 2)]
     face_indices = [[(0, 1, 2, 3)], [(0, 4, 5, 1)], [(0, 3, 7, 4)],
                     [(2, 1, 5, 6)], [(2, 3, 7, 6)], [(4, 5, 6, 7)]]
-    polyface = DisplayPolyface3D(Polyface3D(pts, face_indices), [grey])
+    polyface = DisplayPolyface3D(Polyface3D(pts, face_indices), grey)
 
-    assert polyface.colors == (grey,)
+    assert polyface.color == grey
     assert polyface.display_mode == 'Surface'
     assert len(polyface.vertices) == 8
     assert len(polyface.face_indices) == 6
@@ -31,16 +31,16 @@ def test_polyface3d_init_solid():
         assert face.area == 4
 
     blue = Color(0, 0, 100)
-    polyface.colors = (blue,)
+    polyface.color = blue
     polyface.display_mode = 'Wireframe'
-    assert polyface.colors == (blue,)
+    assert polyface.color == blue
     assert polyface.display_mode == 'Wireframe'
 
 
 def test_polyface3d_to_from_dict():
     """Test the to/from dict of Polyface3D objects."""
     grey = Color(100, 100, 100)
-    polyface = DisplayPolyface3D(Polyface3D.from_box(2, 4, 2), [grey])
+    polyface = DisplayPolyface3D(Polyface3D.from_box(2, 4, 2), grey)
     polyface.display_mode = 'Wireframe'
     polyface_dict = polyface.to_dict()
     new_polyface = DisplayPolyface3D.from_dict(polyface_dict)
@@ -58,5 +58,5 @@ def test_polyface3d_to_from_dict():
     assert new_polyface.area == 40
     assert new_polyface.volume == 16
     assert new_polyface.is_solid
-    assert new_polyface.colors == (grey,)
+    assert new_polyface.color == grey
     assert new_polyface.display_mode == 'Wireframe'

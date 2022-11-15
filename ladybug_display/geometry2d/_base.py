@@ -4,7 +4,7 @@ import math
 
 from ladybug.color import Color
 
-from ladybug_display._base import _DisplayBase, LINE_TYPES
+from ladybug_display._base import _DisplayBase, LINE_TYPES, DISPLAY_MODES
 from ladybug_display.altnumber import default
 from ladybug_display.typing import float_positive
 
@@ -101,6 +101,48 @@ class _SingleColorBase2D(_DisplayBase2D):
             assert isinstance(value, Color), 'Expected Color for ladybug_display ' \
                 'object color. Got {}.'.format(type(value))
         self._color = value
+
+
+class _SingleColorModeBase2D(_SingleColorBase2D):
+    """A base class for ladybug-display geometry objects with a display mode.
+
+    Args:
+        geometry: A ladybug-geometry object.
+        color: A ladybug Color object. If None, a default black color will be
+            used. (Default: None).
+        display_mode: Text to indicate the display mode (surface, wireframe, etc.).
+            Choose from the following. (Default: Surface).
+
+    Properties:
+        * geometry
+        * color
+        * display_mode
+        * user_data
+    """
+    __slots__ = ('_display_mode',)
+
+    def __init__(self, geometry, color=None, display_mode='Surface'):
+        """Initialize object."""
+        _SingleColorBase2D.__init__(self, geometry, color)
+        self.display_mode = display_mode
+
+    @property
+    def display_mode(self):
+        """Get or set text to indicate the display mode."""
+        return self._display_mode
+
+    @display_mode.setter
+    def display_mode(self, value):
+        clean_input = value.lower()
+        for key in DISPLAY_MODES:
+            if key.lower() == clean_input:
+                value = key
+                break
+        else:
+            raise ValueError(
+                'display_mode {} is not recognized.\nChoose from the '
+                'following:\n{}'.format(value, DISPLAY_MODES))
+        self._display_mode = value
 
 
 class _LineCurveBase2D(_SingleColorBase2D):

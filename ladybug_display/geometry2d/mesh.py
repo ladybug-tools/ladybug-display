@@ -2,18 +2,16 @@
 from ladybug_geometry.geometry2d.mesh import Mesh2D
 from ladybug.color import Color
 
-from .._base import DISPLAY_MODES
-from ._base import _DisplayBase2D
+from ._base import _SingleColorModeBase2D
 
 
-class DisplayMesh2D(_DisplayBase2D):
+class DisplayMesh2D(_SingleColorModeBase2D):
     """A mesh in 2D space with display properties.
 
     Args:
         geometry: A ladybug-geometry Mesh2D.
-        colors: A list of colors that correspond to either the faces of the mesh
-            or the vertices of the mesh. It can also be a single color for the
-            entire mesh. (Default: None).
+        color: A ladybug Color object. If None, a default black color will be
+            used. (Default: None).
         display_mode: Text to indicate the display mode (surface, wireframe, etc.).
             Choose from the following. (Default: Surface).
 
@@ -24,7 +22,7 @@ class DisplayMesh2D(_DisplayBase2D):
 
     Properties:
         * geometry
-        * colors
+        * color
         * display_mode
         * vertices
         * faces
@@ -36,15 +34,13 @@ class DisplayMesh2D(_DisplayBase2D):
         * face_centroids
         * user_data
     """
-    __slots__ = ('_colors', '_display_mode')
+    __slots__ = ()
 
-    def __init__(self, geometry, colors=None, display_mode='Surface'):
+    def __init__(self, geometry, color=None, display_mode='Surface'):
         """Initialize base with shade object."""
         assert isinstance(geometry, Mesh2D), '\
             Expected ladybug_geometry Mesh2D. Got {}'.format(type(geometry))
-        _DisplayBase2D.__init__(self, geometry)
-        self.colors = colors
-        self.display_mode = display_mode
+        _SingleColorModeBase2D.__init__(self, geometry, color, display_mode)
 
     @classmethod
     def from_dict(cls, data):
@@ -55,65 +51,14 @@ class DisplayMesh2D(_DisplayBase2D):
         """
         assert data['type'] == 'DisplayMesh2D', \
             'Expected DisplayMesh2D dictionary. Got {}.'.format(data['type'])
-        colors = [Color.from_dict(c) for c in data['colors']] if 'colors' in data \
-            and data['colors'] is not None else None
+        color = Color.from_dict(data['color']) if 'color' in data and data['color'] \
+            is not None else None
         d_mode = data['display_mode'] if 'display_mode' in data and \
             data['display_mode'] is not None else 'Surface'
-        geo = cls(Mesh2D.from_dict(data['geometry']), colors, d_mode)
+        geo = cls(Mesh2D.from_dict(data['geometry']), color, d_mode)
         if 'user_data' in data and data['user_data'] is not None:
             geo.user_data = data['user_data']
         return geo
-
-    @property
-    def colors(self):
-        """Get or set a tuple of colors for this object.
-
-        The length of this tuple must be either equal to the number or faces or
-        vertices of the mesh. Or it can be a tuple with a single color for the
-        whole geometry object.
-        """
-        return self._colors
-
-    @colors.setter
-    def colors(self, col):
-        if col is None:
-            col = (Color(0, 0, 0),)
-        else:
-            assert isinstance(col, (list, tuple)), \
-                'colors should be a list or tuple. Got {}'.format(type(col))
-            if isinstance(col, list):
-                col = tuple(col)
-            l_col = len(col)
-            if l_col == 1 or l_col == len(self.faces) or l_col == len(self.vertices):
-                pass
-            elif l_col == 0:
-                col = (Color(0, 0, 0),)
-            else:
-                msg = 'Number of colors ({}) does not match the number of mesh faces ' \
-                    '({}) nor the number of vertices ({}).'.format(
-                        len(col), len(self.faces), len(self.vertices))
-                raise ValueError(msg)
-            assert all(isinstance(v, Color) for v in col), 'Expected Color for ' \
-                'ladybug_display object color.'
-        self._colors = col
-
-    @property
-    def display_mode(self):
-        """Get or set text to indicate the display mode."""
-        return self._display_mode
-
-    @display_mode.setter
-    def display_mode(self, value):
-        clean_input = value.lower()
-        for key in DISPLAY_MODES:
-            if key.lower() == clean_input:
-                value = key
-                break
-        else:
-            raise ValueError(
-                'display_mode {} is not recognized.\nChoose from the '
-                'following:\n{}'.format(value, DISPLAY_MODES))
-        self._display_mode = value
 
     @property
     def vertices(self):
@@ -159,14 +104,14 @@ class DisplayMesh2D(_DisplayBase2D):
         """Return DisplayMesh2D as a dictionary."""
         base = {'type': 'DisplayMesh2D'}
         base['geometry'] = self._geometry.to_dict()
-        base['colors'] = [c.to_dict() for c in self.colors]
+        base['color'] = self.color.to_dict()
         base['display_mode'] = self.display_mode
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
 
     def __copy__(self):
-        new_g = DisplayMesh2D(self.geometry, self.colors, self.display_mode)
+        new_g = DisplayMesh2D(self.geometry, self.color, self.display_mode)
         new_g._user_data = None if self.user_data is None else self.user_data.copy()
         return new_g
 

@@ -10,9 +10,9 @@ def test_display_mesh2d_init():
     grey = Color(100, 100, 100)
     pts = (Point2D(0, 0), Point2D(0, 2), Point2D(2, 2),
            Point2D(2, 0), Point2D(4, 0))
-    mesh = DisplayMesh2D(Mesh2D(pts, [(0, 1, 2, 3), (2, 3, 4)]), [grey])
+    mesh = DisplayMesh2D(Mesh2D(pts, [(0, 1, 2, 3), (2, 3, 4)]), grey)
 
-    assert mesh.colors == (grey,)
+    assert mesh.color == grey
     assert mesh.display_mode == 'Surface'
     assert len(mesh.vertices) == 5
     assert len(mesh.faces) == 2
@@ -27,9 +27,9 @@ def test_display_mesh2d_init():
     assert mesh.face_centroids[0] == Point2D(1, 1)
 
     blue = Color(0, 0, 100)
-    mesh.colors = (blue,)
+    mesh.color = blue
     mesh.display_mode = 'Wireframe'
-    assert mesh.colors == (blue,)
+    assert mesh.color == blue
     assert mesh.display_mode == 'Wireframe'
 
 
@@ -37,10 +37,9 @@ def test_mesh2d_to_from_dict():
     """Test the to/from dict of Mesh2D objects."""
     grey = Color(100, 100, 100)
     pts = (Point2D(0, 0), Point2D(0, 2), Point2D(2, 2), Point2D(2, 0))
-    mesh = DisplayMesh2D(Mesh2D(pts, [(0, 1, 2, 3)]), [grey])
+    mesh = DisplayMesh2D(Mesh2D(pts, [(0, 1, 2, 3)]), grey)
     mesh.display_mode = 'Wireframe'
     mesh_dict = mesh.to_dict()
     new_mesh = DisplayMesh2D.from_dict(mesh_dict)
     assert isinstance(new_mesh, DisplayMesh2D)
-    print(new_mesh.colors)
     assert new_mesh.to_dict() == mesh_dict
