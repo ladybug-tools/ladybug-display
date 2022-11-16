@@ -315,11 +315,21 @@ class VisualizationSet(_VisualizationBase):
             self._calculate_min_max()
         return self._max_point
 
-    def add_geometry(self, geometry, insert_index=None):
-        """Add a data set to this AnalysisGeometry object.
+    def add_vis_set(self, vis_set):
+        """Add all geometry objects of another VisualizationSet to this one.
 
         Args:
-            data: A VisualizationData object to be added to this AnalysisGeometry.
+            vis_set: A VisualizationData object to be added to this AnalysisGeometry.
+        """
+        for geo in vis_set.geometry:
+            self.add_geometry(geo)
+
+    def add_geometry(self, geometry, insert_index=None):
+        """Add a ContextGeometry or AnalysisGeometry object to this VisualizationSet.
+
+        Args:
+            geometry: A ContextGeometry or AnalysisGeometry object to be added
+                to this VisualizationSet.
             insert_index: An integer for the index at which the data should be
                 inserted. If None, the data will be appended to the end. (Default: None).
         """
