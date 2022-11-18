@@ -1024,7 +1024,7 @@ class AnalysisGeometry(_VisualizationBase):
 
     def __iter__(self):
         """Iterate through the data sets."""
-        return iter(self.data_sets._values)
+        return iter(self.data_sets)
 
     def ToString(self):
         """Overwrite .NET ToString."""
