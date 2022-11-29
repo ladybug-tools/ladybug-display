@@ -4,7 +4,9 @@
 
 # ladybug-display
 
-A library that assigns basic display attributes to ladybug-geometry objects (color, line weight, line type, etc).
+A library that assigns basic display attributes to ladybug-geometry objects
+(color, line weight, line type, etc). It also extends several core Ladybug objects
+with methods to translate them to a VisualzationSet (Sunpath, WindRose, etc.).
 
 ## Installation
 ```console
