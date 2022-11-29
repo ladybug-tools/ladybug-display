@@ -205,15 +205,15 @@ class VisualizationSet(_VisualizationBase):
         return new_obj
 
     @classmethod
-    def from_file(cls, hb_file):
+    def from_file(cls, vis_set_file):
         """Initialize a VisualizationSet from a JSON or pkl file, auto-sensing the type.
 
         Args:
-            hb_file: Path to either a VisualizationSet JSON or pkl file.
+            VisualizationSet: Path to either a VisualizationSet JSON or pkl file.
         """
         # sense the file type from the first character to avoid maxing memory with JSON
         # this is needed since queenbee overwrites all file extensions
-        with open(hb_file) as inf:
+        with open(vis_set_file) as inf:
             try:
                 first_char = inf.read(1)
                 is_json = True if first_char == '{' else False
@@ -221,8 +221,8 @@ class VisualizationSet(_VisualizationBase):
                 is_json = False
         # load the file using either JSON pathway or pkl
         if is_json:
-            return cls.from_json(hb_file)
-        return cls.from_pkl(hb_file)
+            return cls.from_json(vis_set_file)
+        return cls.from_pkl(vis_set_file)
 
     @classmethod
     def from_json(cls, json_file):
@@ -540,16 +540,19 @@ class ContextGeometry(_VisualizationBase):
             Typically, these will display in wireframe around the geometry, though
             the properties of display geometry can be used to customize the
             visualization.
+        hidden: A boolean to note whether the geometry is hidden by default and
+            must be un-hidden to be visible in the 3D scene. (Default: False).
 
     Properties:
         * identifier
         * display_name
         * geometry
+        * hidden
         * min_point
         * max_point
         * user_data
     """
-    __slots__ = ('_geometry', '_min_point', '_max_point')
+    __slots__ = ('_geometry', '_min_point', '_max_point', '_hidden')
 
     WIREFRAME_MAP = {
         Vector2D: (DisplayVector2D, None),
@@ -575,10 +578,11 @@ class ContextGeometry(_VisualizationBase):
         Cylinder: (DisplayCylinder, None, 'Wireframe')
     }
 
-    def __init__(self, identifier, geometry):
+    def __init__(self, identifier, geometry, hidden=False):
         """Initialize ContextGeometry."""
         _VisualizationBase.__init__(self, identifier)  # process the identifier
         self.geometry = geometry
+        self.hidden = hidden
         self._min_point = None
         self._max_point = None
 
@@ -594,7 +598,8 @@ class ContextGeometry(_VisualizationBase):
             {
             "type": "ContextGeometry",
             "identifier": "",  # unique object identifier
-            "geometry": []  # list of ladybug-display geometry objects
+            "geometry": [],  # list of ladybug-display geometry objects
+            "hidden": True  # boolean for whether the layer is hidden by default
             }
         """
         # check the type key
@@ -602,7 +607,8 @@ class ContextGeometry(_VisualizationBase):
             'Expected ContextGeometry, Got {}.'.format(data['type'])
         # re-serialize the object
         geos = tuple(dict_to_object(geo) for geo in data['geometry'])
-        new_obj = cls(data['identifier'], geos)
+        hidden = False if 'hidden' not in data else data['hidden']
+        new_obj = cls(data['identifier'], geos, hidden)
         if 'display_name' in data and data['display_name'] is not None:
             new_obj.display_name = data['display_name']
         if 'user_data' in data and data['user_data'] is not None:
@@ -636,6 +642,15 @@ class ContextGeometry(_VisualizationBase):
         self._geometry = tuple(processed_value)
 
     @property
+    def hidden(self):
+        """Get or set a boolean for whether the geometry is hidden by default."""
+        return self._hidden
+
+    @hidden.setter
+    def hidden(self, value):
+        self._hidden = bool(value)
+
+    @property
     def min_point(self):
         """A Point3D for the minimum bounding box vertex around all of the geometry."""
         if self._min_point is None:
@@ -654,7 +669,8 @@ class ContextGeometry(_VisualizationBase):
         base = {
             'type': 'ContextGeometry',
             'identifier': self.identifier,
-            'geometry': [geo.to_dict() for geo in self.geometry]
+            'geometry': [geo.to_dict() for geo in self.geometry],
+            'hidden': self.hidden
         }
         if self._display_name is not None:
             base['display_name'] = self.display_name
@@ -682,7 +698,7 @@ class ContextGeometry(_VisualizationBase):
 
     def __copy__(self):
         new_geo_objs = tuple(geo.duplicate() for geo in self.geometry)
-        new_obj = ContextGeometry(self.identifier, new_geo_objs)
+        new_obj = ContextGeometry(self.identifier, new_geo_objs, self.hidden)
         new_obj._display_name = self._display_name
         new_obj._user_data = None if self.user_data is None else self.user_data.copy()
         return new_obj
@@ -732,6 +748,9 @@ class AnalysisGeometry(_VisualizationBase):
             * Wireframe
             * Points
 
+        hidden: A boolean to note whether the geometry is hidden by default and
+            must be un-hidden to be visible in the 3D scene. (Default: False).
+
     Properties:
         * identifier
         * display_name
@@ -739,17 +758,18 @@ class AnalysisGeometry(_VisualizationBase):
         * data_sets
         * active_data
         * display_mode
+        * hidden
         * min_point
         * max_point
         * matching_method
         * user_data
     """
     __slots__ = (
-        '_geometry', '_data_sets', '_active_data', '_display_mode',
+        '_geometry', '_data_sets', '_active_data', '_display_mode', '_hidden',
         '_min_point', '_max_point', '_possible_lengths', '_matching_method')
 
     def __init__(self, identifier, geometry, data_sets,
-                 active_data=0, display_mode='Surface'):
+                 active_data=0, display_mode='Surface', hidden=False):
         """Initialize AnalysisGeometry."""
         _VisualizationBase.__init__(self, identifier)  # process the identifier
         if not isinstance(geometry, tuple):
@@ -764,6 +784,7 @@ class AnalysisGeometry(_VisualizationBase):
         self._data_sets = data_sets
         self.active_data = active_data
         self.display_mode = display_mode
+        self.hidden = hidden
         self._min_point = None
         self._max_point = None
 
@@ -782,7 +803,8 @@ class AnalysisGeometry(_VisualizationBase):
             "geometry": [],  # list of geometry objects
             "data_sets": [],  # list of data sets associated with the geometry
             "active_data": 0,  # integer for the index of the active data set
-            "display_mode": "Surface"  # text for the display mode of the data
+            "display_mode": "Surface",  # text for the display mode of the data
+            "hidden": True  # boolean for whether the layer is hidden by default
             }
         """
         # check the type key
@@ -794,7 +816,8 @@ class AnalysisGeometry(_VisualizationBase):
         # re-serialize the data type and unit
         act_dt = data['active_data'] if 'active_data' in data else 0
         d_mode = data['display_mode'] if 'display_mode' in data else 'Surface'
-        new_obj = cls(data['identifier'], geos, dts, act_dt, d_mode)
+        hidden = False if 'hidden' not in data else data['hidden']
+        new_obj = cls(data['identifier'], geos, dts, act_dt, d_mode, hidden)
         if 'display_name' in data and data['display_name'] is not None:
             new_obj.display_name = data['display_name']
         if 'user_data' in data and data['user_data'] is not None:
@@ -838,6 +861,15 @@ class AnalysisGeometry(_VisualizationBase):
                 'display_mode {} is not recognized.\nChoose from the '
                 'following:\n{}'.format(value, DISPLAY_MODES))
         self._display_mode = value
+
+    @property
+    def hidden(self):
+        """Get or set a boolean for whether the geometry is hidden by default."""
+        return self._hidden
+
+    @hidden.setter
+    def hidden(self, value):
+        self._hidden = bool(value)
 
     @property
     def min_point(self):
@@ -944,7 +976,8 @@ class AnalysisGeometry(_VisualizationBase):
             'geometry': [geo.to_dict() for geo in self.geometry],
             'data_sets': [ds.to_dict() for ds in self.data_sets],
             'active_data': self.active_data,
-            'display_mode': self.display_mode
+            'display_mode': self.display_mode,
+            'hidden': self.hidden
         }
         if self._display_name is not None:
             base['display_name'] = self.display_name
@@ -1009,7 +1042,8 @@ class AnalysisGeometry(_VisualizationBase):
     def __copy__(self):
         new_d = tuple(data.duplicate() for data in self.data_sets)
         new_obj = AnalysisGeometry(
-            self.identifier, self.geometry, new_d, self.active_data, self.display_mode)
+            self.identifier, self.geometry, new_d, self.active_data,
+            self.display_mode, self.hidden)
         new_obj._display_name = self._display_name
         new_obj._user_data = None if self.user_data is None else self.user_data.copy()
         return new_obj
