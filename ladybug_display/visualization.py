@@ -725,7 +725,9 @@ class ContextGeometry(_VisualizationBase):
 
 
 class AnalysisGeometry(_VisualizationBase):
-    """An object where multiple data streams correspond to the same geometry.
+    """An object where geometry is colored with data.
+
+    Multiple data sets for different metrics can correspond to the same geometry.
 
     Args:
         identifier: Text string for a unique object ID. Must be less than 100
