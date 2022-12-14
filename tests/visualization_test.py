@@ -81,6 +81,24 @@ def test_init_visualization_set_legend_parameters():
     assert graphic_con.legend_parameters.text_height == 0.15
 
 
+def test_convert_to_units():
+    """Test the VisualizationSet convert_to_units method."""
+    room = Polyface3D.from_box(120, 240, 96)
+    context = ContextGeometry('Building_Massing', [room])
+    mesh2d = Mesh2D.from_grid(num_x=2, num_y=2)
+    mesh3d = Mesh3D.from_mesh2d(mesh2d)
+    data = VisualizationData([-1, 0, 1, 2])
+    a_geo = AnalysisGeometry('Test_Results', [mesh3d], [data])
+
+    vis_set = VisualizationSet('Test_Set', [a_geo, context], units='Inches')
+    inches_conversion = vis_set._conversion_factor_to_meters('Inches')
+    vis_set.convert_to_units('Meters')
+
+    assert vis_set[1][0].volume == \
+        pytest.approx(120 * 240 * 96 * (inches_conversion ** 3), rel=1e-3)
+    assert vis_set.units == 'Meters'
+
+
 def test_to_from_dict():
     """Test the to/from dict methods."""
     con_geo = Polyface3D.from_box(2, 4, 2, base_plane=Plane(o=Point3D(0, 2, 0)))
