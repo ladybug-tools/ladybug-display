@@ -28,6 +28,8 @@ from ladybug_geometry.bounding import bounding_box
 from ladybug_geometry.dictutil import geometry_dict_to_object
 
 from ._base import DISPLAY_MODES
+from .geometry2d._base import _DisplayBase2D
+from .geometry3d._base import _DisplayBase3D
 from .typing import int_in_range, valid_string
 from .dictutil import dict_to_object
 
@@ -154,6 +156,16 @@ class VisualizationSet(_VisualizationBase):
         geometry: A list of AnalysisGeometry and ContextGeometry objects to display
             in the visualization. Each geometry object will typically be translated
             to its own layer within the interface that renders the VisualizationSet.
+        units: Text for the units system in which the visualization geometry
+            exists. If None, the geometry will always be assumed to be in the current
+            units system of the display interface. (Default: None). Choose from
+            the following:
+
+            * Meters
+            * Millimeters
+            * Feet
+            * Inches
+            * Centimeters
 
     Properties:
         * identifier
@@ -161,14 +173,18 @@ class VisualizationSet(_VisualizationBase):
         * geometry
         * min_point
         * max_point
+        * units
         * user_data
     """
-    __slots__ = ('_geometry', '_min_point', '_max_point')
+    __slots__ = ('_geometry', '_min_point', '_max_point', '_units')
 
-    def __init__(self, identifier, geometry):
+    UNITS = ('Meters', 'Millimeters', 'Feet', 'Inches', 'Centimeters')
+
+    def __init__(self, identifier, geometry, units=None):
         """Initialize VisualizationSet."""
         _VisualizationBase.__init__(self, identifier)  # process the identifier
         self.geometry = geometry
+        self.units = units
         self._min_point = None
         self._max_point = None
 
@@ -198,6 +214,8 @@ class VisualizationSet(_VisualizationBase):
             else:
                 geos.append(ContextGeometry.from_dict(geo_data))
         new_obj = cls(data['identifier'], geos)
+        if 'units' in data and data['units'] is not None:
+            new_obj.units = data['units']
         if 'display_name' in data and data['display_name'] is not None:
             new_obj.display_name = data['display_name']
         if 'user_data' in data and data['user_data'] is not None:
@@ -315,6 +333,19 @@ class VisualizationSet(_VisualizationBase):
             self._calculate_min_max()
         return self._max_point
 
+    @property
+    def units(self):
+        """Get or set Text for the units system in which the geometry exists."""
+        return self._units
+
+    @units.setter
+    def units(self, value):
+        if value is not None:
+            value = value.title()
+            assert value in self.UNITS, '{} is not supported as a units system. ' \
+                'Choose from the following: {}'.format(value, self.UNITS)
+        self._units = value
+
     def add_vis_set(self, vis_set):
         """Add all geometry objects of another VisualizationSet to this one.
 
@@ -428,6 +459,61 @@ class VisualizationSet(_VisualizationBase):
         dat_set = geo_obj.data_sets[data_index]
         return dat_set.graphic_container(min_point, max_point)
 
+    def move(self, moving_vec):
+        """Move this VisualizationSet along a vector.
+
+        Args:
+            moving_vec: A ladybug_geometry Vector3D with the direction and distance
+                to move the VisualizationSet.
+        """
+        for geo in self.geometry:
+            geo.move(moving_vec)
+
+    def rotate_xy(self, angle, origin):
+        """Rotate this VisualizationSet counterclockwise in the world XY plane.
+
+        Args:
+            angle: An angle in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        for geo in self.geometry:
+            geo.rotate_xy(angle, origin)
+
+    def scale(self, factor, origin=None):
+        """Scale this VisualizationSet by a factor from an origin point.
+
+        Args:
+            factor: A number representing how much the object should be scaled.
+            origin: A ladybug_geometry Point3D representing the origin from which
+                to scale. If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        for geo in self._geometry:
+            geo.scale(factor, origin)
+
+    def convert_to_units(self, units):
+        """Convert all of the geometry in this VisualizationSet to certain units.
+
+        This involves scaling the geometry and changing the VisualizationSet's
+        units property.
+
+        Args:
+            units: Text for the units to which the VisualizationSet geometry should be
+                converted. Choose from the following:
+
+                * Meters
+                * Millimeters
+                * Feet
+                * Inches
+                * Centimeters
+        """
+        if self.units != units:
+            scale_fac1 = self._conversion_factor_to_meters(self.units)
+            scale_fac2 = self._conversion_factor_to_meters(units)
+            scale_fac = scale_fac1 / scale_fac2
+            self.scale(scale_fac)
+            self.units = units
+
     def to_dict(self):
         """Get VisualizationSet as a dictionary."""
         base = {
@@ -435,6 +521,8 @@ class VisualizationSet(_VisualizationBase):
             'identifier': self.identifier,
             'geometry': [geo_obj.to_dict() for geo_obj in self.geometry]
         }
+        if self._units is not None:
+            base['units'] = self.units
         if self._display_name is not None:
             base['display_name'] = self.display_name
         if self.user_data is not None:
@@ -501,13 +589,40 @@ class VisualizationSet(_VisualizationBase):
         if len(all_geo) != 0:
             self._min_point, self._max_point = bounding_box(all_geo)
 
+    def _conversion_factor_to_meters(self, units):
+        """Get the conversion factor to meters based on input units.
+
+        Args:
+            units: Text for the units.
+
+        Returns:
+            A number for the conversion factor, which should be multiplied by
+            all distance units taken from Rhino geometry in order to convert
+            them to meters.
+        """
+        if units == 'Meters':
+            return 1.0
+        elif units == 'Millimeters':
+            return 0.001
+        elif units == 'Feet':
+            return 0.305
+        elif units == 'Inches':
+            return 0.0254
+        elif units == 'Centimeters':
+            return 0.01
+        else:
+            raise ValueError(
+                'You are kidding me! What units are you using? {}?\n'
+                'Please use one of the following: {}'.format(units, ' '.join(self.UNITS))
+            )
+
     def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
 
     def __copy__(self):
         new_geo_objs = tuple(obj.duplicate() for obj in self.geometry)
-        new_obj = VisualizationSet(self.identifier, new_geo_objs)
+        new_obj = VisualizationSet(self.identifier, new_geo_objs, self.units)
         new_obj._display_name = self._display_name
         new_obj._user_data = None if self.user_data is None else self.user_data.copy()
         return new_obj
@@ -664,6 +779,50 @@ class ContextGeometry(_VisualizationBase):
             self._calculate_min_max()
         return self._max_point
 
+    def move(self, moving_vec):
+        """Move this ContextGeometry along a vector.
+
+        Args:
+            moving_vec: A ladybug_geometry Vector3D with the direction and distance
+                to move the ContextGeometry.
+        """
+        moving_vec_2d = Vector2D(moving_vec.x, moving_vec.y)
+        for geo in self._geometry:
+            if isinstance(geo, _DisplayBase3D):
+                geo.move(moving_vec)
+            elif isinstance(geo, _DisplayBase2D):
+                geo.move(moving_vec_2d)
+
+    def rotate_xy(self, angle, origin):
+        """Rotate this ContextGeometry counterclockwise in the world XY plane.
+
+        Args:
+            angle: An angle in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        origin_2d = Point2D(origin.x, origin.y)
+        for geo in self._geometry:
+            if isinstance(geo, _DisplayBase3D):
+                geo.rotate_xy(angle, origin)
+            elif isinstance(geo, _DisplayBase2D):
+                geo.rotate(angle, origin_2d)
+
+    def scale(self, factor, origin=None):
+        """Scale this ContextGeometry by a factor from an origin point.
+
+        Args:
+            factor: A number representing how much the object should be scaled.
+            origin: A ladybug_geometry Point3D representing the origin from which
+                to scale. If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        origin_2d = Point2D(origin.x, origin.y) if origin is not None else None
+        for geo in self._geometry:
+            if isinstance(geo, _DisplayBase3D):
+                geo.scale(factor, origin)
+            elif isinstance(geo, _DisplayBase2D):
+                geo.scale(factor, origin_2d)
+
     def to_dict(self):
         """Get ContextGeometry as a dictionary."""
         base = {
@@ -769,6 +928,7 @@ class AnalysisGeometry(_VisualizationBase):
     __slots__ = (
         '_geometry', '_data_sets', '_active_data', '_display_mode', '_hidden',
         '_min_point', '_max_point', '_possible_lengths', '_matching_method')
+    T_FORMABLE_2D = (Point2D, Ray2D, LineSegment2D, Polyline2D, Arc2D, Polygon2D, Mesh2D)
 
     def __init__(self, identifier, geometry, data_sets,
                  active_data=0, display_mode='Surface', hidden=False):
@@ -969,6 +1129,65 @@ class AnalysisGeometry(_VisualizationBase):
         # return the Graphic Container for the correct data set
         data_index = self.active_data if data_index is None else data_index
         return self.data_sets[data_index].graphic_container(min_point, max_point)
+
+    def move(self, moving_vec):
+        """Move this AnalysisGeometry along a vector.
+
+        Args:
+            moving_vec: A ladybug_geometry Vector3D with the direction and distance
+                to move the AnalysisGeometry.
+        """
+        new_geo = []
+        moving_vec_2d = Vector2D(moving_vec.x, moving_vec.y)
+        for geo in self._geometry:
+            try:  # most likely a 3D object
+                new_geo.append(geo.move(moving_vec))
+            except Exception:  # possibly a 2D object
+                if isinstance(geo, self.T_FORMABLE_2D):
+                    new_geo.append(geo.move(moving_vec_2d))
+                else:  # object like a vector for which the transform is meaningless
+                    new_geo.append(geo)
+        self._geometry = tuple(new_geo)
+
+    def rotate_xy(self, angle, origin):
+        """Rotate this AnalysisGeometry counterclockwise in the world XY plane.
+
+        Args:
+            angle: An angle in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        new_geo = []
+        origin_2d = Point2D(origin.x, origin.y)
+        for geo in self._geometry:
+            try:
+                new_geo.append(geo.rotate_xy(angle, origin))
+            except Exception:  # possibly a 2D object
+                if isinstance(geo, self.T_FORMABLE_2D):
+                    new_geo.append(geo.rotate(angle, origin_2d))
+                else:  # object like a vector for which the transform is meaningless
+                    new_geo.append(geo)
+        self._geometry = tuple(new_geo)
+
+    def scale(self, factor, origin=None):
+        """Scale this AnalysisGeometry by a factor from an origin point.
+
+        Args:
+            factor: A number representing how much the object should be scaled.
+            origin: A ladybug_geometry Point3D representing the origin from which
+                to scale. If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        new_geo = []
+        origin_2d = Point2D(origin.x, origin.y) if origin is not None else None
+        for geo in self._geometry:
+            try:
+                new_geo.append(geo.scale(factor, origin))
+            except Exception:  # possibly a 2D object
+                if isinstance(geo, self.T_FORMABLE_2D):
+                    new_geo.append(geo.scale(factor, origin_2d))
+                else:  # object like a vector for which the transform is meaningless
+                    new_geo.append(geo)
+        self._geometry = tuple(new_geo)
 
     def to_dict(self):
         """Get AnalysisGeometry as a dictionary."""
