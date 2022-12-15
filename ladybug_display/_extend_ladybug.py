@@ -6,6 +6,7 @@ from ladybug.windrose import WindRose
 from ladybug.windprofile import WindProfile
 from ladybug.hourlyplot import HourlyPlot
 from ladybug.monthlychart import MonthlyChart
+from ladybug.psychchart import PsychrometricChart
 
 # import the extension functions
 from .extension.compass import compass_to_vis_set
@@ -14,6 +15,7 @@ from .extension.windrose import wind_rose_to_vis_set
 from .extension.windprofile import wind_profile_to_vis_set
 from .extension.hourlyplot import hourly_plot_to_vis_set
 from .extension.monthlychart import monthly_chart_to_vis_set
+from .extension.psychchart import psychrometric_chart_to_vis_set
 
 # inject the methods onto the classes
 Compass.to_vis_set = compass_to_vis_set
@@ -22,3 +24,4 @@ WindRose.to_vis_set = wind_rose_to_vis_set
 WindProfile.to_vis_set = wind_profile_to_vis_set
 HourlyPlot.to_vis_set = hourly_plot_to_vis_set
 MonthlyChart.to_vis_set = monthly_chart_to_vis_set
+PsychrometricChart.to_vis_set = psychrometric_chart_to_vis_set
