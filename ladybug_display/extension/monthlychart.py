@@ -42,7 +42,6 @@ def monthly_chart_to_vis_set(
                 of the monthly chart.
 
         -   Title -- A ContextGeometry with text for the title of the monthly chart.
-                This layer will be excluded if include_title is False.
 
         -   Data_Outlines -- A ContextGeometry with a list of polylines that outline
                 the input data. These will represent the average or total at
@@ -56,7 +55,7 @@ def monthly_chart_to_vis_set(
     set_id = 'Monthly_Chart_{}'.format(data_type.name.replace(' ', '_'))
     vis_set = VisualizationSet(set_id, ())
 
-    # process all of the text-related outputs
+    # get values used througout the translation
     txt_hgt = monthly_chart.legend_parameters.text_height
     font = monthly_chart.legend_parameters.font
     x_dim = monthly_chart.x_dim
