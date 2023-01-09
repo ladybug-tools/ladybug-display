@@ -25,3 +25,22 @@ WindProfile.to_vis_set = wind_profile_to_vis_set
 HourlyPlot.to_vis_set = hourly_plot_to_vis_set
 MonthlyChart.to_vis_set = monthly_chart_to_vis_set
 PsychrometricChart.to_vis_set = psychrometric_chart_to_vis_set
+
+# try to extend ladybug-radiance
+try:
+    # import the ladybug-radiance modules
+    from ladybug_radiance.visualize.skydome import SkyDome
+    from ladybug_radiance.visualize.radrose import RadiationRose
+    from ladybug_radiance.visualize.raddome import RadiationDome
+
+    # import the extension functions
+    from .extension.skydome import sky_dome_to_vis_set
+    from .extension.radrose import radiation_rose_to_vis_set
+    from .extension.raddome import radiation_dome_to_vis_set
+
+    # inject the methods onto the classes
+    SkyDome.to_vis_set = sky_dome_to_vis_set
+    RadiationRose.to_vis_set = radiation_rose_to_vis_set
+    RadiationDome.to_vis_set = radiation_dome_to_vis_set
+except ImportError:
+    pass  # ladybug-radiance is not installed
