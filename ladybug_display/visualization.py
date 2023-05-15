@@ -1004,7 +1004,8 @@ class AnalysisGeometry(_VisualizationBase):
 
     @active_data.setter
     def active_data(self, value):
-        self._active_data = int_in_range(value, 0, len(self._data_sets), 'active_data')
+        self._active_data = int_in_range(
+            value, 0, len(self._data_sets) - 1, 'active_data')
 
     @property
     def display_mode(self):
