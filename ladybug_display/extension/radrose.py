@@ -11,7 +11,7 @@ def radiation_rose_to_vis_set(
     """Translate radiation rose geometry into a format suitable for Rhino.
 
     Args:
-        radiation_rose: A Ladybug RadiationRose object.
+        radiation_rose: A Ladybug-Radiance RadiationRose object.
         max_rad: An optional number to set the level of radiation or irradiance
             associated with the full radius of the rose. If None, this is
             determined by the maximum level of radiation in the input data

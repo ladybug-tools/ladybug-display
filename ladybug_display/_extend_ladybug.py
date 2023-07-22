@@ -32,15 +32,21 @@ try:
     from ladybug_radiance.visualize.skydome import SkyDome
     from ladybug_radiance.visualize.radrose import RadiationRose
     from ladybug_radiance.visualize.raddome import RadiationDome
+    from ladybug_radiance.study.directsun import DirectSunStudy
+    from ladybug_radiance.study.radiation import RadiationStudy
 
     # import the extension functions
     from .extension.skydome import sky_dome_to_vis_set
     from .extension.radrose import radiation_rose_to_vis_set
     from .extension.raddome import radiation_dome_to_vis_set
+    from .extension.study.directsun import direct_sun_study_to_vis_set
+    from .extension.study.radiation import radiation_study_to_vis_set
 
     # inject the methods onto the classes
     SkyDome.to_vis_set = sky_dome_to_vis_set
     RadiationRose.to_vis_set = radiation_rose_to_vis_set
     RadiationDome.to_vis_set = radiation_dome_to_vis_set
+    DirectSunStudy.to_vis_set = direct_sun_study_to_vis_set
+    RadiationStudy.to_vis_set = radiation_study_to_vis_set
 except ImportError:
     pass  # ladybug-radiance is not installed

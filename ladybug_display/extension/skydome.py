@@ -10,7 +10,7 @@ def sky_dome_to_vis_set(sky_dome, show_components=False, include_title=True):
     """Translate sky dome geometry into a VisualizationSet.
 
     Args:
-        sky_dome: A Ladybug SkyDome object.
+        sky_dome: A Ladybug-Radiance SkyDome object.
         show_components: Boolean to indicate whether only one dome with total radiation
             should be displayed (False) or three domes with the solar radiation
             components (total, direct, and diffuse) should be shown. (Default: False).

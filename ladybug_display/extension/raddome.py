@@ -10,7 +10,7 @@ def radiation_dome_to_vis_set(radiation_dome, show_components=False, include_tit
     """Translate radiation dome geometry into a VisualizationSet.
 
     Args:
-        radiation_dome: A Ladybug RadiationDome object.
+        radiation_dome: A Ladybug-Radiance RadiationDome object.
         show_components: Boolean to indicate whether only one dome with total radiation
             should be displayed (False) or three domes with the solar radiation
             components (total, direct, and diffuse) should be shown. (Default: False).
