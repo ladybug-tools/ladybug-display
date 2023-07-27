@@ -1,19 +1,20 @@
 """Method to draw a RadiationDome as a VisualizationSet."""
 from ladybug_geometry.bounding import bounding_box
-from ladybug.color import Colorset
+from ladybug_geometry.geometry3d import Mesh3D
+from ladybug.color import Colorset, Color
 from ladybug.legend import LegendParameters
 from ladybug.graphic import GraphicContainer
 from ladybug.datatype.energyintensity import Radiation
 from ladybug.datatype.energyflux import Irradiance
 
-from ladybug_display.geometry3d import DisplayText3D
+from ladybug_display.geometry3d import DisplayText3D, DisplayMesh3D, DisplayFace3D
 from ladybug_display.visualization import VisualizationSet, AnalysisGeometry, \
     VisualizationData, ContextGeometry
 
 
 def radiation_study_to_vis_set(
         radiation_study, legend_parameters=None, plot_irradiance=False,
-        include_title=True):
+        include_title=True, include_context=False):
     """Translate radiation study into a VisualizationSet.
 
     Args:
@@ -21,17 +22,25 @@ def radiation_study_to_vis_set(
         legend_parameters: An optional LegendParameter object to change the display
             of the radiation study. If None, default legend parameters will be
             used. (Default: None).
+        plot_irradiance: Boolean to note whether the results should be plotted
+            with units of total Radiation (kWh/m2) [False] or with units of average
+            Irradiance (W/m2) [True]. (Default: False).
         include_title: Boolean to note whether the title should be included
             in the output visualization. (Default: True).
+        include_context: Boolean to note whether the context geometry should be
+            included in the output visualization. (Default: False).
 
     Returns:
         A VisualizationSet with the radiation study represented as an
         AnalysisGeometry. This includes these objects in the following order.
 
+        -   Radiation_Data -- An AnalysisGeometry for the radiation data.
+
         -   Title -- A ContextGeometry with text for the title of the study.
                 This layer will be excluded if include_title is False.
 
-        -   Radiation_Data -- An AnalysisGeometry for the radiation data.
+        -   Context_Geometry -- A ContextGeometry with the shading context used
+                in the study. This layer will be excluded when include_context is False.
     """
     # get the radiation data
     if plot_irradiance:
@@ -67,6 +76,14 @@ def radiation_study_to_vis_set(
     vis_set = VisualizationSet('RadiationStudy', ())
     vis_set.display_name = 'Radiation Study'
 
+    # create the AnalysisGeometry
+    vis_data = VisualizationData(rad_data, l_par, d_type, unit)
+    mesh_geo = AnalysisGeometry(
+        'Radiation_Data', [radiation_study.study_mesh], [vis_data])
+    mesh_geo.display_name = 'Radiation Data'
+    mesh_geo.display_mode = 'Surface'
+    vis_set.add_geometry(mesh_geo)
+
     # create the ContextGeometry for the title
     if include_title:
         all_geo = (radiation_study.study_mesh,) + radiation_study.context_geometry
@@ -80,12 +97,17 @@ def radiation_study_to_vis_set(
         title_geo = ContextGeometry('Title', [study_title])
         vis_set.add_geometry(title_geo)
 
-    # create the AnalysisGeometry
-    vis_data = VisualizationData(rad_data, l_par, d_type, unit)
-    mesh_geo = AnalysisGeometry(
-        'Radiation_Data', [radiation_study.study_mesh], [vis_data])
-    mesh_geo.display_name = 'Radiation Data'
-    mesh_geo.display_mode = 'Surface'
-    vis_set.add_geometry(mesh_geo)
+    # create the ContextGeometry for the context
+    if include_context:
+        con_color = Color(125, 125, 125, 125)
+        con_geos = []
+        for geo in radiation_study.context_geometry:
+            if isinstance(geo, Mesh3D):
+                con_geos.append(DisplayMesh3D(geo, con_color))
+            else:  # it's a Face3D
+                con_geos.append(DisplayFace3D(geo, con_color))
+        context_geo = ContextGeometry('Context_Geometry', con_geos)
+        context_geo.display_name = 'Context Geometry'
+        vis_set.add_geometry(context_geo)
 
     return vis_set
