@@ -50,3 +50,16 @@ try:
     RadiationStudy.to_vis_set = radiation_study_to_vis_set
 except ImportError:
     pass  # ladybug-radiance is not installed
+
+# try to extend ladybug-comfort
+try:
+    # import the ladybug-comfort modules
+    from ladybug_comfort.chart.adaptive import AdaptiveChart
+
+    # import the extension functions
+    from .extension.adaptivechart import adaptive_chart_to_vis_set
+
+    # inject the methods onto the classes
+    AdaptiveChart.to_vis_set = adaptive_chart_to_vis_set
+except ImportError:
+    pass  # ladybug-radiance is not installed
