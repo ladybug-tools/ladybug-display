@@ -55,7 +55,7 @@ def psychrometric_chart_to_vis_set(
 
         -   Wet_Bulb_Lines -- A ContextGeometry with lines and text for the wet bulb
                 temperature of the psychrometric chart. This layer will not be
-                included if plot_wet_bulb is FAlse.
+                included if plot_wet_bulb is False.
 
         -   Analysis_Data -- An AnalysisGeometry for the data on the psychrometric
                 chart. This will include multiple data sets if the data input
@@ -189,7 +189,7 @@ def psychrometric_chart_to_vis_set(
             d_vals = dat.values
             assert len(d_vals) == psych_chart._calc_length, \
                 'Number of data collection values ' \
-                'must match those of the psychometric chart temperature and humidity.'
+                'must match those of the psychrometric chart temperature and humidity.'
             # create a matrix with a tally of the hours for all the data
             base_mtx = [[[] for val in psych_chart._t_category]
                         for rh in psych_chart._rh_category]
