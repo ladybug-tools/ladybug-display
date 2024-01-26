@@ -7,7 +7,8 @@ from ..geometry3d import DisplayText3D, DisplayArc3D, DisplayLineSegment3D
 from ..visualization import VisualizationSet, ContextGeometry
 
 
-def compass_to_vis_set(compass, z=0, custom_angles=None, projection=None, font='Arial'):
+def compass_to_vis_set(compass, z=0, custom_angles=None, projection=None, font='Arial',
+                       maj_txt_size=None, min_txt_size=None):
     """Translate a Ladybug Compass object into Display geometry.
 
     Args:
@@ -24,6 +25,11 @@ def compass_to_vis_set(compass, z=0, custom_angles=None, projection=None, font='
 
         font: Optional text for the font to be used in creating the text.
             (Default: 'Arial')
+        maj_txt_size: An optional number for the size of the major text. If None,
+            it will be set to one 20th of the radius.
+        min_txt_size: An optional number for the size of the major text. Set to
+            zero to have no minor text in the compass. If None, it will be set
+            to half of the major text size.
 
     Returns:
         A VisualizationSet with the Compass represented as a single ContextGeometry.
@@ -49,8 +55,8 @@ def compass_to_vis_set(compass, z=0, custom_angles=None, projection=None, font='
 
      """
     # set default variables based on the compass properties
-    maj_txt = compass.radius / 20
-    min_txt = maj_txt / 2
+    maj_txt = compass.radius / 20 if maj_txt_size is None else maj_txt_size
+    min_txt = maj_txt / 2 if min_txt_size is None else min_txt_size
     xaxis = Vector3D(1, 0, 0).rotate_xy(math.radians(compass.north_angle))
 
     result = []  # list to hold all of the returned objects
@@ -72,12 +78,13 @@ def compass_to_vis_set(compass, z=0, custom_angles=None, projection=None, font='
             txt_pln = Plane(o=Point3D(pt.x, pt.y, z), x=xaxis)
             result.append(
                 DisplayText3D(txt, txt_pln, maj_txt, None, font, 'Center', 'Middle'))
-        for line in compass.minor_azimuth_ticks:
-            result.append(from_linesegment2d(line, z))
-        for txt, pt in zip(compass.MINOR_TEXT, compass.minor_azimuth_points):
-            txt_pln = Plane(o=Point3D(pt.x, pt.y, z), x=xaxis)
-            result.append(
-                DisplayText3D(txt, txt_pln, min_txt, None, font, 'Center', 'Middle'))
+        if min_txt > 0:
+            for line in compass.minor_azimuth_ticks:
+                result.append(from_linesegment2d(line, z))
+            for txt, pt in zip(compass.MINOR_TEXT, compass.minor_azimuth_points):
+                txt_pln = Plane(o=Point3D(pt.x, pt.y, z), x=xaxis)
+                result.append(
+                    DisplayText3D(txt, txt_pln, min_txt, None, font, 'Center', 'Middle'))
     else:
         for line in compass.ticks_from_angles(custom_angles):
             result.append(from_linesegment2d(line, z))
