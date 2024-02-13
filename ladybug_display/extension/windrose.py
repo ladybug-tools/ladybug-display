@@ -1,6 +1,8 @@
 """Method to draw a WindRose as a VisualizationSet."""
+import math
+
 from ladybug_geometry.geometry2d import Polyline2D
-from ladybug_geometry.geometry3d import Point3D, Plane, LineSegment3D, \
+from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane, LineSegment3D, \
     Polyline3D, Mesh3D
 
 from ladybug_display.geometry3d import DisplayLineSegment3D, DisplayPolyline3D, \
@@ -63,12 +65,14 @@ def wind_rose_to_vis_set(windrose, z=0, frequency_labels=True):
     for lin in freq_line:
         dis_freq.append(DisplayPolyline3D(lin, line_width=1, line_type='Dotted'))
     if frequency_labels:
+        b_pln_x = Vector3D(1, 0, 0) if windrose.north == 0 else \
+            Vector3D(1, 0, 0).rotate_xy(math.radians(windrose.north))
         f_int = windrose.frequency_hours
         txt_h = min((windrose.frequency_spacing_distance / 4, txt_h))
         freqs = range(0, f_int * windrose.frequency_intervals_compass, f_int)
         for i, (lin, val) in enumerate(zip(freq_line, freqs)):
             if i % 2 == 0 and i != 0:
-                b_pln = Plane(o=lin.segments[0].midpoint)
+                b_pln = Plane(o=lin.segments[0].midpoint, x=b_pln_x)
                 d_txt = DisplayText3D(str(val), b_pln, txt_h, None, font,
                                       'Center', 'Bottom')
                 freq_text.append(d_txt)
