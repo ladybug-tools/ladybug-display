@@ -1455,11 +1455,11 @@ class VisualizationData(VisualizationMetaData):
             assert isinstance(data_type, DataTypeBase), \
                 'data_type should be a ladybug DataType. Got {}'.format(type(data_type))
             if self.legend_parameters.is_title_default:
-                unit = unit if unit else data_type.units[0]
-                data_type.is_unit_acceptable(unit)
-                self.legend_parameters.title = unit if \
+                self._unit = unit if unit else data_type.units[0]
+                data_type.is_unit_acceptable(self._unit)
+                self.legend_parameters.title = self._unit if \
                     self.legend_parameters.vertical \
-                    else '{} ({})'.format(data_type.name, unit)
+                    else '{} ({})'.format(data_type.name, self._unit)
             if data_type.unit_descr is not None and \
                     self.legend_parameters.ordinal_dictionary is None and not \
                     isinstance(self.legend_parameters, LegendParametersCategorized):
@@ -1555,6 +1555,81 @@ class VisualizationData(VisualizationMetaData):
         return GraphicContainer(
             self.values, min_point, max_point, self._legend_parameters,
             self._data_type, self._unit)
+
+    def convert_to_unit(self, unit, convert_min_max=False):
+        """Convert the VisualizationData to the input unit.
+
+        Note that the VisualizationData must have a data_type and unit assigned
+        to it in order for this method to run successfully and not raise an exception.
+
+        Args:
+            unit: Text indicating the units to which the value should be
+                converted (eg. 'kWh/m2'). See ladybug.datatype.UNITS for
+                a dictionary containing all acceptable units for each data type.
+            convert_min_max: Boolean to note whether the min and max of the
+                LegendParameters should also have their units converted, which
+                may or may not be desirable depending on when this min and max
+                was originally set. (Default: False).
+        """
+        assert self._data_type is not None and self._unit is not None, \
+            'VisualizationData must have a data_type and unit assigned in ' \
+            'order to perform unit conversions.'
+        new_values = self._data_type.to_unit(self.values, unit, self._unit)
+        self._change_units(new_values, unit, convert_min_max)
+
+    def convert_to_ip(self, convert_min_max=False):
+        """Convert the VisualizationData to IP units.
+
+        Note that the VisualizationData must have a data_type and unit assigned
+        to it in order for this method to run successfully and not raise an exception.
+
+        Args:
+            convert_min_max: Boolean to note whether the min and max of the
+                LegendParameters should also have their units converted, which
+                may or may not be desirable depending on when this min and max
+                was originally set. (Default: False).
+        """
+        assert self._data_type is not None and self._unit is not None, \
+            'VisualizationData must have a data_type and unit assigned in ' \
+            'order to perform unit conversions.'
+        new_values, new_unit = self._data_type.to_ip(self.values, self._unit)
+        self._change_units(new_values, new_unit, convert_min_max)
+
+    def convert_to_si(self, convert_min_max=False):
+        """Convert the VisualizationData to SI units.
+
+        Note that the VisualizationData must have a data_type and unit assigned
+        to it in order for this method to run successfully and not raise an exception.
+
+        Args:
+            convert_min_max: Boolean to note whether the min and max of the
+                LegendParameters should also have their units converted, which
+                may or may not be desirable depending on when this min and max
+                was originally set. (Default: False).
+        """
+        assert self._data_type is not None and self._unit is not None, \
+            'VisualizationData must have a data_type and unit assigned in ' \
+            'order to perform unit conversions.'
+        new_values, new_unit = self._data_type.to_si(self.values, self._unit)
+        self._change_units(new_values, new_unit, convert_min_max)
+
+    def _change_units(self, new_values, new_unit, convert_min_max=False):
+        if self._legend.is_min_default:
+            self._legend_parameters.min = None
+        elif convert_min_max:
+            self._legend_parameters.min = \
+                self._data_type.to_unit(
+                    [self._legend_parameters.min], new_unit, self._unit)[0]
+        if self._legend.is_max_default:
+            self._legend_parameters.max = None
+        elif convert_min_max:
+            self._legend_parameters.max = \
+                self._data_type.to_unit(
+                    [self._legend_parameters.max], new_unit, self._unit)[0]
+        self._unit = new_unit
+        self._legend = Legend(new_values, self._legend_parameters)
+        self.legend_parameters.title = new_unit if self.legend_parameters.vertical \
+            else '{} ({})'.format(self._data_type.name, new_unit)
 
     def to_dict(self):
         """Get visualization data as a dictionary."""
