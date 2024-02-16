@@ -1,0 +1,7 @@
+ladybug\_display.extension.study.directsun module
+=================================================
+
+.. automodule:: ladybug_display.extension.study.directsun
+   :members:
+   :undoc-members:
+   :show-inheritance:
