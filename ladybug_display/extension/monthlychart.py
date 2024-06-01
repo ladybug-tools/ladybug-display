@@ -55,7 +55,7 @@ def monthly_chart_to_vis_set(
     set_id = 'Monthly_Chart_{}'.format(data_type.name.replace(' ', '_'))
     vis_set = VisualizationSet(set_id, ())
 
-    # get values used througout the translation
+    # get values used throughout the translation
     txt_hgt = monthly_chart.legend_parameters.text_height
     font = monthly_chart.legend_parameters.font
     x_dim = monthly_chart.x_dim
@@ -141,10 +141,11 @@ def monthly_chart_to_vis_set(
     # add the analysis geometry
     legend = monthly_chart.legend
     if monthly_chart.time_interval == 'MonthlyPerHour':
+        data_p_lines, line_colors = monthly_chart.data_polylines_with_colors
         data_lines = [Polyline3D.from_polyline2d(line, bp)
-                      for line in monthly_chart.data_polylines]
-        month_count = len(data_lines) / len(monthly_chart.data_collections)
-        data_vals = [int(i / month_count) for i, pline in enumerate(data_lines)]
+                      for line in data_p_lines]
+        data_colors = monthly_chart.colors
+        data_vals = [data_colors.index(col) for col in line_colors]
         vis_data = VisualizationData(data_vals, legend.legend_parameters)
         a_geo = AnalysisGeometry('Analysis_Data', data_lines, [vis_data])
     else:
