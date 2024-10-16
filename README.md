@@ -9,6 +9,9 @@ A library that assigns basic display attributes to ladybug-geometry objects
 with methods to translate them to a VisualzationSet (Sunpath, WindRose, etc.).
 
 ## Installation
+
+To install the library use:
+
 ```console
 pip install ladybug-display
 ```
