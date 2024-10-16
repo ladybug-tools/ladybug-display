@@ -56,16 +56,16 @@ def wind_profile_to_vis_set(
         and an AnalysisGeometry. This includes these objects in the following order.
 
         -   Arrows -- An AnalysisGeometry of colored mesh objects that represent
-                the wind speeds along the height of the wind profile.
+            the wind speeds along the height of the wind profile.
 
         -   Profile -- A Polyline outlining the wind speed as it changes
-                with height.
+            with height.
 
         -   Speed_Axis -- A ContextGeometry of line segments and text objects
-                that mark the X axis, which relates to the wind speed in (m/s).
+            that mark the X axis, which relates to the wind speed in (m/s).
 
         -   Height_Axis -- A ContextGeometry of line segments and text objects
-                that mark the Y axis, which relates to the the height above the ground.
+            that mark the Y axis, which relates to the the height above the ground.
     """
     # establish the VisualizationSet object
     vis_set = VisualizationSet(

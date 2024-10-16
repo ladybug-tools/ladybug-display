@@ -35,20 +35,20 @@ def adaptive_chart_to_vis_set(
         in the following order.
 
         -   Title -- A ContextGeometry for the title and border around the
-                adaptive chart.
+            adaptive chart.
 
         -   Prevailing_Axis -- A ContextGeometry with lines and text for the
-                Prevailing Outdoor Temperature (X) axis of the adaptive chart.
+            Prevailing Outdoor Temperature (X) axis of the adaptive chart.
 
         -   Operative_Axis -- A ContextGeometry with lines and text for the
-                Indoor Operative Temperature (Y) axis of the adaptive chart.
+            Indoor Operative Temperature (Y) axis of the adaptive chart.
 
         -   Comfort_Polygon -- A ContextGeometry with lines for the comfort polygon
-                and neutral temperature of the adaptive chart.
+            and neutral temperature of the adaptive chart.
 
         -   Analysis_Data -- An AnalysisGeometry for the data on the adaptive
-                chart. This will include multiple data sets if the data input
-                is provided.
+            chart. This will include multiple data sets if the data input
+            is provided.
     """
     # establish the VisualizationSet object
     vis_set = VisualizationSet('Adaptive_Chart', ())
