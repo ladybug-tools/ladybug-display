@@ -35,15 +35,17 @@ def sunpath_to_vis_set(
         solar_time: A boolean to indicate if the sunpath should be drawn with solar
              time hours instead of standard or daylight time. (Default: False)
         daily: Boolean to note whether the sunpath should display only one daily
-            arc for each unique day in the input hoys_ (True) or whether the
+            arc for each unique day in the input hoys (True) or whether the
             output sun path geometry should be for the entire year, complete
             with analemmas for all sun-up hours and a daily arc for each
             month (False). (Default: False)
         projection: Optional text for the name of a projection to use from the sky
             dome hemisphere to the 2D plane. If None, a 3D sun path will be drawn
             instead of a 2D one. (Default: None) Choose from the following:
+
                 * Orthographic
                 * Stereographic
+
         sun_spheres: Boolean to note whether sun positions should be drawn as points
             or as fully-detailed spheres. Note that this option should only be
             used when there are relatively few hoys input. Anything more than
