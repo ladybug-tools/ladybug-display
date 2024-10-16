@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ladybug_display.geometry2d.polygon &#8212; ladybug-display  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css?v=0bf093e7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=45cd8fae" />
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          ladybug-display</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../ladybug_display.html">ladybug_display package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../ladybug_display.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../ladybug_display.extension.html">ladybug_display.extension package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.extension.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.study.html">ladybug_display.extension.study package</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.study.html#submodules">Submodules</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.extension.study.directsun.html">ladybug_display.extension.study.directsun module</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../ladybug_display.extension.study.directsun.html#ladybug_display.extension.study.directsun.direct_sun_study_to_vis_set"><code class="docutils literal notranslate"><span class="pre">direct_sun_study_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.extension.study.radiation.html">ladybug_display.extension.study.radiation module</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../ladybug_display.extension.study.radiation.html#ladybug_display.extension.study.radiation.radiation_study_to_vis_set"><code class="docutils literal notranslate"><span class="pre">radiation_study_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.study.html#module-ladybug_display.extension.study">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.extension.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.adaptivechart.html">ladybug_display.extension.adaptivechart module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.adaptivechart.html#ladybug_display.extension.adaptivechart.adaptive_chart_to_vis_set"><code class="docutils literal notranslate"><span class="pre">adaptive_chart_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.compass.html">ladybug_display.extension.compass module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.compass.html#ladybug_display.extension.compass.compass_to_vis_set"><code class="docutils literal notranslate"><span class="pre">compass_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.hourlyplot.html">ladybug_display.extension.hourlyplot module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.hourlyplot.html#ladybug_display.extension.hourlyplot.hourly_plot_to_vis_set"><code class="docutils literal notranslate"><span class="pre">hourly_plot_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.monthlychart.html">ladybug_display.extension.monthlychart module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.monthlychart.html#ladybug_display.extension.monthlychart.monthly_chart_to_vis_set"><code class="docutils literal notranslate"><span class="pre">monthly_chart_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.psychchart.html">ladybug_display.extension.psychchart module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.psychchart.html#ladybug_display.extension.psychchart.psychrometric_chart_to_vis_set"><code class="docutils literal notranslate"><span class="pre">psychrometric_chart_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.raddome.html">ladybug_display.extension.raddome module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.raddome.html#ladybug_display.extension.raddome.radiation_dome_to_vis_set"><code class="docutils literal notranslate"><span class="pre">radiation_dome_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.radrose.html">ladybug_display.extension.radrose module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.radrose.html#ladybug_display.extension.radrose.radiation_rose_to_vis_set"><code class="docutils literal notranslate"><span class="pre">radiation_rose_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.skydome.html">ladybug_display.extension.skydome module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.skydome.html#ladybug_display.extension.skydome.sky_dome_to_vis_set"><code class="docutils literal notranslate"><span class="pre">sky_dome_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.sunpath.html">ladybug_display.extension.sunpath module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.sunpath.html#ladybug_display.extension.sunpath.sunpath_to_vis_set"><code class="docutils literal notranslate"><span class="pre">sunpath_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.viewsphere.html">ladybug_display.extension.viewsphere module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.viewsphere.html#ladybug_display.extension.viewsphere.view_sphere_to_vis_set"><code class="docutils literal notranslate"><span class="pre">view_sphere_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.windprofile.html">ladybug_display.extension.windprofile module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.windprofile.html#ladybug_display.extension.windprofile.wind_profile_to_vis_set"><code class="docutils literal notranslate"><span class="pre">wind_profile_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.extension.windrose.html">ladybug_display.extension.windrose module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.extension.windrose.html#ladybug_display.extension.windrose.wind_rose_to_vis_set"><code class="docutils literal notranslate"><span class="pre">wind_rose_to_vis_set()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.extension.html#module-ladybug_display.extension">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ladybug_display.geometry2d.html">ladybug_display.geometry2d package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.geometry2d.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html">ladybug_display.geometry2d.arc module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D"><code class="docutils literal notranslate"><span class="pre">DisplayArc2D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.c"><code class="docutils literal notranslate"><span class="pre">c</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.is_circle"><code class="docutils literal notranslate"><span class="pre">is_circle</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.length"><code class="docutils literal notranslate"><span class="pre">length</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.line_type"><code class="docutils literal notranslate"><span class="pre">line_type</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.line_width"><code class="docutils literal notranslate"><span class="pre">line_width</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.p1"><code class="docutils literal notranslate"><span class="pre">p1</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.p2"><code class="docutils literal notranslate"><span class="pre">p2</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.r"><code class="docutils literal notranslate"><span class="pre">r</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.arc.html#ladybug_display.geometry2d.arc.DisplayArc2D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html">ladybug_display.geometry2d.line module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D"><code class="docutils literal notranslate"><span class="pre">DisplayLineSegment2D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.length"><code class="docutils literal notranslate"><span class="pre">length</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.line_type"><code class="docutils literal notranslate"><span class="pre">line_type</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.line_width"><code class="docutils literal notranslate"><span class="pre">line_width</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.p"><code class="docutils literal notranslate"><span class="pre">p</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.p1"><code class="docutils literal notranslate"><span class="pre">p1</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.p2"><code class="docutils literal notranslate"><span class="pre">p2</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.line.html#ladybug_display.geometry2d.line.DisplayLineSegment2D.v"><code class="docutils literal notranslate"><span class="pre">v</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html">ladybug_display.geometry2d.mesh module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D"><code class="docutils literal notranslate"><span class="pre">DisplayMesh2D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.area"><code class="docutils literal notranslate"><span class="pre">area</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.center"><code class="docutils literal notranslate"><span class="pre">center</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.display_mode"><code class="docutils literal notranslate"><span class="pre">display_mode</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.face_areas"><code class="docutils literal notranslate"><span class="pre">face_areas</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.face_centroids"><code class="docutils literal notranslate"><span class="pre">face_centroids</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.faces"><code class="docutils literal notranslate"><span class="pre">faces</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.max"><code class="docutils literal notranslate"><span class="pre">max</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.min"><code class="docutils literal notranslate"><span class="pre">min</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.mesh.html#ladybug_display.geometry2d.mesh.DisplayMesh2D.vertices"><code class="docutils literal notranslate"><span class="pre">vertices</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html">ladybug_display.geometry2d.point module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D"><code class="docutils literal notranslate"><span class="pre">DisplayPoint2D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.distance_to_point"><code class="docutils literal notranslate"><span class="pre">distance_to_point()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.radius"><code class="docutils literal notranslate"><span class="pre">radius</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.x"><code class="docutils literal notranslate"><span class="pre">x</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.point.html#ladybug_display.geometry2d.point.DisplayPoint2D.y"><code class="docutils literal notranslate"><span class="pre">y</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html">ladybug_display.geometry2d.polygon module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D"><code class="docutils literal notranslate"><span class="pre">DisplayPolygon2D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.area"><code class="docutils literal notranslate"><span class="pre">area</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.center"><code class="docutils literal notranslate"><span class="pre">center</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.is_clockwise"><code class="docutils literal notranslate"><span class="pre">is_clockwise</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.is_convex"><code class="docutils literal notranslate"><span class="pre">is_convex</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.is_self_intersecting"><code class="docutils literal notranslate"><span class="pre">is_self_intersecting</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.line_type"><code class="docutils literal notranslate"><span class="pre">line_type</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.line_width"><code class="docutils literal notranslate"><span class="pre">line_width</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.max"><code class="docutils literal notranslate"><span class="pre">max</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.min"><code class="docutils literal notranslate"><span class="pre">min</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.perimeter"><code class="docutils literal notranslate"><span class="pre">perimeter</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.segments"><code class="docutils literal notranslate"><span class="pre">segments</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.vertices"><code class="docutils literal notranslate"><span class="pre">vertices</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html">ladybug_display.geometry2d.polyline module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D"><code class="docutils literal notranslate"><span class="pre">DisplayPolyline2D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.interpolated"><code class="docutils literal notranslate"><span class="pre">interpolated</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.length"><code class="docutils literal notranslate"><span class="pre">length</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.line_type"><code class="docutils literal notranslate"><span class="pre">line_type</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.line_width"><code class="docutils literal notranslate"><span class="pre">line_width</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.max"><code class="docutils literal notranslate"><span class="pre">max</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.min"><code class="docutils literal notranslate"><span class="pre">min</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.p1"><code class="docutils literal notranslate"><span class="pre">p1</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.p2"><code class="docutils literal notranslate"><span class="pre">p2</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.segments"><code class="docutils literal notranslate"><span class="pre">segments</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.polyline.html#ladybug_display.geometry2d.polyline.DisplayPolyline2D.vertices"><code class="docutils literal notranslate"><span class="pre">vertices</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html">ladybug_display.geometry2d.ray module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D"><code class="docutils literal notranslate"><span class="pre">DisplayRay2D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.reverse"><code class="docutils literal notranslate"><span class="pre">reverse()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.p"><code class="docutils literal notranslate"><span class="pre">p</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.ray.html#ladybug_display.geometry2d.ray.DisplayRay2D.v"><code class="docutils literal notranslate"><span class="pre">v</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html">ladybug_display.geometry2d.vector module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D"><code class="docutils literal notranslate"><span class="pre">DisplayVector2D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.angle"><code class="docutils literal notranslate"><span class="pre">angle()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.dot"><code class="docutils literal notranslate"><span class="pre">dot()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.normalize"><code class="docutils literal notranslate"><span class="pre">normalize()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.reverse"><code class="docutils literal notranslate"><span class="pre">reverse()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.magnitude"><code class="docutils literal notranslate"><span class="pre">magnitude</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.x"><code class="docutils literal notranslate"><span class="pre">x</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry2d.vector.html#ladybug_display.geometry2d.vector.DisplayVector2D.y"><code class="docutils literal notranslate"><span class="pre">y</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.geometry2d.html#module-ladybug_display.geometry2d">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ladybug_display.geometry3d.html">ladybug_display.geometry3d package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.geometry3d.html#submodules">Submodules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html">ladybug_display.geometry3d.arc module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D"><code class="docutils literal notranslate"><span class="pre">DisplayArc3D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.angle"><code class="docutils literal notranslate"><span class="pre">angle</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.c"><code class="docutils literal notranslate"><span class="pre">c</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.is_circle"><code class="docutils literal notranslate"><span class="pre">is_circle</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.length"><code class="docutils literal notranslate"><span class="pre">length</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.line_type"><code class="docutils literal notranslate"><span class="pre">line_type</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.line_width"><code class="docutils literal notranslate"><span class="pre">line_width</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.p1"><code class="docutils literal notranslate"><span class="pre">p1</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.p2"><code class="docutils literal notranslate"><span class="pre">p2</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.plane"><code class="docutils literal notranslate"><span class="pre">plane</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.radius"><code class="docutils literal notranslate"><span class="pre">radius</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.arc.html#ladybug_display.geometry3d.arc.DisplayArc3D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html">ladybug_display.geometry3d.cone module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone"><code class="docutils literal notranslate"><span class="pre">DisplayCone</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.area"><code class="docutils literal notranslate"><span class="pre">area</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.axis"><code class="docutils literal notranslate"><span class="pre">axis</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.display_mode"><code class="docutils literal notranslate"><span class="pre">display_mode</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.height"><code class="docutils literal notranslate"><span class="pre">height</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.radius"><code class="docutils literal notranslate"><span class="pre">radius</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.vertex"><code class="docutils literal notranslate"><span class="pre">vertex</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cone.html#ladybug_display.geometry3d.cone.DisplayCone.volume"><code class="docutils literal notranslate"><span class="pre">volume</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html">ladybug_display.geometry3d.cylinder module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder"><code class="docutils literal notranslate"><span class="pre">DisplayCylinder</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.area"><code class="docutils literal notranslate"><span class="pre">area</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.axis"><code class="docutils literal notranslate"><span class="pre">axis</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.center"><code class="docutils literal notranslate"><span class="pre">center</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.display_mode"><code class="docutils literal notranslate"><span class="pre">display_mode</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.height"><code class="docutils literal notranslate"><span class="pre">height</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.radius"><code class="docutils literal notranslate"><span class="pre">radius</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.cylinder.html#ladybug_display.geometry3d.cylinder.DisplayCylinder.volume"><code class="docutils literal notranslate"><span class="pre">volume</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html">ladybug_display.geometry3d.face module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D"><code class="docutils literal notranslate"><span class="pre">DisplayFace3D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.altitude"><code class="docutils literal notranslate"><span class="pre">altitude</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.area"><code class="docutils literal notranslate"><span class="pre">area</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.azimuth"><code class="docutils literal notranslate"><span class="pre">azimuth</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.center"><code class="docutils literal notranslate"><span class="pre">center</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.display_mode"><code class="docutils literal notranslate"><span class="pre">display_mode</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.max"><code class="docutils literal notranslate"><span class="pre">max</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.min"><code class="docutils literal notranslate"><span class="pre">min</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.normal"><code class="docutils literal notranslate"><span class="pre">normal</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.perimeter"><code class="docutils literal notranslate"><span class="pre">perimeter</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.face.html#ladybug_display.geometry3d.face.DisplayFace3D.vertices"><code class="docutils literal notranslate"><span class="pre">vertices</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html">ladybug_display.geometry3d.line module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D"><code class="docutils literal notranslate"><span class="pre">DisplayLineSegment3D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.length"><code class="docutils literal notranslate"><span class="pre">length</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.line_type"><code class="docutils literal notranslate"><span class="pre">line_type</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.line_width"><code class="docutils literal notranslate"><span class="pre">line_width</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.p"><code class="docutils literal notranslate"><span class="pre">p</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.p1"><code class="docutils literal notranslate"><span class="pre">p1</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.p2"><code class="docutils literal notranslate"><span class="pre">p2</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.line.html#ladybug_display.geometry3d.line.DisplayLineSegment3D.v"><code class="docutils literal notranslate"><span class="pre">v</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html">ladybug_display.geometry3d.mesh module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D"><code class="docutils literal notranslate"><span class="pre">DisplayMesh3D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.area"><code class="docutils literal notranslate"><span class="pre">area</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.center"><code class="docutils literal notranslate"><span class="pre">center</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.display_mode"><code class="docutils literal notranslate"><span class="pre">display_mode</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.face_areas"><code class="docutils literal notranslate"><span class="pre">face_areas</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.face_centroids"><code class="docutils literal notranslate"><span class="pre">face_centroids</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.face_normals"><code class="docutils literal notranslate"><span class="pre">face_normals</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.faces"><code class="docutils literal notranslate"><span class="pre">faces</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.max"><code class="docutils literal notranslate"><span class="pre">max</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.min"><code class="docutils literal notranslate"><span class="pre">min</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.vertex_normals"><code class="docutils literal notranslate"><span class="pre">vertex_normals</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.mesh.html#ladybug_display.geometry3d.mesh.DisplayMesh3D.vertices"><code class="docutils literal notranslate"><span class="pre">vertices</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html">ladybug_display.geometry3d.plane module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane"><code class="docutils literal notranslate"><span class="pre">DisplayPlane</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.k"><code class="docutils literal notranslate"><span class="pre">k</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.n"><code class="docutils literal notranslate"><span class="pre">n</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.o"><code class="docutils literal notranslate"><span class="pre">o</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.show_axes"><code class="docutils literal notranslate"><span class="pre">show_axes</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.show_grid"><code class="docutils literal notranslate"><span class="pre">show_grid</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.x"><code class="docutils literal notranslate"><span class="pre">x</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.plane.html#ladybug_display.geometry3d.plane.DisplayPlane.y"><code class="docutils literal notranslate"><span class="pre">y</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html">ladybug_display.geometry3d.point module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D"><code class="docutils literal notranslate"><span class="pre">DisplayPoint3D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.distance_to_point"><code class="docutils literal notranslate"><span class="pre">distance_to_point()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.radius"><code class="docutils literal notranslate"><span class="pre">radius</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.x"><code class="docutils literal notranslate"><span class="pre">x</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.y"><code class="docutils literal notranslate"><span class="pre">y</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.point.html#ladybug_display.geometry3d.point.DisplayPoint3D.z"><code class="docutils literal notranslate"><span class="pre">z</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html">ladybug_display.geometry3d.polyface module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D"><code class="docutils literal notranslate"><span class="pre">DisplayPolyface3D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.area"><code class="docutils literal notranslate"><span class="pre">area</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.center"><code class="docutils literal notranslate"><span class="pre">center</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.display_mode"><code class="docutils literal notranslate"><span class="pre">display_mode</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.edge_indices"><code class="docutils literal notranslate"><span class="pre">edge_indices</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.edge_types"><code class="docutils literal notranslate"><span class="pre">edge_types</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.edges"><code class="docutils literal notranslate"><span class="pre">edges</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.face_indices"><code class="docutils literal notranslate"><span class="pre">face_indices</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.faces"><code class="docutils literal notranslate"><span class="pre">faces</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.internal_edges"><code class="docutils literal notranslate"><span class="pre">internal_edges</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.is_solid"><code class="docutils literal notranslate"><span class="pre">is_solid</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.max"><code class="docutils literal notranslate"><span class="pre">max</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.min"><code class="docutils literal notranslate"><span class="pre">min</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.naked_edges"><code class="docutils literal notranslate"><span class="pre">naked_edges</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.non_manifold_edges"><code class="docutils literal notranslate"><span class="pre">non_manifold_edges</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.vertices"><code class="docutils literal notranslate"><span class="pre">vertices</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyface.html#ladybug_display.geometry3d.polyface.DisplayPolyface3D.volume"><code class="docutils literal notranslate"><span class="pre">volume</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html">ladybug_display.geometry3d.polyline module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D"><code class="docutils literal notranslate"><span class="pre">DisplayPolyline3D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.interpolated"><code class="docutils literal notranslate"><span class="pre">interpolated</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.length"><code class="docutils literal notranslate"><span class="pre">length</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.line_type"><code class="docutils literal notranslate"><span class="pre">line_type</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.line_width"><code class="docutils literal notranslate"><span class="pre">line_width</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.max"><code class="docutils literal notranslate"><span class="pre">max</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.min"><code class="docutils literal notranslate"><span class="pre">min</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.p1"><code class="docutils literal notranslate"><span class="pre">p1</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.p2"><code class="docutils literal notranslate"><span class="pre">p2</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.segments"><code class="docutils literal notranslate"><span class="pre">segments</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.polyline.html#ladybug_display.geometry3d.polyline.DisplayPolyline3D.vertices"><code class="docutils literal notranslate"><span class="pre">vertices</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html">ladybug_display.geometry3d.ray module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D"><code class="docutils literal notranslate"><span class="pre">DisplayRay3D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.reverse"><code class="docutils literal notranslate"><span class="pre">reverse()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.p"><code class="docutils literal notranslate"><span class="pre">p</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.ray.html#ladybug_display.geometry3d.ray.DisplayRay3D.v"><code class="docutils literal notranslate"><span class="pre">v</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html">ladybug_display.geometry3d.sphere module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere"><code class="docutils literal notranslate"><span class="pre">DisplaySphere</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.area"><code class="docutils literal notranslate"><span class="pre">area</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.center"><code class="docutils literal notranslate"><span class="pre">center</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.circumference"><code class="docutils literal notranslate"><span class="pre">circumference</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.diameter"><code class="docutils literal notranslate"><span class="pre">diameter</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.display_mode"><code class="docutils literal notranslate"><span class="pre">display_mode</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.max"><code class="docutils literal notranslate"><span class="pre">max</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.min"><code class="docutils literal notranslate"><span class="pre">min</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.radius"><code class="docutils literal notranslate"><span class="pre">radius</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.sphere.html#ladybug_display.geometry3d.sphere.DisplaySphere.volume"><code class="docutils literal notranslate"><span class="pre">volume</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html">ladybug_display.geometry3d.text module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D"><code class="docutils literal notranslate"><span class="pre">DisplayText3D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.HORIZONTAL_ALIGN"><code class="docutils literal notranslate"><span class="pre">HORIZONTAL_ALIGN</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.VERTICAL_ALIGN"><code class="docutils literal notranslate"><span class="pre">VERTICAL_ALIGN</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.font"><code class="docutils literal notranslate"><span class="pre">font</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.height"><code class="docutils literal notranslate"><span class="pre">height</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.horizontal_alignment"><code class="docutils literal notranslate"><span class="pre">horizontal_alignment</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.max"><code class="docutils literal notranslate"><span class="pre">max</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.min"><code class="docutils literal notranslate"><span class="pre">min</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.plane"><code class="docutils literal notranslate"><span class="pre">plane</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.text"><code class="docutils literal notranslate"><span class="pre">text</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.text.html#ladybug_display.geometry3d.text.DisplayText3D.vertical_alignment"><code class="docutils literal notranslate"><span class="pre">vertical_alignment</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html">ladybug_display.geometry3d.vector module</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D"><code class="docutils literal notranslate"><span class="pre">DisplayVector3D</span></code></a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.angle"><code class="docutils literal notranslate"><span class="pre">angle()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.cross"><code class="docutils literal notranslate"><span class="pre">cross()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.dot"><code class="docutils literal notranslate"><span class="pre">dot()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.normalize"><code class="docutils literal notranslate"><span class="pre">normalize()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.reverse"><code class="docutils literal notranslate"><span class="pre">reverse()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.color"><code class="docutils literal notranslate"><span class="pre">color</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.magnitude"><code class="docutils literal notranslate"><span class="pre">magnitude</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.x"><code class="docutils literal notranslate"><span class="pre">x</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.y"><code class="docutils literal notranslate"><span class="pre">y</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="../../../ladybug_display.geometry3d.vector.html#ladybug_display.geometry3d.vector.DisplayVector3D.z"><code class="docutils literal notranslate"><span class="pre">z</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.geometry3d.html#module-ladybug_display.geometry3d">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ladybug_display.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../ladybug_display.altnumber.html">ladybug_display.altnumber module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.altnumber.html#ladybug_display.altnumber.Default"><code class="docutils literal notranslate"><span class="pre">Default</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.altnumber.html#ladybug_display.altnumber.Default.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.altnumber.html#ladybug_display.altnumber.Default.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.altnumber.html#ladybug_display.altnumber.Default.name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ladybug_display.dictutil.html">ladybug_display.dictutil module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.dictutil.html#ladybug_display.dictutil.dict_to_object"><code class="docutils literal notranslate"><span class="pre">dict_to_object()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ladybug_display.typing.html">ladybug_display.typing module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.typing.html#ladybug_display.typing.float_in_range"><code class="docutils literal notranslate"><span class="pre">float_in_range()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.typing.html#ladybug_display.typing.float_in_range_excl"><code class="docutils literal notranslate"><span class="pre">float_in_range_excl()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.typing.html#ladybug_display.typing.float_in_range_excl_incl"><code class="docutils literal notranslate"><span class="pre">float_in_range_excl_incl()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.typing.html#ladybug_display.typing.float_in_range_incl_excl"><code class="docutils literal notranslate"><span class="pre">float_in_range_incl_excl()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.typing.html#ladybug_display.typing.float_positive"><code class="docutils literal notranslate"><span class="pre">float_positive()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.typing.html#ladybug_display.typing.int_in_range"><code class="docutils literal notranslate"><span class="pre">int_in_range()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.typing.html#ladybug_display.typing.int_positive"><code class="docutils literal notranslate"><span class="pre">int_positive()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.typing.html#ladybug_display.typing.list_with_length"><code class="docutils literal notranslate"><span class="pre">list_with_length()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.typing.html#ladybug_display.typing.tuple_with_length"><code class="docutils literal notranslate"><span class="pre">tuple_with_length()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.typing.html#ladybug_display.typing.valid_string"><code class="docutils literal notranslate"><span class="pre">valid_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ladybug_display.visualization.html">ladybug_display.visualization module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry"><code class="docutils literal notranslate"><span class="pre">AnalysisGeometry</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.add_data_set"><code class="docutils literal notranslate"><span class="pre">add_data_set()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.graphic_container"><code class="docutils literal notranslate"><span class="pre">graphic_container()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.remove_data_set"><code class="docutils literal notranslate"><span class="pre">remove_data_set()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.T_FORMABLE_2D"><code class="docutils literal notranslate"><span class="pre">T_FORMABLE_2D</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.active_data"><code class="docutils literal notranslate"><span class="pre">active_data</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.data_sets"><code class="docutils literal notranslate"><span class="pre">data_sets</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.display_mode"><code class="docutils literal notranslate"><span class="pre">display_mode</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.display_name"><code class="docutils literal notranslate"><span class="pre">display_name</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.full_id"><code class="docutils literal notranslate"><span class="pre">full_id</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.hidden"><code class="docutils literal notranslate"><span class="pre">hidden</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.identifier"><code class="docutils literal notranslate"><span class="pre">identifier</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.matching_method"><code class="docutils literal notranslate"><span class="pre">matching_method</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.max_point"><code class="docutils literal notranslate"><span class="pre">max_point</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.min_point"><code class="docutils literal notranslate"><span class="pre">min_point</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.AnalysisGeometry.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry"><code class="docutils literal notranslate"><span class="pre">ContextGeometry</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.geometry_to_wireframe"><code class="docutils literal notranslate"><span class="pre">geometry_to_wireframe()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.WIREFRAME_MAP"><code class="docutils literal notranslate"><span class="pre">WIREFRAME_MAP</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.display_name"><code class="docutils literal notranslate"><span class="pre">display_name</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.full_id"><code class="docutils literal notranslate"><span class="pre">full_id</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.hidden"><code class="docutils literal notranslate"><span class="pre">hidden</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.identifier"><code class="docutils literal notranslate"><span class="pre">identifier</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.max_point"><code class="docutils literal notranslate"><span class="pre">max_point</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.min_point"><code class="docutils literal notranslate"><span class="pre">min_point</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.ContextGeometry.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData"><code class="docutils literal notranslate"><span class="pre">VisualizationData</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.convert_to_ip"><code class="docutils literal notranslate"><span class="pre">convert_to_ip()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.convert_to_si"><code class="docutils literal notranslate"><span class="pre">convert_to_si()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.convert_to_unit"><code class="docutils literal notranslate"><span class="pre">convert_to_unit()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.graphic_container"><code class="docutils literal notranslate"><span class="pre">graphic_container()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.data_type"><code class="docutils literal notranslate"><span class="pre">data_type</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.legend"><code class="docutils literal notranslate"><span class="pre">legend</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.legend_parameters"><code class="docutils literal notranslate"><span class="pre">legend_parameters</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.unit"><code class="docutils literal notranslate"><span class="pre">unit</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.value_colors"><code class="docutils literal notranslate"><span class="pre">value_colors</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationData.values"><code class="docutils literal notranslate"><span class="pre">values</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationMetaData"><code class="docutils literal notranslate"><span class="pre">VisualizationMetaData</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationMetaData.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationMetaData.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationMetaData.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationMetaData.data_type"><code class="docutils literal notranslate"><span class="pre">data_type</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationMetaData.legend_parameters"><code class="docutils literal notranslate"><span class="pre">legend_parameters</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationMetaData.unit"><code class="docutils literal notranslate"><span class="pre">unit</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationMetaData.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet"><code class="docutils literal notranslate"><span class="pre">VisualizationSet</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.ToString"><code class="docutils literal notranslate"><span class="pre">ToString()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.add_geometry"><code class="docutils literal notranslate"><span class="pre">add_geometry()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.add_vis_set"><code class="docutils literal notranslate"><span class="pre">add_vis_set()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.check_duplicate_identifiers"><code class="docutils literal notranslate"><span class="pre">check_duplicate_identifiers()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.convert_to_units"><code class="docutils literal notranslate"><span class="pre">convert_to_units()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.duplicate"><code class="docutils literal notranslate"><span class="pre">duplicate()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.from_dict"><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.from_file"><code class="docutils literal notranslate"><span class="pre">from_file()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.from_json"><code class="docutils literal notranslate"><span class="pre">from_json()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.from_pkl"><code class="docutils literal notranslate"><span class="pre">from_pkl()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.from_single_analysis_geo"><code class="docutils literal notranslate"><span class="pre">from_single_analysis_geo()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.graphic_container"><code class="docutils literal notranslate"><span class="pre">graphic_container()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.move"><code class="docutils literal notranslate"><span class="pre">move()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.remove_geometry"><code class="docutils literal notranslate"><span class="pre">remove_geometry()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.rotate_xy"><code class="docutils literal notranslate"><span class="pre">rotate_xy()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.to_dict"><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.to_json"><code class="docutils literal notranslate"><span class="pre">to_json()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.to_pkl"><code class="docutils literal notranslate"><span class="pre">to_pkl()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.UNITS"><code class="docutils literal notranslate"><span class="pre">UNITS</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.display_name"><code class="docutils literal notranslate"><span class="pre">display_name</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.full_id"><code class="docutils literal notranslate"><span class="pre">full_id</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.geometry"><code class="docutils literal notranslate"><span class="pre">geometry</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.identifier"><code class="docutils literal notranslate"><span class="pre">identifier</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.max_point"><code class="docutils literal notranslate"><span class="pre">max_point</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.min_point"><code class="docutils literal notranslate"><span class="pre">min_point</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.units"><code class="docutils literal notranslate"><span class="pre">units</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../ladybug_display.visualization.html#ladybug_display.visualization.VisualizationSet.user_data"><code class="docutils literal notranslate"><span class="pre">user_data</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ladybug_display.html#module-ladybug_display">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../ladybug_display.html">ladybug_display package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../ladybug_display.html">ladybug_display package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for ladybug_display.geometry2d.polygon</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;A polygon that can be displayed in 2D space.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">ladybug_geometry.geometry2d.polygon</span> <span class="kn">import</span> <span class="n">Polygon2D</span>
+<span class="kn">from</span> <span class="nn">ladybug.color</span> <span class="kn">import</span> <span class="n">Color</span>
+
+<span class="kn">from</span> <span class="nn">ladybug_display.altnumber</span> <span class="kn">import</span> <span class="n">default</span>
+<span class="kn">from</span> <span class="nn">._base</span> <span class="kn">import</span> <span class="n">_LineCurveBase2D</span>
+
+
+<div class="viewcode-block" id="DisplayPolygon2D">
+<a class="viewcode-back" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D">[docs]</a>
+<span class="k">class</span> <span class="nc">DisplayPolygon2D</span><span class="p">(</span><span class="n">_LineCurveBase2D</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A polygon in 2D space with display properties.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        geometry: A ladybug-geometry Polygon2D object.</span>
+<span class="sd">        color: A ladybug Color object. If None, a default black color will be</span>
+<span class="sd">            used. (Default: None).</span>
+<span class="sd">        line_width: Number for line width in pixels (for the screen). For print,</span>
+<span class="sd">            this will be converted a value in millimeters or inches assuming</span>
+<span class="sd">            standard web resolution (72 pixels per inch). This can also be the</span>
+<span class="sd">            Default object to indicate that the default settings of the</span>
+<span class="sd">            interface should be used (typically one pixel).</span>
+<span class="sd">        line_type: Get or set text to indicate the type of line to display.</span>
+<span class="sd">            Choose from the following. (Default: &quot;Continuous&quot;)</span>
+
+<span class="sd">            * Continuous</span>
+<span class="sd">            * Dashed</span>
+<span class="sd">            * Dotted</span>
+<span class="sd">            * DashDot</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * geometry</span>
+<span class="sd">        * color</span>
+<span class="sd">        * line_width</span>
+<span class="sd">        * line_type</span>
+<span class="sd">        * vertices</span>
+<span class="sd">        * segments</span>
+<span class="sd">        * min</span>
+<span class="sd">        * max</span>
+<span class="sd">        * center</span>
+<span class="sd">        * perimeter</span>
+<span class="sd">        * area</span>
+<span class="sd">        * is_clockwise</span>
+<span class="sd">        * is_convex</span>
+<span class="sd">        * is_self_intersecting</span>
+<span class="sd">        * user_data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">line_width</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="n">line_type</span><span class="o">=</span><span class="s1">&#39;Continuous&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize base with shade object.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">Polygon2D</span><span class="p">),</span> <span class="s1">&#39;</span><span class="se">\</span>
+<span class="s1">            Expected ladybug_geometry Polygon2D. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">geometry</span><span class="p">))</span>
+        <span class="n">_LineCurveBase2D</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">line_width</span><span class="p">,</span> <span class="n">line_type</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DisplayPolygon2D.from_dict">
+<a class="viewcode-back" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a DisplayPolygon2D from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A dictionary representation of an DisplayPolygon2D object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;DisplayPolygon2D&#39;</span><span class="p">,</span> \
+            <span class="s1">&#39;Expected DisplayPolygon2D dictionary. Got </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">Color</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="s1">&#39;color&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> \
+            <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">lw</span> <span class="o">=</span> <span class="n">default</span> <span class="k">if</span> <span class="s1">&#39;line_width&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">or</span> \
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;line_width&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">default</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">else</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;line_width&#39;</span><span class="p">]</span>
+        <span class="n">lt</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;line_type&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;line_type&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;line_type&#39;</span><span class="p">]</span> \
+            <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;Continuous&#39;</span>
+        <span class="n">geo</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">Polygon2D</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]),</span> <span class="n">color</span><span class="p">,</span> <span class="n">lw</span><span class="p">,</span> <span class="n">lt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;user_data&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_data&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">geo</span><span class="o">.</span><span class="n">user_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_data&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">geo</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a tuple of Point2Ds that make up the polygon.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">vertices</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">segments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a tuple of LineSegment2Ds that make up the polygon.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">segments</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">min</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a Point2D for the minimum of the bounding box around the object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">min</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">max</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a Point2D for the maximum of the bounding box around the object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">max</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a Point2D for the center of the bounding box around the object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">center</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">perimeter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a number for the perimeter of the polygon.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">perimeter</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a number for the area of the polygon.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">area</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_clockwise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a boolean for whether the polygon is clockwise.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">is_clockwise</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_convex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a boolean for whether the polygon is convex.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">is_convex</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_self_intersecting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a boolean for whether the polygon is self intersecting.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">is_self_intersecting</span>
+
+<div class="viewcode-block" id="DisplayPolygon2D.to_dict">
+<a class="viewcode-back" href="../../../ladybug_display.geometry2d.polygon.html#ladybug_display.geometry2d.polygon.DisplayPolygon2D.to_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return DisplayPolygon2D as a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;DisplayPolygon2D&#39;</span><span class="p">}</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;line_width&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">if</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">line_width</span> <span class="o">==</span> <span class="n">default</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_width</span>
+        <span class="n">base</span><span class="p">[</span><span class="s1">&#39;line_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">base</span><span class="p">[</span><span class="s1">&#39;user_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span>
+        <span class="k">return</span> <span class="n">base</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">new_g</span> <span class="o">=</span> <span class="n">DisplayPolygon2D</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_type</span><span class="p">)</span>
+        <span class="n">new_g</span><span class="o">.</span><span class="n">_user_data</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_g</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;DisplayPolygon2D: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span></div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2024, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
