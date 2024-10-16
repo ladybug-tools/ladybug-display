@@ -38,28 +38,28 @@ def psychrometric_chart_to_vis_set(
         in the following order.
 
         -   Title -- A ContextGeometry for the title and border around the
-                psychrometric chart.
+            psychrometric chart.
 
         -   Temperature_Axis -- A ContextGeometry with lines and text for the
-                Temperature (X) axis of the psychrometric chart.
+            Temperature (X) axis of the psychrometric chart.
 
         -   Humidity_Axis -- A ContextGeometry with lines and text for the
-                Humidity (Y) axis of the psychrometric chart.
+            Humidity (Y) axis of the psychrometric chart.
 
         -   Relative_Humidity_Lines -- A ContextGeometry with lines and text
-                for the relative humidity of the psychrometric chart.
+            for the relative humidity of the psychrometric chart.
 
         -   Enthalpy_Lines -- A ContextGeometry with lines and text for the
-                enthalpy of the psychrometric chart. This layer will not be
-                included if plot_wet_bulb is True.
+            enthalpy of the psychrometric chart. This layer will not be
+            included if plot_wet_bulb is True.
 
         -   Wet_Bulb_Lines -- A ContextGeometry with lines and text for the wet bulb
-                temperature of the psychrometric chart. This layer will not be
-                included if plot_wet_bulb is False.
+            temperature of the psychrometric chart. This layer will not be
+            included if plot_wet_bulb is False.
 
         -   Analysis_Data -- An AnalysisGeometry for the data on the psychrometric
-                chart. This will include multiple data sets if the data input
-                is provided.
+            chart. This will include multiple data sets if the data input
+            is provided.
     """
     # establish the VisualizationSet object
     vis_set = VisualizationSet('Psychrometric_Chart', ())

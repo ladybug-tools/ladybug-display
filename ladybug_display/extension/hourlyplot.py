@@ -26,13 +26,13 @@ def hourly_plot_to_vis_set(
         (and an AnalysisGeometry). This includes these objects in the following order.
 
         -   Hour_Axis -- A ContextGeometry with lines and text for the hour-of-the-day
-                axis of the hourly plot.
+            axis of the hourly plot.
 
         -   Month_Axis -- A ContextGeometry with lines and text for the month-of-the-year
-                axis of the hourly plot.
+            axis of the hourly plot.
 
         -   Title -- A ContextGeometry with text for the title of the hourly plot.
-                This layer will be excluded if include_title is False.
+            This layer will be excluded if include_title is False.
 
         -   Analysis_Data -- An AnalysisGeometry for the data on the hourly plot.
     """

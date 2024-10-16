@@ -31,10 +31,10 @@ def radiation_rose_to_vis_set(
         -   Compass -- A ContextGeometry for the Compass at the base of the rose.
 
         -   Orientation_Lines -- A ContextGeometry with lines representing the
-                edges (or "spokes") of the wind rose directions.
+            edges (or "spokes") of the wind rose directions.
 
         -   Title -- A ContextGeometry with text for the title of the rose.
-                This layer will be excluded if include_title is False.
+            This layer will be excluded if include_title is False.
 
         -   Radiation_Data -- An AnalysisGeometry for the radiation rose data.
     """

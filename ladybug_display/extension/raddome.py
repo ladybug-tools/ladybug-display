@@ -24,10 +24,10 @@ def radiation_dome_to_vis_set(radiation_dome, show_components=False, include_tit
         -   Compass -- A ContextGeometry for the Compass at the base of the dome.
 
         -   Max_Info -- A ContextGeometry with a Point and text for the maximum
-                radiation occurring on the dome.
+            radiation occurring on the dome.
 
         -   Title -- A ContextGeometry with text for the title of the dome.
-                This layer will be excluded if include_title is False.
+            This layer will be excluded if include_title is False.
 
         -   Radiation_Data -- An AnalysisGeometry for the radiation dome data.
     """

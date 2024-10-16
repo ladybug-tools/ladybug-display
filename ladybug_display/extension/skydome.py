@@ -24,7 +24,7 @@ def sky_dome_to_vis_set(sky_dome, show_components=False, include_title=True):
         -   Compass -- A ContextGeometry for the Compass at the base of the sky dome.
 
         -   Title -- A ContextGeometry with text for the title of the sky dome.
-                This layer will be excluded if include_title is False.
+            This layer will be excluded if include_title is False.
 
         -   Radiation_Data -- An AnalysisGeometry for the sky dome data.
     """

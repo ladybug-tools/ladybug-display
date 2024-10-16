@@ -43,8 +43,8 @@ def sunpath_to_vis_set(
             dome hemisphere to the 2D plane. If None, a 3D sun path will be drawn
             instead of a 2D one. (Default: None) Choose from the following:
 
-                * Orthographic
-                * Stereographic
+            * Orthographic
+            * Stereographic
 
         sun_spheres: Boolean to note whether sun positions should be drawn as points
             or as fully-detailed spheres. Note that this option should only be
@@ -59,14 +59,14 @@ def sunpath_to_vis_set(
         -   Compass -- A ContextGeometry for the Compass at the base of the sunpath.
 
         -   Analemmas -- A ContextGeometry for the analemmas of the sunpath (if
-                the daily input is False).
+            the daily input is False).
 
         -   Daily_Arcs -- A ContextGeometry for the daily arcs across the sunpath.
 
         -   Sun_Positions -- Either a ContextGeometry or an AnalysisGeometry for
-                the sun positions (if hoys are input). The object will be an
-                AnalysisGeometry if data is input, indicating that suns are colored
-                with this data.
+            the sun positions (if hoys are input). The object will be an
+            AnalysisGeometry if data is input, indicating that suns are colored
+            with this data.
     """
     # establish the VisualizationSet object
     vis_set = VisualizationSet(

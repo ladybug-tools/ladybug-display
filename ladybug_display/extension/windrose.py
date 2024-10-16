@@ -28,10 +28,10 @@ def wind_rose_to_vis_set(windrose, z=0, frequency_labels=True):
         -   Compass -- A ContextGeometry for the Compass at the base of the wind rose.
 
         -   Orientation_Lines -- A ContextGeometry with lines representing the
-                edges (or "spokes") of the wind rose directions.
+            edges (or "spokes") of the wind rose directions.
 
         -   Frequency_Lines -- A ContextGeometry with polygons representing
-                the frequency intervals of the wind rose.
+            the frequency intervals of the wind rose.
 
         -   Analysis_Data -- An AnalysisGeometry for the wind rose data.
     """

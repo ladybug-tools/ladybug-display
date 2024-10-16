@@ -42,16 +42,16 @@ def compass_to_vis_set(compass, z=0, custom_angles=None, projection=None, font='
         -   major_azimuth_text -- Text objects for the major azimuth labels.
 
         -   minor_azimuth_ticks -- Line objects for the minor azimuth labels
-                (if applicable).
+            (if applicable).
 
         -   minor_azimuth_text -- Text objects for the minor azimuth
-                labels (if applicable).
+            labels (if applicable).
 
         -   altitude_circles -- Circle objects for altitude labels (if projection
-                is not None).
+            is not None).
 
         -   altitude_text -- Text objects for altitude labels (if projection
-                is not None).
+            is not None).
 
      """
     # set default variables based on the compass properties

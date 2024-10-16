@@ -33,19 +33,19 @@ def monthly_chart_to_vis_set(
         (and an AnalysisGeometry). This includes these objects in the following order.
 
         -   X_Axis -- A ContextGeometry with lines and text for the X axis of
-                the monthly chart.
+            the monthly chart.
 
         -   Y_Axis -- A ContextGeometry with lines and text for the Y axis of
-                the monthly chart.
+            the monthly chart.
 
         -   Y_Axis2 -- A ContextGeometry with lines and text for the second Y axis
-                of the monthly chart.
+            of the monthly chart.
 
         -   Title -- A ContextGeometry with text for the title of the monthly chart.
 
         -   Data_Outlines -- A ContextGeometry with a list of polylines that outline
-                the input data. These will represent the average or total at
-                each hour whenever the input data is hourly or monthly-per-hour data.
+            the input data. These will represent the average or total at
+            each hour whenever the input data is hourly or monthly-per-hour data.
 
         -   Analysis_Data -- An AnalysisGeometry for the data on the monthly chart.
     """
