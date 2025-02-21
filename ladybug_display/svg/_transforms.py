@@ -1,8 +1,5 @@
-from __future__ import annotations
-
-from dataclasses import dataclass
-
-from ._types import Number
+"""Classes for representing Transforms."""
+from ._types import _number
 
 
 class Transform:
@@ -12,83 +9,96 @@ class Transform:
     pass
 
 
-@dataclass
 class Matrix(Transform):
     """
     https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/transform#matrix
     """
-    a: Number
-    b: Number
-    c: Number
-    d: Number
-    e: Number
-    f: Number
+    __slots__ = ('a', 'b', 'c', 'd', 'e', 'f')
+
+    def __init__(self, a, b, c, d, e, f):
+        self.a = _number(a, 'a')
+        self.b = _number(b, 'b')
+        self.c = _number(c, 'c')
+        self.d = _number(d, 'd')
+        self.e = _number(e, 'e')
+        self.f = _number(f, 'f')
 
     def __str__(self):
-        return f'matrix({self.a} {self.b} {self.c} {self.d} {self.e} {self.f})'
+        return 'matrix({} {} {} {} {} {})'.format(
+            self.a, self.b, self.c, self.d, self.e, self.f)
 
 
-@dataclass
 class Translate(Transform):
     """
     https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/transform#translate
     """
-    x: Number
-    y: Number | None = None
+    __slots__ = ('x', 'y')
+
+    def __init__(self, x, y=None):
+        self.x = _number(x, 'x')
+        self.y = _number(y, 'y', True)
 
     def __str__(self):
         if self.y is None:
-            return f'translate({self.x})'
-        return f'translate({self.x} {self.y})'
+            return 'translate({})'.format(self.x)
+        return 'translate({} {})'.format(self.x, self.y)
 
 
-@dataclass
 class Scale(Transform):
     """
     https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/transform#scale
     """
-    x: Number
-    y: Number | None = None
+    __slots__ = ('x', 'y')
+
+    def __init__(self, x, y=None):
+        self.x = _number(x, 'x')
+        self.y = _number(y, 'y', True)
 
     def __str__(self):
         if self.y is None:
-            return f'scale({self.x})'
-        return f'scale({self.x} {self.y})'
+            return 'scale({})'.format(self.x)
+        return 'scale({} {})'.format(self.x, self.y)
 
 
-@dataclass
 class Rotate(Transform):
     """
     https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/transform#rotate
     """
-    a: Number
-    x: Number | None = None
-    y: Number | None = None
+    __slots__ = ('a', 'x', 'y')
+
+    def __init__(self, a, x=None, y=None):
+        self.a = _number(a, 'a')
+        self.x = _number(x, 'x', True)
+        self.y = _number(y, 'y', True)
 
     def __str__(self):
         if self.x is None:
-            return f'rotate({self.a})'
+            return 'rotate({})'.format(self.a)
         assert self.y is not None
-        return f'rotate({self.a} {self.x} {self.y})'
+        return 'rotate({} {} {})'.format(self.a, self.x, self.y)
 
 
-@dataclass
 class SkewX(Transform):
     """
     https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/transform#skewx
     """
-    a: Number
+    __slots__ = ('a',)
+
+    def __init__(self, a):
+        self.a = _number(a, 'a')
 
     def __str__(self):
-        return f'skewX({self.a})'
+        return 'skewX({})'.format(self.a)
 
 
-@dataclass
 class SkewY(Transform):
     """
     https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/transform#skewy
     """
-    a: Number
+    __slots__ = ('a',)
+
+    def __init__(self, a):
+        self.a = _number(a, 'a')
 
     def __str__(self):
-        return f'skewY({self.a})'
+        return 'skewY({})'.format(self.a)

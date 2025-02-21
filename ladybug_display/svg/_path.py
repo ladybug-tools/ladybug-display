@@ -1,5 +1,5 @@
 """Classes for representing Path data."""
-from ._types import Number
+from ._types import _number
 
 
 class PathData:
@@ -8,7 +8,7 @@ class PathData:
     """
     __slots__ = ()
 
-    def __str__(self) -> str:
+    def __str__(self):
         points = []
         attr = (getattr(self, prop) for prop in self.__slots__)
         for p in attr:
@@ -16,7 +16,7 @@ class PathData:
                 p = int(p)
             points.append(str(p))
         joined = ' '.join(points)
-        return f'{self.command} {joined}'
+        return '{} {}'.format(self.command, joined)
 
 
 class MoveTo(PathData):
@@ -27,10 +27,8 @@ class MoveTo(PathData):
     __slots__ = ('x', 'y')
 
     def __init__(self, x, y):
-        assert isinstance(x, Number), 'Expected number for x. Got {}.'.format(type(x))
-        assert isinstance(y, Number), 'Expected number for y. Got {}.'.format(type(y))
-        self.x = x
-        self.y = y
+        self.x = _number(x, 'x')
+        self.y = _number(y, 'y')
 
 
 class MoveToRel(PathData):
@@ -41,10 +39,8 @@ class MoveToRel(PathData):
     __slots__ = ('dx', 'dy')
 
     def __init__(self, dx, dy):
-        assert isinstance(dx, Number), 'Expected number for dx. Got {}.'.format(type(dx))
-        assert isinstance(dy, Number), 'Expected number for dy. Got {}.'.format(type(dy))
-        self.dx = dx
-        self.dy = dy
+        self.dx = _number(dx, 'dx')
+        self.dy = _number(dy, 'dy')
 
 
 class LineTo(PathData):
@@ -55,10 +51,8 @@ class LineTo(PathData):
     __slots__ = ('x', 'y')
 
     def __init__(self, x, y):
-        assert isinstance(x, Number), 'Expected number for x. Got {}.'.format(type(x))
-        assert isinstance(y, Number), 'Expected number for y. Got {}.'.format(type(y))
-        self.x = x
-        self.y = y
+        self.x = _number(x, 'x')
+        self.y = _number(y, 'y')
 
 
 class LineToRel(PathData):
@@ -69,10 +63,8 @@ class LineToRel(PathData):
     __slots__ = ('dx', 'dy')
 
     def __init__(self, dx, dy):
-        assert isinstance(dx, Number), 'Expected number for dx. Got {}.'.format(type(dx))
-        assert isinstance(dy, Number), 'Expected number for dy. Got {}.'.format(type(dy))
-        self.dx = dx
-        self.dy = dy
+        self.dx = _number(dx, 'dx')
+        self.dy = _number(dy, 'dy')
 
 
 class HorizontalLineTo(PathData):
@@ -83,8 +75,7 @@ class HorizontalLineTo(PathData):
     __slots__ = ('x',)
 
     def __init__(self, x):
-        assert isinstance(x, Number), 'Expected number for x. Got {}.'.format(type(x))
-        self.x = x
+        self.x = _number(x, 'x')
 
 
 class HorizontalLineToRel(PathData):
@@ -95,8 +86,7 @@ class HorizontalLineToRel(PathData):
     __slots__ = ('dx',)
 
     def __init__(self, dx):
-        assert isinstance(dx, Number), 'Expected number for dx. Got {}.'.format(type(dx))
-        self.dx = dx
+        self.dx = _number(dx, 'dx')
 
 
 class VerticalLineTo(PathData):
@@ -107,8 +97,7 @@ class VerticalLineTo(PathData):
     __slots__ = ('y',)
 
     def __init__(self, y):
-        assert isinstance(y, Number), 'Expected number for y. Got {}.'.format(type(y))
-        self.y = y
+        self.y = _number(y, 'y')
 
 
 class VerticalLineToRel(PathData):
@@ -119,8 +108,7 @@ class VerticalLineToRel(PathData):
     __slots__ = ('dy',)
 
     def __init__(self, dy):
-        assert isinstance(dy, Number), 'Expected number for dy. Got {}.'.format(type(dy))
-        self.dy = dy
+        self.dy = _number(dy, 'dy')
 
 
 class CubicBezier(PathData):
@@ -131,18 +119,12 @@ class CubicBezier(PathData):
     __slots__ = ('x1', 'y1', 'x2', 'y2', 'x', 'y')
 
     def __init__(self, x1, y1, x2, y2, x, y):
-        assert isinstance(x1, Number), 'Expected number for x1. Got {}.'.format(type(x1))
-        assert isinstance(y1, Number), 'Expected number for y1. Got {}.'.format(type(y1))
-        assert isinstance(x2, Number), 'Expected number for x2. Got {}.'.format(type(x2))
-        assert isinstance(y2, Number), 'Expected number for y2. Got {}.'.format(type(y2))
-        assert isinstance(x, Number), 'Expected number for x. Got {}.'.format(type(x))
-        assert isinstance(y, Number), 'Expected number for y. Got {}.'.format(type(y))
-        self.x1 = x1
-        self.y1 = y1
-        self.x2 = x2
-        self.y2 = y2
-        self.x = x
-        self.y = y
+        self.x1 = _number(x1, 'x1')
+        self.y1 = _number(y1, 'y1')
+        self.x2 = _number(x2, 'x2')
+        self.y2 = _number(y2, 'y2')
+        self.x = _number(x, 'x')
+        self.y = _number(y, 'x')
 
 
 class CubicBezierRel(PathData):
@@ -153,18 +135,12 @@ class CubicBezierRel(PathData):
     __slots__ = ('dx1', 'dy1', 'dx2', 'dy2', 'dx', 'dy')
 
     def __init__(self, dx1, dy1, dx2, dy2, dx, dy):
-        assert isinstance(dx1, Number), 'Expected number for dx1. Got {}.'.format(type(dx1))
-        assert isinstance(dy1, Number), 'Expected number for dy1. Got {}.'.format(type(dy1))
-        assert isinstance(dx2, Number), 'Expected number for dx2. Got {}.'.format(type(dx2))
-        assert isinstance(dy2, Number), 'Expected number for dy2. Got {}.'.format(type(dy2))
-        assert isinstance(dx, Number), 'Expected number for dx. Got {}.'.format(type(dx))
-        assert isinstance(dy, Number), 'Expected number for dy. Got {}.'.format(type(dy))
-        self.dx1 = dx1
-        self.dy1 = dy1
-        self.dx2 = dx2
-        self.dy2 = dy2
-        self.dx = dx
-        self.dy = dy
+        self.dx1 = _number(dx1, 'dx1')
+        self.dy1 = _number(dy1, 'dy1')
+        self.dx2 = _number(dx2, 'dx2')
+        self.dy2 = _number(dy2, 'dy2')
+        self.dx = _number(dx, 'dx')
+        self.dy = _number(dy, 'dy')
 
 
 class SmoothCubicBezier(PathData):
@@ -175,14 +151,10 @@ class SmoothCubicBezier(PathData):
     __slots__ = ('x2', 'y2', 'x', 'y')
 
     def __init__(self, x2, y2, x, y):
-        assert isinstance(x2, Number), 'Expected number for x2. Got {}.'.format(type(x2))
-        assert isinstance(y2, Number), 'Expected number for y2. Got {}.'.format(type(y2))
-        assert isinstance(x, Number), 'Expected number for x. Got {}.'.format(type(x))
-        assert isinstance(y, Number), 'Expected number for y. Got {}.'.format(type(y))
-        self.x2 = x2
-        self.y2 = y2
-        self.x = x
-        self.y = y
+        self.x2 = _number(x2, 'x2')
+        self.y2 = _number(y2, 'y2')
+        self.x = _number(x, 'x')
+        self.y = _number(y, 'x')
 
 
 class SmoothCubicBezierRel(PathData):
@@ -193,14 +165,10 @@ class SmoothCubicBezierRel(PathData):
     __slots__ = ('dx2', 'dy2', 'dx', 'dy')
 
     def __init__(self, dx2, dy2, dx, dy):
-        assert isinstance(dx2, Number), 'Expected number for dx2. Got {}.'.format(type(dx2))
-        assert isinstance(dy2, Number), 'Expected number for dy2. Got {}.'.format(type(dy2))
-        assert isinstance(dx, Number), 'Expected number for dx. Got {}.'.format(type(dx))
-        assert isinstance(dy, Number), 'Expected number for dy. Got {}.'.format(type(dy))
-        self.dx2 = dx2
-        self.dy2 = dy2
-        self.dx = dx
-        self.dy = dy
+        self.dx2 = _number(dx2, 'dx2')
+        self.dy2 = _number(dy2, 'dy2')
+        self.dx = _number(dx, 'dx')
+        self.dy = _number(dy, 'dy')
 
 
 class QuadraticBezier(PathData):
@@ -211,14 +179,10 @@ class QuadraticBezier(PathData):
     __slots__ = ('x1', 'y1', 'x', 'y')
 
     def __init__(self, x1, y1, x, y):
-        assert isinstance(x1, Number), 'Expected number for x1. Got {}.'.format(type(x1))
-        assert isinstance(y1, Number), 'Expected number for y1. Got {}.'.format(type(y1))
-        assert isinstance(x, Number), 'Expected number for x. Got {}.'.format(type(x))
-        assert isinstance(y, Number), 'Expected number for y. Got {}.'.format(type(y))
-        self.x1 = x1
-        self.y1 = y1
-        self.x = x
-        self.y = y
+        self.x1 = _number(x1, 'x1')
+        self.y1 = _number(y1, 'y1')
+        self.x = _number(x, 'x')
+        self.y = _number(y, 'x')
 
 
 class QuadraticBezierRel(PathData):
@@ -229,14 +193,10 @@ class QuadraticBezierRel(PathData):
     __slots__ = ('dx1', 'dy1', 'dx', 'dy')
 
     def __init__(self, dx1, dy1, dx, dy):
-        assert isinstance(dx1, Number), 'Expected number for dx1. Got {}.'.format(type(dx1))
-        assert isinstance(dy1, Number), 'Expected number for dy1. Got {}.'.format(type(dy1))
-        assert isinstance(dx, Number), 'Expected number for dx. Got {}.'.format(type(dx))
-        assert isinstance(dy, Number), 'Expected number for dy. Got {}.'.format(type(dy))
-        self.dx1 = dx1
-        self.dy1 = dy1
-        self.dx = dx
-        self.dy = dy
+        self.dx1 = _number(dx1, 'dx1')
+        self.dy1 = _number(dy1, 'dy1')
+        self.dx = _number(dx, 'dx')
+        self.dy = _number(dy, 'dy')
 
 
 class SmoothQuadraticBezier(PathData):
@@ -247,10 +207,8 @@ class SmoothQuadraticBezier(PathData):
     __slots__ = ('x', 'y')
 
     def __init__(self, x, y):
-        assert isinstance(x, Number), 'Expected number for x. Got {}.'.format(type(x))
-        assert isinstance(y, Number), 'Expected number for y. Got {}.'.format(type(y))
-        self.x = x
-        self.y = y
+        self.x = _number(x, 'x')
+        self.y = _number(y, 'x')
 
 
 class SmoothQuadraticBezierRel(PathData):
@@ -261,10 +219,8 @@ class SmoothQuadraticBezierRel(PathData):
     __slots__ = ('dx', 'dy')
 
     def __init__(self, dx, dy):
-        assert isinstance(dx, Number), 'Expected number for dx. Got {}.'.format(type(dx))
-        assert isinstance(dy, Number), 'Expected number for dy. Got {}.'.format(type(dy))
-        self.dx = dx
-        self.dy = dy
+        self.dx = _number(dx, 'dx')
+        self.dy = _number(dy, 'dy')
 
 
 class Arc(PathData):
@@ -275,18 +231,13 @@ class Arc(PathData):
     __slots__ = ('rx', 'ry', 'angle', 'large_arc', 'sweep', 'x', 'y')
 
     def __init__(self, rx, ry, angle, large_arc, sweep, x, y):
-        assert isinstance(rx, Number), 'Expected number for rx. Got {}.'.format(type(rx))
-        assert isinstance(ry, Number), 'Expected number for ry. Got {}.'.format(type(ry))
-        assert isinstance(angle, Number), 'Expected number for angle. Got {}.'.format(type(angle))
-        assert isinstance(x, Number), 'Expected number for x. Got {}.'.format(type(x))
-        assert isinstance(y, Number), 'Expected number for y. Got {}.'.format(type(y))
-        self.rx = rx
-        self.ry = ry
-        self.angle = angle
+        self.rx = _number(rx, 'rx')
+        self.ry = _number(ry, 'rx')
+        self.angle = _number(angle, 'angle')
         self.large_arc = bool(large_arc)
         self.sweep = bool(sweep)
-        self.x = x
-        self.y = y
+        self.x = _number(x, 'x')
+        self.y = _number(y, 'x')
 
 
 class ArcRel(PathData):
@@ -294,21 +245,16 @@ class ArcRel(PathData):
     https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
     """
     command = 'a'
-    __slots__ = ('rx', 'ry', 'angle', 'large_arc', 'sweep', 'x', 'y')
+    __slots__ = ('rx', 'ry', 'angle', 'large_arc', 'sweep', 'dx', 'dy')
 
-    def __init__(self, rx, ry, angle, large_arc, sweep, x, y):
-        assert isinstance(rx, Number), 'Expected number for rx. Got {}.'.format(type(rx))
-        assert isinstance(ry, Number), 'Expected number for ry. Got {}.'.format(type(ry))
-        assert isinstance(angle, Number), 'Expected number for angle. Got {}.'.format(type(angle))
-        assert isinstance(x, Number), 'Expected number for x. Got {}.'.format(type(x))
-        assert isinstance(y, Number), 'Expected number for y. Got {}.'.format(type(y))
-        self.rx = rx
-        self.ry = ry
-        self.angle = angle
+    def __init__(self, rx, ry, angle, large_arc, sweep, dx, dy):
+        self.rx = _number(rx, 'rx')
+        self.ry = _number(ry, 'rx')
+        self.angle = _number(angle, 'angle')
         self.large_arc = bool(large_arc)
         self.sweep = bool(sweep)
-        self.x = x
-        self.y = y
+        self.dx = _number(dx, 'dx')
+        self.dy = _number(dy, 'dy')
 
 
 class ClosePath(PathData):
