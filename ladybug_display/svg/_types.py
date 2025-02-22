@@ -13,6 +13,13 @@ class Length(object):
         self.value = _number(value, 'value')
         self.unit = _str_enum(unit, self.UNITS, 'units')
 
+    @classmethod
+    def from_str(cls, length_str):
+        """Initialize Length from a length string."""
+        for unit in cls.UNITS:
+            if length_str.endswith(unit):
+                return cls(float(length_str.replace(length_str, '')), unit)
+
     def __str__(self):
         return '{}{}'.format(self.value, self.unit)
 
