@@ -18,8 +18,8 @@ from ._transforms import (
 )
 from ._types import Length, PreserveAspectRatio, ViewBoxSpec
 from .elements import (
-    SVG, Circle, Defs, Desc, Element,
-    G, Image, Path,
-    Rect, Style,
-    Switch, Symbol, Title
+    SVG, Circle, ClipPath, Defs, Desc, Element, Ellipse,
+    G, Image, Line, LinearGradient, Marker, Mask, Path,
+    Polygon, Polyline, RadialGradient, Rect, Stop, Style,
+    Switch, Symbol, Text, TextPath, Title, TSpan
 )

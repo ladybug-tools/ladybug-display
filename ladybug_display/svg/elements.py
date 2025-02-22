@@ -543,7 +543,7 @@ class Text(Element, _TextElement):
         self.y = _number_or_length(y, 'y', True)
         self.dx = _number_or_length(dx, 'width', True)
         self.dy = _number_or_length(dy, 'height', True)
-        self.textLength = _number_or_length(textLength, 'rx', True)
+        self.textLength = _number_or_length(textLength, 'textLength', True)
         self.lengthAdjust = _str_enum(lengthAdjust, LENGTH_ADJUSTS, 'lengthAdjust', True)
         self.writing_mode = _str_enum(writing_mode, WRITING_MODES, 'writing_mode', True)
         self.text_rendering = _str_enum(text_rendering, self.RENDERINGS, 'text_rendering', True)
