@@ -1,6 +1,7 @@
 # coding=utf-8
 """Class for representing geometry colored with data according to legend parameters."""
 from __future__ import division
+import uuid
 
 from ladybug_geometry.geometry2d import Vector2D, Point2D, Ray2D, LineSegment2D, \
     Polyline2D, Arc2D, Polygon2D, Mesh2D
@@ -788,9 +789,10 @@ class VisualizationData(VisualizationMetaData):
             base['user_data'] = self.user_data
         return base
 
-    def to_svg_object(self, width=800, height=600):
+    def to_svg(self, width=800, height=600):
         """Get the legend of the visualization data as an editable SVG object.
 
+        Casting this SVG object to string will give the file contents of a SVG.
         The legend will be rendered using the properties2d of the LegendParameters,
         which is suitable for exporting the legend as a standalone graphic.
 
@@ -806,54 +808,70 @@ class VisualizationData(VisualizationMetaData):
         or_x, or_y, sh, sw, th = legend._pixel_dims_2d(width, height)
         elements = []  # list to hold all of the elements of the legend
 
+        # draw a border around the whole legend bar
+        lh = sh * l_par.segment_count if l_par.vertical else sh
+        lw = sw if l_par.vertical else sw * l_par.segment_count
+        if l_par.continuous_legend:
+            if l_par.vertical:
+                lh = lh - sh
+            else:
+                lw = lw - sw
+        bound_rect = svg.Rect(x=or_x, y=or_y, height=lh, width=lw, fill='none')
+        bound_rect.stroke = 'black'
+        bound_rect.stroke_width = 1
+
         # translate the colors of the legend to SVG shapes
+        colors = list(reversed(legend.segment_colors)) \
+            if l_par.vertical else legend.segment_colors
         if not l_par.continuous_legend:  # output segments as colored rectangles
-            colors = legend.segment_colors
             for i, col in enumerate(colors):
                 rect = svg.Rect(x=or_x, y=or_y, height=sh, width=sw, fill=col.to_hex())
                 move = svg.Translate(x=0, y=sh * i) if l_par.vertical else \
-                    svg.Translate(x=sw * 1, y=0)
+                    svg.Translate(x=sw * i, y=0)
                 rect.transform = move
                 elements.append(rect)
+        else:
+            gradient = svg.LinearGradient()
+            gradient.gradientUnits = 'objectBoundingBox'
+            gradient.id = 'legend_gradient_{}'.format(str(uuid.uuid4())[:8])
+            if l_par.vertical:
+                gradient.gradientTransform = svg.Rotate(90)
+            stop_colors = []
+            for i, col in enumerate(colors):
+                stop = svg.Stop(stop_color=col.to_hex())
+                stop.offset = '{}%'.format(int((i / len(colors)) * 100))
+                stop_colors.append(stop)
+            gradient.elements = stop_colors
+            elements.append(gradient)
+            bound_rect.fill = "url('#{}')".format(gradient.id)
+        elements.append(bound_rect)
 
         # translate the legend title
         t_pt = legend.title_location_2d(width, height)
         svg_txt = svg.Text(x=t_pt.x, y=t_pt.y)
         svg_txt.text = legend.title
         svg_txt.font_size = th
-        svg_txt.text_anchor = 'start'
         svg_txt.font_family = l_par.font
+        svg_txt.text_anchor = 'start'
+        svg_txt.dominant_baseline = 'hanging'
         elements.append(svg_txt)
 
         # translate the legend text for the values in the legend
         txt_pts = legend.segment_text_location_2d(width, height)
-        text_anchor = 'text_anchor' if l_par.vertical else 'start'
         for txt, loc in zip(legend.segment_text, txt_pts):
             svg_txt = svg.Text(x=loc.x, y=loc.y)
             svg_txt.text = txt
             svg_txt.font_size = th
-            svg_txt.text_anchor = text_anchor
             svg_txt.font_family = l_par.font
+            svg_txt.dominant_baseline = 'hanging'
+            if not l_par.vertical:
+                svg_txt.text_anchor = 'middle'
             elements.append(svg_txt)
 
         # combine everything into a final SVG object
         canvas = svg.SVG(width=width, height=height)
         canvas.elements = elements
         return canvas
-
-    def to_svg(self, width=800, height=600):
-        """Get the legend of the visualization data as an SVG string.
-
-        The legend will be rendered using the properties2d of the LegendParameters,
-        which is suitable for exporting the legend as a standalone graphic.
-
-        Args:
-            width: The screen width in pixels, which is needed to interpret
-                dimensions specified in the percent of the screen. (Default: 800).
-            height: The screen height in pixels, which is needed to interpret
-                dimensions specified in the percent of the screen. (Default: 600).
-        """
-        return str(self.to_svg_object(width, height))
 
     def duplicate(self):
         """Get a copy of this object."""
