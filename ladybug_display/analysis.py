@@ -828,18 +828,18 @@ class VisualizationData(VisualizationMetaData):
                 rect = svg.Rect(x=or_x, y=or_y, height=sh, width=sw, fill=col.to_hex())
                 move = svg.Translate(x=0, y=sh * i) if l_par.vertical else \
                     svg.Translate(x=sw * i, y=0)
-                rect.transform = move
+                rect.transform = [move]
                 elements.append(rect)
         else:
             gradient = svg.LinearGradient()
             gradient.gradientUnits = 'objectBoundingBox'
             gradient.id = 'legend_gradient_{}'.format(str(uuid.uuid4())[:8])
             if l_par.vertical:
-                gradient.gradientTransform = svg.Rotate(90)
+                gradient.gradientTransform = [svg.Rotate(90)]
             stop_colors = []
             for i, col in enumerate(colors):
                 stop = svg.Stop(stop_color=col.to_hex())
-                stop.offset = '{}%'.format(int((i / len(colors)) * 100))
+                stop.offset = svg.Length(int((i / len(colors)) * 100), '%')
                 stop_colors.append(stop)
             gradient.elements = stop_colors
             elements.append(gradient)
@@ -853,7 +853,7 @@ class VisualizationData(VisualizationMetaData):
         svg_txt.font_size = th
         svg_txt.font_family = l_par.font
         svg_txt.text_anchor = 'start'
-        svg_txt.dominant_baseline = 'hanging'
+        svg_txt.dominant_baseline = 'middle'
         elements.append(svg_txt)
 
         # translate the legend text for the values in the legend

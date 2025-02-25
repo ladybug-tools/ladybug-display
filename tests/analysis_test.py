@@ -7,7 +7,6 @@ from ladybug_display.analysis import VisualizationData
 def test_init_visualization_data_to_svg():
     """Test the translation of VisualizationData to SVG."""
     l_par = LegendParameters()
-    l_par.continuous_legend = True
     data = VisualizationData([0, 1, 2, 3], l_par, data_type=Temperature())
     svg_data = data.to_svg()
     assert len(str(svg_data)) > 300
@@ -18,4 +17,3 @@ def test_init_visualization_data_to_svg():
     data = VisualizationData([0, 1, 2, 3], l_par, data_type=Temperature())
     svg_data = data.to_svg()
     assert len(str(svg_data)) > 300
-    print(svg_data)
