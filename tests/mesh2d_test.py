@@ -43,3 +43,18 @@ def test_mesh2d_to_from_dict():
     new_mesh = DisplayMesh2D.from_dict(mesh_dict)
     assert isinstance(new_mesh, DisplayMesh2D)
     assert new_mesh.to_dict() == mesh_dict
+
+
+def test_mesh2d_to_svg():
+    """Test the translation of Mesh2D objects to SVG."""
+    pts = (Point2D(200, -50), Point2D(100, -50), Point2D(100, -100), Point2D(200, -100),
+           Point2D(150, -200))
+    mesh = Mesh2D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    mesh.colors = [Color(255, 0, 0), Color(0, 0, 255)]
+    svg_data = DisplayMesh2D.mesh2d_to_svg(mesh)
+    assert len(str(svg_data)) > 30
+
+    grey = Color(100, 100, 100, 125)
+    p_gon = DisplayMesh2D(mesh, grey, 'SurfaceWithEdges')
+    svg_data = p_gon.to_svg()
+    assert len(str(svg_data)) > 30

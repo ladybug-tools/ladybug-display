@@ -81,3 +81,15 @@ def test_reflect():
 
     pt_1.reflect(normal_1, origin_1)
     assert pt_1.geometry == Point2D(2, 0)
+
+
+def test_display_point2d_to_svg():
+    """Test the translation of Point2D objects to SVG."""
+    pt1 = Point2D(200, -100)
+    svg_data = DisplayPoint2D.point2d_to_svg(pt1)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    pt = DisplayPoint2D(pt1, red, radius=10)
+    svg_data = pt.to_svg()
+    assert len(str(svg_data)) > 30

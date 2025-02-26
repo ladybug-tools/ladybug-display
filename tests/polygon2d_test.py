@@ -7,7 +7,7 @@ from ladybug_display.altnumber import default
 
 
 def test_display_p_gon2d_init():
-    """Test the initialization of DisplayFace2D objects and basic properties."""
+    """Test the initialization of DisplayPolygon2D objects and basic properties."""
     grey = Color(100, 100, 100)
     pts = (Point2D(0, 0), Point2D(0, 2), Point2D(2, 2), Point2D(2, 0))
     p_gon = DisplayPolygon2D(Polygon2D(pts), grey)
@@ -33,7 +33,7 @@ def test_display_p_gon2d_init():
 
 
 def test_p_gon2d_to_from_dict():
-    """Test the to/from dict of Face2D objects."""
+    """Test the to/from dict of Polygon2D objects."""
     grey = Color(100, 100, 100)
     pts = (Point2D(0, 0), Point2D(0, 2), Point2D(2, 2), Point2D(2, 0))
     p_gon = DisplayPolygon2D(Polygon2D(pts), grey)
@@ -43,3 +43,16 @@ def test_p_gon2d_to_from_dict():
     new_p_gon = DisplayPolygon2D.from_dict(p_gon_dict)
     assert isinstance(new_p_gon, DisplayPolygon2D)
     assert new_p_gon.to_dict() == p_gon_dict
+
+
+def test_p_gon2d_to_svg():
+    """Test the translation of Polygon2D objects to SVG."""
+    pts = (Point2D(200, -100), Point2D(200, -50), Point2D(100, -50), Point2D(100, -100))
+    p_gon = Polygon2D(pts)
+    svg_data = DisplayPolygon2D.polygon2d_to_svg(p_gon)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    p_gon = DisplayPolygon2D(p_gon, red, line_width=2, line_type='Dashed')
+    svg_data = p_gon.to_svg()
+    assert len(str(svg_data)) > 30

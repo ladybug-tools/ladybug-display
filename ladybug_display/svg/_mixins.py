@@ -158,7 +158,7 @@ class FillStroke(AttrsMixin):
 
     @property
     def stroke_dasharray(self):
-        """[str]
+        """[list of numbers]
 
         https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
         """

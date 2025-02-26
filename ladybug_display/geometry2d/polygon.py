@@ -1,8 +1,12 @@
 """A polygon that can be displayed in 2D space."""
+from __future__ import division
+
 from ladybug_geometry.geometry2d.polygon import Polygon2D
 from ladybug.color import Color
 
 from ladybug_display.altnumber import default
+import ladybug_display.svg as svg
+from ladybug_display._base import DASH_ARRAYS
 from ._base import _LineCurveBase2D
 
 
@@ -132,6 +136,31 @@ class DisplayPolygon2D(_LineCurveBase2D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayPolygon2D as an SVG Element."""
+        element = self.polygon2d_to_svg(self.geometry)
+        element.stroke = self.color.to_hex()
+        if self.color.a != 255:
+            element.opacity = self.color.a / 255
+        if self.line_width != default:
+            element.stroke_width = self.line_width
+        if self.line_type != 'Continuous':
+            element.stroke_dasharray = DASH_ARRAYS[self.line_type]
+        return element
+
+    @staticmethod
+    def polygon2d_to_svg(polygon):
+        """SVG Polygon element from ladybug-geometry Polygon2D."""
+        points = []
+        for pt in polygon.vertices:
+            points.append(pt.x)
+            points.append(-pt.y)
+        element = svg.Polygon(points=points)
+        element.fill = 'none'
+        element.stroke = 'black'
+        element.stroke_width = 1
+        return element
 
     def __copy__(self):
         new_g = DisplayPolygon2D(

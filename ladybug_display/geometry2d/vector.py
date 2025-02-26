@@ -1,10 +1,12 @@
 """A vector that can be displayed in 2D space."""
+from __future__ import division
 import math
 
 from ladybug_geometry.geometry2d.pointvector import Vector2D
 from ladybug.color import Color
 
 from .._base import _DisplayBase
+import ladybug_display.svg as svg
 
 
 class DisplayVector2D(_DisplayBase):
@@ -120,6 +122,21 @@ class DisplayVector2D(_DisplayBase):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayVector2D as an SVG Element."""
+        element = self.point2d_to_svg(self.geometry)
+        element.fill = self.color.to_hex()
+        if self.color.a != 255:
+            element.opacity = self.color.a / 255
+        return element
+
+    @staticmethod
+    def vector2d_to_svg(point):
+        """SVG Circle element from ladybug-geometry Vector2D."""
+        element = element = svg.Circle(cx=point.x, cy=-point.y, r=5)
+        element.fill = 'black'
+        return element
 
     def __copy__(self):
         new_g = DisplayVector2D(self.geometry, self.color)
