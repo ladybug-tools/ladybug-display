@@ -22,7 +22,7 @@ def test_display_ray2d_init():
     assert ray.v == Vector2D(0, -2)
 
 
-def test_ray3_to_from_dict():
+def test_display_ray2d_to_from_dict():
     """Test the to/from dict of Ray2D objects."""
     grey = Color(100, 100, 100)
     pt = Point2D(2, 0)
@@ -32,3 +32,22 @@ def test_ray3_to_from_dict():
     new_ray = DisplayRay2D.from_dict(ray_dict)
     assert isinstance(new_ray, DisplayRay2D)
     assert new_ray.to_dict() == ray_dict
+
+
+def test_display_ray2d_to_svg():
+    """Test the translation of Ray2D objects to SVG."""
+    pt = Point2D(200, -100)
+    v = Point2D(-100, 50)
+    ray = Ray2D(pt, v)
+    svg_data = DisplayRay2D.ray2d_to_svg(ray)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    ray = DisplayRay2D(ray, red)
+    svg_data = ray.to_svg()
+    assert len(str(svg_data)) > 30
+
+    import ladybug_display.svg as svg
+    canvas = svg.SVG(width=800, height=600)
+    canvas.elements = [svg_data]
+    print(canvas)

@@ -53,3 +53,26 @@ def test_polyline2d_to_from_dict():
     new_pline = DisplayPolyline2D.from_dict(pline_dict)
     assert isinstance(new_pline, DisplayPolyline2D)
     assert new_pline.to_dict() == pline_dict
+
+
+def test_polyline2d_to_svg():
+    """Test the translation of Polyline2D objects to SVG."""
+    pts = (Point2D(200, -100), Point2D(200, -50), Point2D(100, -50), Point2D(100, -100))
+    p_line = Polyline2D(pts)
+    svg_data = DisplayPolyline2D.polyline2d_to_svg(p_line)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    p_line = DisplayPolyline2D(p_line, red, line_width=2, line_type='Dashed')
+    svg_data = p_line.to_svg()
+    assert len(str(svg_data)) > 30
+
+    p_line = Polyline2D(pts, interpolated=True)
+    p_line = DisplayPolyline2D(p_line, red, line_width=2, line_type='Dashed')
+    svg_data = p_line.to_svg()
+    assert len(str(svg_data)) > 30
+
+    import ladybug_display.svg as svg
+    canvas = svg.SVG(width=800, height=600)
+    canvas.elements = [svg_data]
+    print(canvas)

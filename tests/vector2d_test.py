@@ -51,3 +51,15 @@ def test_display_vector2d_angle():
     assert vec_1.angle(vec_3) == pytest.approx(180, rel=1e-3)
     assert vec_1.angle(vec_4) == pytest.approx(90, rel=1e-3)
     assert vec_1.angle(vec_1) == pytest.approx(0, rel=1e-3)
+
+
+def test_display_vector2d_to_svg():
+    """Test the translation of Vector2D objects to SVG."""
+    vec1 = Vector2D(200, -100)
+    svg_data = DisplayVector2D.vector2d_to_svg(vec1)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    pt = DisplayVector2D(vec1, red, radius=10)
+    svg_data = pt.to_svg()
+    assert len(str(svg_data)) > 30

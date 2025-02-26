@@ -1,8 +1,11 @@
 """A line segment that can be displayed in 2D space."""
+from __future__ import division
 from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug.color import Color
 
 from ladybug_display.altnumber import default
+import ladybug_display.svg as svg
+from ladybug_display._base import DASH_ARRAYS
 from ._base import _LineCurveBase2D
 
 
@@ -102,6 +105,26 @@ class DisplayLineSegment2D(_LineCurveBase2D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayLineSegment2D as an SVG Element."""
+        element = self.linesegment2d_to_svg(self.geometry)
+        element.stroke = self.color.to_hex()
+        if self.color.a != 255:
+            element.opacity = self.color.a / 255
+        if self.line_width != default:
+            element.stroke_width = self.line_width
+        if self.line_type != 'Continuous':
+            element.stroke_dasharray = DASH_ARRAYS[self.line_type]
+        return element
+
+    @staticmethod
+    def linesegment2d_to_svg(line):
+        """SVG Line element from ladybug-geometry LineSegment2D."""
+        element = svg.Line(x1=line.p1.x, y1=-line.p1.y, x2=line.p2.x, y2=-line.p2.y)
+        element.stroke = 'black'
+        element.stroke_width = 1
+        return element
 
     def __copy__(self):
         new_g = DisplayLineSegment2D(

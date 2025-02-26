@@ -40,7 +40,7 @@ def test_display_arc3d_init():
     assert arc.line_type == 'Dashed'
 
 
-def test_arc3_to_from_dict():
+def test_display_arc3d_to_from_dict():
     """Test the initialization of Arc3D objects and basic properties."""
     grey = Color(100, 100, 100)
     pt = Point3D(2, 0, 2)

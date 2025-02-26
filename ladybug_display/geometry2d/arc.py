@@ -1,8 +1,12 @@
 """An arc that can be displayed in 2D space."""
+from __future__ import division
+import math
 from ladybug_geometry.geometry2d.arc import Arc2D
 from ladybug.color import Color
 
 from ladybug_display.altnumber import default
+import ladybug_display.svg as svg
+from ladybug_display._base import DASH_ARRAYS
 from ._base import _LineCurveBase2D
 
 
@@ -108,6 +112,35 @@ class DisplayArc2D(_LineCurveBase2D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayArc2D as an SVG Element."""
+        element = self.arc2d_to_svg(self.geometry)
+        element.stroke = self.color.to_hex()
+        if self.color.a != 255:
+            element.opacity = self.color.a / 255
+        if self.line_width != default:
+            element.stroke_width = self.line_width
+        if self.line_type != 'Continuous':
+            element.stroke_dasharray = DASH_ARRAYS[self.line_type]
+        return element
+
+    @staticmethod
+    def arc2d_to_svg(arc):
+        """SVG Circle or Path element from ladybug-geometry Arc2D."""
+        if arc.is_circle:
+            element = svg.Circle(cx=arc.c.x, cy=-arc.c.y, r=arc.r)
+        else:
+            p1, p2, = arc.p1, arc.p2
+            start = svg.MoveTo(x=p1.x, y=-p1.y)
+            large_arc = arc.angle > math.pi
+            arc_path = svg.Arc(rx=arc.r, ry=arc.r, angle=0, large_arc=large_arc,
+                               sweep=arc.is_inverted, x=p2.x, y=-p2.y)
+            element = svg.Path(d=[start, arc_path])
+        element.fill = 'none'
+        element.stroke = 'black'
+        element.stroke_width = 1
+        return element
 
     def __copy__(self):
         new_g = DisplayArc2D(

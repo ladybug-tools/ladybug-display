@@ -2,8 +2,13 @@
 """Base class for all geometry objects."""
 from .typing import valid_string
 
-LINE_TYPES = ('Continuous', 'Dashed', 'Dotted', 'DashDot')
 DISPLAY_MODES = ('Surface', 'SurfaceWithEdges', 'Wireframe', 'Points')
+LINE_TYPES = ('Continuous', 'Dashed', 'Dotted', 'DashDot')
+DASH_ARRAYS = {
+    'Dashed': [8, 8],
+    'Dotted': [2, 2],
+    'DashDot': [8, 8, 2, 8]
+}
 
 
 class _DisplayBase(object):
