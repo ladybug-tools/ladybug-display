@@ -1,7 +1,12 @@
 """A cylinder that can be displayed in 3D space."""
-from ladybug_geometry.geometry3d.cylinder import Cylinder
+from __future__ import division
+
+from ladybug_geometry.geometry3d import Cylinder, LineSegment3D
 from ladybug.color import Color
 
+import ladybug_display.svg as svg
+from .line import DisplayLineSegment3D
+from .arc import DisplayArc3D
 from ._base import _SingleColorModeBase3D
 
 
@@ -97,6 +102,51 @@ class DisplayCylinder(_SingleColorModeBase3D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayFace3D as an SVG Element."""
+        # convert all of the geometry to polygons or points
+        element = self.cylinder_to_svg(self.geometry, self.display_mode)
+        if self.color != Color(0, 0, 0):
+            col = self.color.to_hex()
+            if self.display_mode == 'Wireframe':
+                for obj in element.elements:
+                    obj.stroke = col
+            else:
+                for obj in element.elements:
+                    if hasattr(obj, 'fill'):
+                        obj.fill = col
+            if self.color.a != 255:
+                element.opacity = self.color.a / 255
+        return element
+
+    @staticmethod
+    def cylinder_to_svg(cylinder, display_mode='Surface'):
+        """SVG Group of Path and line elements from ladybug-geometry Cylinder."""
+        # convert all of the geometry to polygons or points
+        geo = []
+        base1, base2 = cylinder.base_bottom, cylinder.base_top
+        base1_svg = DisplayArc3D.arc3d_to_svg(base1)
+        base2_svg = DisplayArc3D.arc3d_to_svg(base2)
+        if display_mode.startswith('Surface'):
+            base1_svg.fill = base2_svg.fill = 'grey'
+            if display_mode == 'Surface':
+                base1_svg.stroke_width = base2_svg.stroke_width = 0
+        geo.extend([base1_svg, base2_svg])
+        if display_mode != 'Points':
+            for pt1, pt2 in zip(base1.subdivide_evenly(30), base2.subdivide_evenly(30)):
+                line = LineSegment3D.from_end_points(pt1, pt2)
+                line_svg = DisplayLineSegment3D.linesegment3d_to_svg(line)
+                line_svg.stroke_width = 1
+                if display_mode in ('Wireframe', 'SurfaceWithEdges'):
+                    line_svg.stroke = 'black'
+                else:
+                    line_svg.stroke = 'grey'
+                geo.append(line_svg)
+        # group the geometries together and return them
+        element = svg.G()
+        element.elements = geo
+        return element
 
     def __copy__(self):
         new_g = DisplayCylinder(self.geometry, self.color, self.display_mode)

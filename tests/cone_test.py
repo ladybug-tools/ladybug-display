@@ -1,4 +1,5 @@
 # coding=utf-8
+import math
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 from ladybug_geometry.geometry3d.cone import Cone
 from ladybug.color import Color
@@ -37,3 +38,17 @@ def test_cone_to_from_dict():
     new_c = DisplayCone.from_dict(con_d)
     assert isinstance(new_c, DisplayCone)
     assert new_c.to_dict() == con_d
+
+
+def test_display_cone_to_svg():
+    """Test the translation of Cone objects to SVG."""
+    pt1 = Point3D(200, -400)
+    axis = Vector3D(200, 200, 200)
+    cone = Cone(pt1, axis, math.radians(30))
+    svg_data = DisplayCone.cone_to_svg(cone)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    cone = DisplayCone(cone, red, 'SurfaceWithEdges')
+    svg_data = cone.to_svg()
+    assert len(str(svg_data)) > 30

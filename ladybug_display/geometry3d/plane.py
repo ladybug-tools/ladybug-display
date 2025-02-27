@@ -1,7 +1,11 @@
 """A plane that can be displayed in 3D space."""
-from ladybug_geometry.geometry3d.plane import Plane
+from __future__ import division
+
+from ladybug_geometry.geometry3d import Plane, Ray3D
 from ladybug.color import Color
 
+import ladybug_display.svg as svg
+from .ray import DisplayRay3D
 from ._base import _SingleColorBase3D
 
 
@@ -118,6 +122,24 @@ class DisplayPlane(_SingleColorBase3D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return Plane as an SVG Element."""
+        plane = self.geometry
+        x_ray = DisplayRay3D(Ray3D(plane.o, plane.x * 30), self.color).to_svg()
+        y_ray = DisplayRay3D(Ray3D(plane.o, plane.y * 30), self.color).to_svg()
+        element = svg.G()
+        element.elements = x_ray.elements + y_ray.elements
+        return element
+
+    @staticmethod
+    def plane_to_svg(plane):
+        """SVG Group with Line and Marker elements from ladybug-geometry Plane."""
+        x_ray = DisplayRay3D.ray3d_to_svg(Ray3D(plane.o, plane.x * 30))
+        y_ray = DisplayRay3D.ray3d_to_svg(Ray3D(plane.o, plane.y * 30))
+        element = svg.G()
+        element.elements = x_ray.elements + y_ray.elements
+        return element
 
     def __copy__(self):
         new_g = DisplayPlane(self.geometry, self.color, self.show_axes, self.show_grid)

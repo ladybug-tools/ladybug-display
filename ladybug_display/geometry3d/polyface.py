@@ -1,7 +1,11 @@
 """A polyface in 3D space with display properties."""
+from __future__ import division
+
 from ladybug_geometry.geometry3d.polyface import Polyface3D
 from ladybug.color import Color
 
+import ladybug_display.svg as svg
+from .face import DisplayFace3D
 from ._base import _SingleColorModeBase3D
 
 
@@ -159,6 +163,32 @@ class DisplayPolyface3D(_SingleColorModeBase3D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayPolyface3D as an SVG Element."""
+        # convert all of the geometry to polygons or points
+        geo = []
+        for face in self.geometry.faces:
+            display_face = DisplayFace3D(face, self.color, self.display_mode)
+            face_element = display_face.to_svg()
+            geo.extend(face_element.elements)
+        # group the geometries together and return them
+        element = svg.G()
+        element.elements = geo
+        return element
+
+    @staticmethod
+    def polyface3d_to_svg(polyface, display_mode='Surface'):
+        """SVG Group of Polygon elements from ladybug-geometry Polyface3D."""
+        # convert all of the geometry to polygons or points
+        geo = []
+        for face in polyface.faces:
+            face_element = DisplayFace3D.face3d_to_svg(face, display_mode)
+            geo.extend(face_element.elements)
+        # group the geometries together and return them
+        element = svg.G()
+        element.elements = geo
+        return element
 
     def __copy__(self):
         new_g = DisplayPolyface3D(self.geometry, self.color, self.display_mode)

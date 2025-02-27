@@ -43,3 +43,22 @@ def test_plane_to_from_dict():
     new_plane = DisplayPlane.from_dict(plane_dict)
     assert isinstance(new_plane, DisplayPlane)
     assert new_plane.to_dict() == plane_dict
+
+
+def test_display_plane_to_svg():
+    """Test the translation of Plane objects to SVG."""
+    pt = Point3D(200, -100)
+    v = Point3D(-100, 50)
+    plane = Plane(o=pt, x=v)
+    svg_data = DisplayPlane.plane_to_svg(plane)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    plane = DisplayPlane(plane, red)
+    svg_data = plane.to_svg()
+    assert len(str(svg_data)) > 30
+
+    import ladybug_display.svg as svg
+    canvas = svg.SVG(width=800, height=600)
+    canvas.elements = [svg_data]
+    print(canvas)

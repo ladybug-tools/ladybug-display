@@ -60,6 +60,6 @@ def test_display_vector2d_to_svg():
     assert len(str(svg_data)) > 30
 
     red = Color(255, 0, 0, 125)
-    pt = DisplayVector2D(vec1, red, radius=10)
+    pt = DisplayVector2D(vec1, red)
     svg_data = pt.to_svg()
     assert len(str(svg_data)) > 30

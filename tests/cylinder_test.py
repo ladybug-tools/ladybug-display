@@ -41,3 +41,22 @@ def test_cylinder_to_from_dict():
     new_c = DisplayCylinder.from_dict(con_d)
     assert isinstance(new_c, DisplayCylinder)
     assert new_c.to_dict() == con_d
+
+
+def test_display_cylinder_to_svg():
+    """Test the translation of Cylinder objects to SVG."""
+    pt1 = Point3D(200, -400)
+    axis = Vector3D(200, 200, 200)
+    cylinder = Cylinder(pt1, axis, 30)
+    svg_data = DisplayCylinder.cylinder_to_svg(cylinder)
+    assert len(str(svg_data)) > 30
+
+    import ladybug_display.svg as svg
+    canvas = svg.SVG(width=800, height=600)
+    canvas.elements = [svg_data]
+    print(canvas)
+
+    red = Color(255, 0, 0, 125)
+    cylinder = DisplayCylinder(cylinder, red, 'SurfaceWithEdges')
+    svg_data = cylinder.to_svg()
+    assert len(str(svg_data)) > 30

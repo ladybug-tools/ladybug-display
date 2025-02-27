@@ -1,5 +1,6 @@
 # coding: utf-8
 """Base classes for all 3D geometry objects."""
+from __future__ import division
 import math
 
 from ladybug.color import Color

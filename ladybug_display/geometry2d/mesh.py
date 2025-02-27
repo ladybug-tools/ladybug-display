@@ -4,11 +4,11 @@ from __future__ import division
 from ladybug_geometry.geometry2d.mesh import Mesh2D
 from ladybug.color import Color
 
+from .._base import _MeshBase
 from ._base import _SingleColorModeBase2D
-import ladybug_display.svg as svg
 
 
-class DisplayMesh2D(_SingleColorModeBase2D):
+class DisplayMesh2D(_SingleColorModeBase2D, _MeshBase):
     """A mesh in 2D space with display properties.
 
     Args:
@@ -114,81 +114,13 @@ class DisplayMesh2D(_SingleColorModeBase2D):
         return base
 
     def to_svg(self):
-        """Return DisplayPolyline2D as an SVG Element."""
-        element = self.mesh2d_to_svg(self.geometry, self.display_mode)
-        if self.color != Color(0, 0, 0):
-            col = self.color.to_hex()
-            if self.display_mode == 'Wireframe':
-                for face in element.elements:
-                    face.stroke = col
-            else:
-                for face in element.elements:
-                    face.fill = col
-            if self.color.a != 255:
-                element.opacity = self.color.a / 255
-        return element
+        """Return DisplayMesh2D as an SVG Element."""
+        return _MeshBase._display_mesh_to_svg(self)
 
     @staticmethod
     def mesh2d_to_svg(mesh, display_mode='Surface'):
         """SVG Group of Polygon elements from ladybug-geometry Mesh2D."""
-        # ensure all colors are by face if they exist
-        colors = None
-        if mesh.colors is not None:
-            if mesh.is_color_by_face:
-                colors = mesh.colors
-            else:
-                colors = DisplayMesh2D._interpolate_colors_to_faces(mesh)
-        # convert all of the mesh geometry to polygons or points
-        geo = []
-        if display_mode == 'Points':  # render the mesh with circles
-            for point in mesh.face_centroids:
-                pt = svg.Circle(cx=point.x, cy=-point.y, r=5)
-                pt.fill = 'black'
-                geo.append(pt)
-            if colors is not None:
-                for pt, col in zip(geo, mesh.colors):
-                    pt.fill = col.to_hex()
-        else:  # render the mesh with polygons
-            for face in mesh.face_vertices:
-                points = []
-                for pt in face:
-                    points.append(pt.x)
-                    points.append(-pt.y)
-                geo.append(svg.Polygon(points=points))
-            if display_mode == 'Wireframe':
-                for face in geo:
-                    face.fill = 'none'
-                    face.stroke = 'black'
-                    face.stroke_width = 1
-                if colors is not None:
-                    for face, col in zip(geo, mesh.colors):
-                        face.stroke = col.to_hex()
-            else:
-                if colors is not None:
-                    for face, col in zip(geo, mesh.colors):
-                        face.fill = col.to_hex()
-                else:
-                    for face in geo:
-                        face.fill = 'grey'
-                if display_mode == 'SurfaceWithEdges':
-                    for face in geo:
-                        face.stroke = 'black'
-                        face.stroke_width = 1
-        # group the mesh geometries together and return them
-        element = svg.G()
-        element.elements = geo
-        return element
-
-    @staticmethod
-    def _interpolate_colors_to_faces(mesh):
-        """Get Mesh faces colors interpolated from vertices."""
-        colors = []
-        for face in mesh.faces:
-            colors = [mesh.colors[pt] for pt in face]
-            col_r = sum(col.r for col in colors) / len(colors)
-            col_g = sum(col.g for col in colors) / len(colors)
-            col_b = sum(col.b for col in colors) / len(colors)
-            colors.append(Color(col_r, col_g, col_b))
+        return _MeshBase._mesh_to_svg(mesh, display_mode)
 
     def __copy__(self):
         new_g = DisplayMesh2D(self.geometry, self.color, self.display_mode)

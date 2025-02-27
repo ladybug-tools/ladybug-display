@@ -1,7 +1,7 @@
 """A ray that can be displayed in 2D space."""
 from __future__ import division
-
 import uuid
+
 from ladybug_geometry.geometry2d.ray import Ray2D
 from ladybug.color import Color
 

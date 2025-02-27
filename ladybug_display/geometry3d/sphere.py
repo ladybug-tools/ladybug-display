@@ -1,8 +1,11 @@
 """A sphere that can be displayed in 3D space."""
+from __future__ import division
+
 from ladybug_geometry.geometry3d.sphere import Sphere
 from ladybug.color import Color
 
 from ._base import _SingleColorModeBase3D
+import ladybug_display.svg as svg
 
 
 class DisplaySphere(_SingleColorModeBase3D):
@@ -109,6 +112,37 @@ class DisplaySphere(_SingleColorModeBase3D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplaySphere as an SVG Element."""
+        element = self.sphere_to_svg(self.geometry)
+        col = self.color.to_hex()
+        if self.display_mode == 'Wireframe':
+            element.stroke = col
+        else:
+            element.fill = col
+        if self.color.a != 255:
+            element.opacity = self.color.a / 255
+        return element
+
+    @staticmethod
+    def sphere_to_svg(sphere, display_mode='Surface'):
+        """SVG Circle or Path element from ladybug-geometry Sphere."""
+        if display_mode == 'Points':
+            element = svg.Circle(cx=sphere.center.x, cy=-sphere.center.y, r=5)
+            element.fill = 'black'
+        else:
+            element = svg.Circle(cx=sphere.center.x, cy=-sphere.center.y, r=sphere.radius)
+            if display_mode == 'Wireframe':
+                element.fill = 'none'
+                element.stroke = 'black'
+                element.stroke_width = 1
+            else:
+                element.fill = 'grey'
+                if display_mode == 'SurfaceWithEdges':
+                    element.stroke = 'black'
+                    element.stroke_width = 1
+        return element
 
     def __copy__(self):
         new_g = DisplaySphere(self.geometry, self.color, self.display_mode)

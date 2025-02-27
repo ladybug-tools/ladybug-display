@@ -125,7 +125,7 @@ class DisplayVector2D(_DisplayBase):
 
     def to_svg(self):
         """Return DisplayVector2D as an SVG Element."""
-        element = self.point2d_to_svg(self.geometry)
+        element = self.vector2d_to_svg(self.geometry)
         element.fill = self.color.to_hex()
         if self.color.a != 255:
             element.opacity = self.color.a / 255

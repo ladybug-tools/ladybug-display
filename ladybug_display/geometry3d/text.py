@@ -1,9 +1,12 @@
 """Class for specifying text within the 3D scene."""
+from __future__ import division
+
 from ladybug_geometry.geometry3d import Plane, Point3D
 from ladybug.color import Color
 
 from ._base import _SingleColorBase3D
 from ladybug_display.typing import float_positive
+import ladybug_display.svg as svg
 
 
 class DisplayText3D(_SingleColorBase3D):
@@ -203,6 +206,17 @@ class DisplayText3D(_SingleColorBase3D):
         max_y = self.plane.o.y + max_y
         return Point3D(max_x, max_y, self.plane.o.z)
 
+    def scale(self, factor, origin=None):
+        """Scale this geometry by a factor from an origin point.
+
+        Args:
+            factor: A number representing how much the object should be scaled.
+            origin: A ladybug_geometry Point representing the origin from which
+                to scale. If None, it will be scaled from the World origin.
+        """
+        self._geometry = self.geometry.scale(factor, origin)
+        self._height = self._height * factor
+
     def to_dict(self):
         """Return DisplayText3D as a dictionary."""
         base = {'type': 'DisplayText3D'}
@@ -216,6 +230,31 @@ class DisplayText3D(_SingleColorBase3D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayText3D as an SVG Element."""
+        t_pt = self.plane.o
+        element = svg.Text(x=t_pt.x, y=-t_pt.y)
+        element.text = self.text
+        element.font_size = self.height
+        element.font_family = self.font
+        if self.horizontal_alignment == 'Left':
+            element.text_anchor = 'start'
+        elif self.horizontal_alignment == 'Center':
+            element.text_anchor = 'middle'
+        elif self.horizontal_alignment == 'Right':
+            element.text_anchor = 'end'
+        if self.vertical_alignment == 'Top':
+            element.dominant_baseline = 'auto'
+        elif self.vertical_alignment == 'Middle':
+            element.dominant_baseline = 'middle'
+        elif self.vertical_alignment == 'Bottom':
+            element.dominant_baseline = 'hanging'
+
+        element.fill = self.color.to_hex()
+        if self.color.a != 255:
+            element.opacity = self.color.a / 255
+        return element
 
     def __copy__(self):
         new_g = DisplayText3D(

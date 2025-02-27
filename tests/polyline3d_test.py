@@ -53,3 +53,21 @@ def test_polyline3d_to_from_dict():
     new_pline = DisplayPolyline3D.from_dict(pline_dict)
     assert isinstance(new_pline, DisplayPolyline3D)
     assert new_pline.to_dict() == pline_dict
+
+
+def test_polyline3d_to_svg():
+    """Test the translation of Polyline3D objects to SVG."""
+    pts = (Point3D(200, -100), Point3D(200, -50), Point3D(100, -50), Point3D(100, -100))
+    p_line = Polyline3D(pts)
+    svg_data = DisplayPolyline3D.polyline3d_to_svg(p_line)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    p_line = DisplayPolyline3D(p_line, red, line_width=2, line_type='Dashed')
+    svg_data = p_line.to_svg()
+    assert len(str(svg_data)) > 30
+
+    p_line = Polyline3D(pts, interpolated=True)
+    p_line = DisplayPolyline3D(p_line, red, line_width=2, line_type='Dashed')
+    svg_data = p_line.to_svg()
+    assert len(str(svg_data)) > 30

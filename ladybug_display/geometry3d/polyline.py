@@ -1,8 +1,12 @@
 """A polyline that can be displayed in 3D space."""
+from __future__ import division
+
 from ladybug_geometry.geometry3d.polyline import Polyline3D
 from ladybug.color import Color
 
 from ladybug_display.altnumber import default
+from ladybug_display._base import DASH_ARRAYS
+from ..geometry2d import DisplayPolyline2D
 from ._base import _LineCurveBase3D
 
 
@@ -121,6 +125,23 @@ class DisplayPolyline3D(_LineCurveBase3D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayPolyline3D as an SVG Element."""
+        element = self.polyline3d_to_svg(self.geometry)
+        element.stroke = self.color.to_hex()
+        if self.color.a != 255:
+            element.opacity = self.color.a / 255
+        if self.line_width != default:
+            element.stroke_width = self.line_width
+        if self.line_type != 'Continuous':
+            element.stroke_dasharray = DASH_ARRAYS[self.line_type]
+        return element
+
+    @staticmethod
+    def polyline3d_to_svg(polyline):
+        """SVG Polyline or Path element from ladybug-geometry Polyline3D."""
+        return DisplayPolyline2D.polyline2d_to_svg(polyline)
 
     def __copy__(self):
         new_g = DisplayPolyline3D(

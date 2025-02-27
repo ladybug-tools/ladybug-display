@@ -1,6 +1,5 @@
 # coding=utf-8
-from ladybug_geometry.geometry3d.pointvector import Point3D
-from ladybug_geometry.geometry3d.polyface import Polyface3D
+from ladybug_geometry.geometry3d import Point3D, Face3D, Polyface3D
 from ladybug.color import Color
 from ladybug_display.geometry3d.polyface import DisplayPolyface3D
 
@@ -60,3 +59,18 @@ def test_polyface3d_to_from_dict():
     assert new_polyface.is_solid
     assert new_polyface.color == grey
     assert new_polyface.display_mode == 'Wireframe'
+
+
+def test_polyface3d_to_svg():
+    """Test the translation of Face3D objects to SVG."""
+    pts1 = (Point3D(400, -10), Point3D(50, -10), Point3D(50, -200), Point3D(400, -200))
+    pts2 = (Point3D(200, -50), Point3D(100, -50), Point3D(100, -100), Point3D(200, -100))
+    face = Face3D(pts1, holes=[pts2])
+    polyface = Polyface3D.from_offset_face(face, 50)
+    svg_data = DisplayPolyface3D.polyface3d_to_svg(polyface)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    p_gon = DisplayPolyface3D(polyface, red, 'SurfaceWithEdges')
+    svg_data = p_gon.to_svg()
+    assert len(str(svg_data)) > 30

@@ -1,9 +1,11 @@
 """A single planar face that can be displayed in 3D space."""
+from __future__ import division
 import math
 
 from ladybug_geometry.geometry3d.face import Face3D
 from ladybug.color import Color
 
+import ladybug_display.svg as svg
 from ._base import _SingleColorModeBase3D
 
 
@@ -134,6 +136,57 @@ class DisplayFace3D(_SingleColorModeBase3D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayFace3D as an SVG Element."""
+        element = self.face3d_to_svg(self.geometry, self.display_mode)
+        if self.color != Color(0, 0, 0):
+            col = self.color.to_hex()
+            if self.display_mode == 'Wireframe':
+                for face in element.elements:
+                    face.stroke = col
+            else:
+                element.elements[0].fill = col
+            if self.color.a != 255:
+                if self.display_mode == 'SurfaceWithEdges':
+                    element.elements[0].opacity = self.color.a / 255
+                else:
+                    element.opacity = self.color.a / 255
+        return element
+
+    @staticmethod
+    def face3d_to_svg(face, display_mode='Surface'):
+        """SVG Group of Polygon elements from ladybug-geometry Face3D."""
+        # convert all of the geometry to polygons or points
+        geo = []
+        if display_mode == 'Points':  # render the face with circles
+            for point in face.vertices:
+                pt = svg.Circle(cx=point.x, cy=-point.y, r=5)
+                pt.fill = 'black'
+                geo.append(pt)
+        else:  # render the face with polygons
+            if display_mode.startswith('Surface'):
+                points = [p for pt in face.vertices for p in (pt.x, -pt.y)]
+                fp = svg.Polygon(points=points)
+                fp.fill = 'grey'
+                geo.append(fp)
+            if display_mode in ('Wireframe', 'SurfaceWithEdges'):
+                bnd = svg.Polygon(points=[p for v in face.boundary for p in (v.x, -v.y)])
+                bnd.fill = 'none'
+                bnd.stroke = 'black'
+                bnd.stroke_width = 1
+                geo.append(bnd)
+                if face.has_holes:
+                    for hole in face.holes:
+                        hp = svg.Polygon(points=[p for v in hole for p in (v.x, -v.y)])
+                        hp.fill = 'none'
+                        hp.stroke = 'black'
+                        hp.stroke_width = 1
+                        geo.append(hp)
+        # group the geometries together and return them
+        element = svg.G()
+        element.elements = geo
+        return element
 
     def __copy__(self):
         new_g = DisplayFace3D(self.geometry, self.color, self.display_mode)

@@ -46,8 +46,3 @@ def test_display_ray2d_to_svg():
     ray = DisplayRay2D(ray, red)
     svg_data = ray.to_svg()
     assert len(str(svg_data)) > 30
-
-    import ladybug_display.svg as svg
-    canvas = svg.SVG(width=800, height=600)
-    canvas.elements = [svg_data]
-    print(canvas)

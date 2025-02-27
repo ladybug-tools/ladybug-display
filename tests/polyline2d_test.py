@@ -68,11 +68,6 @@ def test_polyline2d_to_svg():
     assert len(str(svg_data)) > 30
 
     p_line = Polyline2D(pts, interpolated=True)
-    p_line = DisplayPolyline2D(p_line, red, line_width=2, line_type='Dashed')
+    p_line = DisplayPolyline2D(p_line, red, line_width=2)
     svg_data = p_line.to_svg()
     assert len(str(svg_data)) > 30
-
-    import ladybug_display.svg as svg
-    canvas = svg.SVG(width=800, height=600)
-    canvas.elements = [svg_data]
-    print(canvas)

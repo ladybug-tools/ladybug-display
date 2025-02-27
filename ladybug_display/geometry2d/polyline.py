@@ -147,16 +147,56 @@ class DisplayPolyline2D(_LineCurveBase2D):
                 points.append(pt.x)
                 points.append(-pt.y)
             element = svg.Polyline(points=points)
-        else:
-            start_pt = polyline.vertices[0]
-            path_d = [svg.MoveTo(x=start_pt.x, y=-start_pt.y)]
-            for vert in polyline.vertices[1:]:
-                path_d.append(svg.SmoothQuadraticBezier(x=vert.x, y=-vert.y))
-            element = svg.Path(d=path_d)
+        else:  # convert the polyline to a cubic Bezier curve
+            element = DisplayPolyline2D._polyline2d_to_cubic_bezier_svg(polyline)
         element.fill = 'none'
         element.stroke = 'black'
         element.stroke_width = 1
         return element
+
+    @staticmethod
+    def _polyline2d_to_cubic_bezier_svg(polyline):
+        """SVG Path from ladybug-geometry Polyline2D."""
+        alpha = 0.5  # for a centripetal Catmull–Rom spline
+        # https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline
+
+        def tj(ti, pi, pj):
+            """Get the parameter given that previous parameter and two points."""
+            dx, dy = pj.x - pi.x, pj.y - pi.y
+            l_val = (dx ** 2 + dy ** 2) ** 0.5
+            return ti + l_val ** alpha
+
+        # loop though the vertices and gather the control points
+        vertices = polyline.vertices
+        control_points = []
+        for i, pt in enumerate(vertices):
+            p0, p1, p2 = vertices[i - 2], vertices[i - 1], pt
+            t0 = 0.0
+            t1 = tj(t0, p0, p1)
+            t2 = tj(t1, p1, p2)
+            c1 = (t2 - t1) / (t2 - t0)
+            c2 = (t1 - t0) / (t2 - t0)
+            try:
+                m1 = (t2 - t1) * (c1 * (p1 - p0) / (t1 - t0) + c2 * (p2 - p1) / (t2 - t1))
+                control_pt = p1 - (m1 / 3)
+                control_points.append(control_pt)
+            except ZeroDivisionError:
+                control_points.append(vertices[i - 1])
+
+        # move the first control point to the end to align with vertices
+        control_points.append(control_points.pop(0))
+
+        # reset the start and end points if the shape is not closed
+        if not polyline.is_closed(0.001):
+            control_points[0] = vertices[0]
+            control_points[-1] = vertices[-1]
+
+        # create the smooth cubic bezier path
+        start_pt = vertices[0]
+        path_d = [svg.MoveTo(x=start_pt.x, y=-start_pt.y)]
+        for pt, c_pt in zip(vertices, control_points):
+            path_d.append(svg.SmoothCubicBezier(x=pt.x, y=-pt.y, x2=c_pt.x, y2=-c_pt.y))
+        return svg.Path(d=path_d)
 
     def __copy__(self):
         new_g = DisplayPolyline2D(
