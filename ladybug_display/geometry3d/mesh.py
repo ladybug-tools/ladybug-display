@@ -1,11 +1,14 @@
 """A mesh in 3D space with display properties."""
+from __future__ import division
+
 from ladybug_geometry.geometry3d.mesh import Mesh3D
 from ladybug.color import Color
 
+from .._base import _MeshBase
 from ._base import _SingleColorModeBase3D
 
 
-class DisplayMesh3D(_SingleColorModeBase3D):
+class DisplayMesh3D(_SingleColorModeBase3D, _MeshBase):
     """A mesh in 3D space with display properties.
 
     Args:
@@ -121,6 +124,15 @@ class DisplayMesh3D(_SingleColorModeBase3D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayMesh3D as an SVG Element."""
+        return _MeshBase._display_mesh_to_svg(self)
+
+    @staticmethod
+    def mesh3d_to_svg(mesh, display_mode='Surface'):
+        """SVG Group of Polygon elements from ladybug-geometry Mesh3D."""
+        return _MeshBase._mesh_to_svg(mesh, display_mode)
 
     def __copy__(self):
         new_g = DisplayMesh3D(self.geometry, self.color, self.display_mode)

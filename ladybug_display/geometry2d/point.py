@@ -93,7 +93,7 @@ class DisplayPoint2D(_SingleColorBase2D):
         return base
 
     def to_svg(self):
-        """Return DisplayLineSegment2D as an SVG Element."""
+        """Return DisplayPoint2D as an SVG Element."""
         element = self.point2d_to_svg(self.geometry)
         element.fill = self.color.to_hex()
         if self.color.a != 255:
@@ -104,7 +104,7 @@ class DisplayPoint2D(_SingleColorBase2D):
 
     @staticmethod
     def point2d_to_svg(point):
-        """SVG Circle element from ladybug-geometry Arc2D."""
+        """SVG Circle element from ladybug-geometry Point2D."""
         element = svg.Circle(cx=point.x, cy=-point.y, r=5)
         element.fill = 'black'
         return element

@@ -32,3 +32,17 @@ def test_ray3_to_from_dict():
     new_ray = DisplayRay3D.from_dict(ray_dict)
     assert isinstance(new_ray, DisplayRay3D)
     assert new_ray.to_dict() == ray_dict
+
+
+def test_display_ray2d_to_svg():
+    """Test the translation of Ray3D objects to SVG."""
+    pt = Point3D(200, -100)
+    v = Point3D(-100, 50)
+    ray = Ray3D(pt, v)
+    svg_data = DisplayRay3D.ray3d_to_svg(ray)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    ray = DisplayRay3D(ray, red)
+    svg_data = ray.to_svg()
+    assert len(str(svg_data)) > 30

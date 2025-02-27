@@ -43,3 +43,17 @@ def test_linesegment3_to_from_dict():
     new_seg = DisplayLineSegment3D.from_dict(seg_dict)
     assert isinstance(new_seg, DisplayLineSegment3D)
     assert new_seg.to_dict() == seg_dict
+
+
+def test_display_linesegment3d_to_svg():
+    """Test the translation of LineSegment2D objects to SVG."""
+    pt1 = Point3D(200, -100)
+    pt2 = Point3D(100, -50)
+    line = LineSegment3D.from_end_points(pt1, pt2)
+    svg_data = DisplayLineSegment3D.linesegment3d_to_svg(line)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    line = DisplayLineSegment3D(line, red, line_width=2, line_type='Dashed')
+    svg_data = line.to_svg()
+    assert len(str(svg_data)) > 30

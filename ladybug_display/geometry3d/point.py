@@ -1,10 +1,13 @@
 """A point that can be displayed in 3D space."""
+from __future__ import division
+
 from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug.color import Color
 
 from ._base import _SingleColorBase3D
 from ladybug_display.altnumber import default
 from ladybug_display.typing import float_positive
+import ladybug_display.svg as svg
 
 
 class DisplayPoint3D(_SingleColorBase3D):
@@ -94,6 +97,23 @@ class DisplayPoint3D(_SingleColorBase3D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayPoint3D as an SVG Element."""
+        element = self.point3d_to_svg(self.geometry)
+        element.fill = self.color.to_hex()
+        if self.color.a != 255:
+            element.opacity = self.color.a / 255
+        if self.radius != default:
+            element.r = self.radius
+        return element
+
+    @staticmethod
+    def point3d_to_svg(point):
+        """SVG Circle element from ladybug-geometry DisplayPoint3D."""
+        element = svg.Circle(cx=point.x, cy=-point.y, r=5)
+        element.fill = 'black'
+        return element
 
     def __copy__(self):
         new_g = DisplayPoint3D(self.geometry, self.color, self.radius)

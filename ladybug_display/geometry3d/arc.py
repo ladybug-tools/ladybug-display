@@ -1,10 +1,14 @@
 """An arc that can be displayed in 3D space."""
+from __future__ import division
 import math
 
-from ladybug_geometry.geometry3d.arc import Arc3D
+from ladybug_geometry.geometry2d import Point2D, Arc2D
+from ladybug_geometry.geometry3d import Vector3D, Arc3D
 from ladybug.color import Color
 
 from ladybug_display.altnumber import default
+from ladybug_display._base import DASH_ARRAYS
+from ..geometry2d import DisplayArc2D, DisplayPolyline2D
 from ._base import _LineCurveBase3D
 
 
@@ -122,6 +126,30 @@ class DisplayArc3D(_LineCurveBase3D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayArc3D as an SVG Element."""
+        element = self.arc3d_to_svg(self.geometry)
+        element.stroke = self.color.to_hex()
+        if self.color.a != 255:
+            element.opacity = self.color.a / 255
+        if self.line_width != default:
+            element.stroke_width = self.line_width
+        if self.line_type != 'Continuous':
+            element.stroke_dasharray = DASH_ARRAYS[self.line_type]
+        return element
+
+    @staticmethod
+    def arc3d_to_svg(arc):
+        """SVG Circle or Path element from ladybug-geometry Arc3D."""
+        xy_angle = math.degrees(arc.plane.n.angle(Vector3D(0, 0, 1)))
+        if xy_angle < 1 or xy_angle > 179:  # close enough to represent with circle
+            origin = arc.plane.o
+            arc_2d = Arc2D(Point2D(origin.x, origin.y), arc.radius, arc.a1, arc.a2)
+            return DisplayArc2D.arc2d_to_svg(arc_2d)
+        else:  # project to XY as an interpolated polyline
+            p_line = arc.to_polyline(30, interpolated=True)
+            return DisplayPolyline2D.polyline2d_to_svg(p_line)
 
     def __copy__(self):
         new_g = DisplayArc3D(

@@ -49,3 +49,25 @@ def test_display_arc3d_to_from_dict():
     new_arc = DisplayArc3D.from_dict(arc_dict)
     assert isinstance(new_arc, DisplayArc3D)
     assert new_arc.to_dict() == arc_dict
+
+
+def test_display_arc2d_to_svg():
+    """Test the translation of Arc3D objects to SVG."""
+    pt = Plane(o=Point3D(200, -100))
+    circle = Arc3D(pt, 50, 0, math.pi * 2)
+    svg_data = DisplayArc3D.arc3d_to_svg(circle)
+    assert len(str(svg_data)) > 30
+
+    arc = Arc3D(pt, 50, 0, math.pi)
+    svg_data = DisplayArc3D.arc3d_to_svg(arc)
+    assert len(str(svg_data)) > 30
+
+    arc = Arc3D(pt, 50, math.pi / 4, math.pi * 1.5)
+    svg_data = DisplayArc3D.arc3d_to_svg(arc)
+    assert len(str(svg_data)) > 30
+
+    grey = Color(100, 100, 100)
+    arc = Arc3D(pt, 50, math.pi / 4, math.pi * 1.5)
+    arc = DisplayArc3D(arc, grey, line_width=2, line_type='Dashed')
+    svg_data = arc.to_svg()
+    assert len(str(svg_data)) > 30

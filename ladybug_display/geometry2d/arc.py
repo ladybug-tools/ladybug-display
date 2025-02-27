@@ -1,6 +1,7 @@
 """An arc that can be displayed in 2D space."""
 from __future__ import division
 import math
+
 from ladybug_geometry.geometry2d.arc import Arc2D
 from ladybug.color import Color
 

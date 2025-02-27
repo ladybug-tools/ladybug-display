@@ -1,7 +1,13 @@
 """A cone that can be displayed in 3D space."""
-from ladybug_geometry.geometry3d.cone import Cone
+from __future__ import division
+
+from ladybug_geometry.geometry3d import Cone, LineSegment3D
 from ladybug.color import Color
 
+import ladybug_display.svg as svg
+from .point import DisplayPoint3D
+from .line import DisplayLineSegment3D
+from .arc import DisplayArc3D
 from ._base import _SingleColorModeBase3D
 
 
@@ -97,6 +103,52 @@ class DisplayCone(_SingleColorModeBase3D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayCone as an SVG Element."""
+        # convert all of the geometry to polygons or points
+        element = self.cone_to_svg(self.geometry, self.display_mode)
+        if self.color != Color(0, 0, 0):
+            col = self.color.to_hex()
+            if self.display_mode == 'Wireframe':
+                for obj in element.elements:
+                    obj.stroke = col
+            else:
+                for obj in element.elements:
+                    if hasattr(obj, 'fill'):
+                        obj.fill = col
+            if self.color.a != 255:
+                element.opacity = self.color.a / 255
+        return element
+
+    @staticmethod
+    def cone_to_svg(cone, display_mode='Surface'):
+        """SVG Group of Path and line elements from ladybug-geometry Cone."""
+        # convert all of the geometry to polygons or points
+        geo = []
+        base = cone.base
+        base_svg = DisplayArc3D.arc3d_to_svg(base)
+        if display_mode.startswith('Surface'):
+            base_svg.fill = 'grey'
+            if display_mode == 'Surface':
+                base_svg.stroke_width = 0
+        geo.append(base_svg)
+        if display_mode == 'Points':
+            geo.append(DisplayPoint3D.point3d_to_svg(cone.vertex))
+        else:
+            for pt in base.subdivide_evenly(30):
+                line = LineSegment3D.from_end_points(pt, cone.vertex)
+                line_svg = DisplayLineSegment3D.linesegment3d_to_svg(line)
+                line_svg.stroke_width = 1
+                if display_mode in ('Wireframe', 'SurfaceWithEdges'):
+                    line_svg.stroke = 'black'
+                else:
+                    line_svg.stroke = 'grey'
+                geo.append(line_svg)
+        # group the geometries together and return them
+        element = svg.G()
+        element.elements = geo
+        return element
 
     def __copy__(self):
         new_g = DisplayCone(self.geometry, self.color, self.display_mode)

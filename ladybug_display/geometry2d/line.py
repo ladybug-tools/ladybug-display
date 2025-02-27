@@ -1,5 +1,6 @@
 """A line segment that can be displayed in 2D space."""
 from __future__ import division
+
 from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug.color import Color
 

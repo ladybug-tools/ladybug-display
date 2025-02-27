@@ -42,3 +42,16 @@ def test_sphere_to_from_dict():
     new_sp = DisplaySphere.from_dict(sp_d)
     assert isinstance(new_sp, DisplaySphere)
     assert new_sp.to_dict() == sp_d
+
+
+def test_display_sphere_to_svg():
+    """Test the translation of Sphere objects to SVG."""
+    pt1 = Point3D(200, -100)
+    sphere = Sphere(pt1, 10)
+    svg_data = DisplaySphere.sphere_to_svg(sphere)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    sphere = DisplaySphere(sphere, red, 'SurfaceWithEdges')
+    svg_data = sphere.to_svg()
+    assert len(str(svg_data)) > 30

@@ -1,7 +1,10 @@
 """A ray that can be displayed in 3D space."""
+from __future__ import division
+
 from ladybug_geometry.geometry3d.ray import Ray3D
 from ladybug.color import Color
 
+from ..geometry2d import DisplayRay2D
 from ._base import _SingleColorBase3D
 
 
@@ -53,7 +56,7 @@ class DisplayRay3D(_SingleColorBase3D):
     def v(self):
         """Get a Vector3D representing the direction of the ray."""
         return self._geometry.v
-    
+
     def reverse(self):
         """Reverse this DisplayRay3D."""
         self._geometry = self._geometry.reverse()
@@ -66,6 +69,21 @@ class DisplayRay3D(_SingleColorBase3D):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self):
+        """Return DisplayRay3D as an SVG Element."""
+        element = self.ray3d_to_svg(self.geometry)
+        marker, line = element.elements
+        line.stroke = self.color.to_hex()
+        marker.elements[0].fill = self.color.to_hex()
+        if self.color.a != 255:
+            element.opacity = self.color.a / 255
+        return element
+
+    @staticmethod
+    def ray3d_to_svg(ray):
+        """SVG Group with Line and Marker elements from ladybug-geometry Ray3D."""
+        return DisplayRay2D.ray2d_to_svg(ray)
 
     def __copy__(self):
         new_g = DisplayRay3D(self.geometry, self.color)

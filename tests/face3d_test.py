@@ -51,3 +51,17 @@ def test_face3d_to_from_dict():
     new_face = DisplayFace3D.from_dict(face_dict)
     assert isinstance(new_face, DisplayFace3D)
     assert new_face.to_dict() == face_dict
+
+
+def test_face3d_to_svg():
+    """Test the translation of Face3D objects to SVG."""
+    pts1 = (Point3D(400, -10), Point3D(50, -10), Point3D(50, -200), Point3D(400, -200))
+    pts2 = (Point3D(200, -50), Point3D(100, -50), Point3D(100, -100), Point3D(200, -100))
+    face = Face3D(pts1, holes=[pts2])
+    svg_data = DisplayFace3D.face3d_to_svg(face)
+    assert len(str(svg_data)) > 30
+
+    red = Color(255, 0, 0, 125)
+    p_gon = DisplayFace3D(face, red, 'SurfaceWithEdges')
+    svg_data = p_gon.to_svg()
+    assert len(str(svg_data)) > 30
