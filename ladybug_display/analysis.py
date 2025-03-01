@@ -14,6 +14,14 @@ from ladybug.legend import Legend, LegendParameters, LegendParametersCategorized
 from ladybug.graphic import GraphicContainer
 from ladybug.datatype.base import DataTypeBase
 
+from .geometry2d import DisplayVector2D, DisplayPoint2D, \
+    DisplayRay2D, DisplayLineSegment2D, DisplayPolyline2D, DisplayArc2D, \
+    DisplayPolygon2D, DisplayMesh2D
+from .geometry3d import DisplayVector3D, DisplayPoint3D, \
+    DisplayRay3D, DisplayPlane, DisplayLineSegment3D, DisplayPolyline3D, DisplayArc3D, \
+    DisplayFace3D, DisplayMesh3D, DisplayPolyface3D, DisplaySphere, DisplayCone, \
+    DisplayCylinder, DisplayText3D
+
 from ._base import DISPLAY_MODES, _VisualizationBase
 from .typing import int_in_range
 import ladybug_display.svg as svg
@@ -23,6 +31,36 @@ GEOMETRY_UNION = (
     Mesh2D, Vector3D, Point3D, Ray3D, Plane, LineSegment3D,
     Polyline3D, Arc3D, Face3D, Mesh3D, Polyface3D, Sphere, Cone, Cylinder
 )
+DISPLAY_UNION = (
+    DisplayVector2D, DisplayPoint2D, DisplayRay2D, DisplayLineSegment2D,
+    DisplayPolyline2D, DisplayArc2D, DisplayPolygon2D, DisplayMesh2D,
+    DisplayVector3D, DisplayPoint3D, DisplayRay3D, DisplayPlane, DisplayLineSegment3D,
+    DisplayPolyline3D, DisplayArc3D, DisplayFace3D, DisplayMesh3D,
+    DisplayPolyface3D, DisplaySphere, DisplayCone, DisplayCylinder, DisplayText3D
+)
+DISPLAY_MAP = {
+    Vector2D: (DisplayVector2D, None),
+    Point2D: (DisplayPoint2D, None),
+    Ray2D: (DisplayRay2D, None),
+    LineSegment2D: (DisplayLineSegment2D, None),
+    Polyline2D: (DisplayPolyline2D, None),
+    Arc2D: (DisplayArc2D, None),
+    Polygon2D: (DisplayPolygon2D, None, 'Wireframe'),
+    Mesh2D: (DisplayMesh2D, None, 'Wireframe'),
+    Vector3D: (DisplayVector3D, None),
+    Point3D: (DisplayPoint3D, None),
+    Ray3D: (DisplayRay3D, None),
+    Plane: (DisplayPlane, None),
+    LineSegment3D: (DisplayLineSegment3D, None),
+    Polyline3D: (DisplayPolyline3D, None),
+    Arc3D: (DisplayArc3D, None),
+    Face3D: (DisplayFace3D, None, 'Wireframe'),
+    Mesh3D: (DisplayMesh3D, None, 'Wireframe'),
+    Polyface3D: (DisplayPolyface3D, None, 'Wireframe'),
+    Sphere: (DisplaySphere, None, 'Wireframe'),
+    Cone: (DisplayCone, None, 'Wireframe'),
+    Cylinder: (DisplayCylinder, None, 'Wireframe')
+}
 
 
 class AnalysisGeometry(_VisualizationBase):
@@ -348,6 +386,48 @@ class AnalysisGeometry(_VisualizationBase):
         if self.user_data is not None:
             base['user_data'] = self.user_data
         return base
+
+    def to_svg(self, width=800, height=600):
+        """Get this AnalysisGeometry as an editable SVG object.
+
+        Casting the SVG object to string will give the file contents of a SVG.
+
+        Note that it is expected that the AnalysisGeometry has been scaled to
+        fit in the specified width and height dimensions and it exists within
+        the lower-right quadrant of the world coordinate system (Quadrant 4)
+        in oder to be translated correctly into the XY coordinate system of
+        the screen.
+
+        Args:
+            width: The screen width in pixels.
+            height: The screen height in pixels.
+        """
+        elements = []
+        colors = self.data_sets[self.active_data].value_colors
+        if self.matching_method in ('faces', 'vertices'):
+            # translate the AnalysisGeometry using DisplayMesh2D
+            prev_i = 0
+            for mesh in self.geometry:
+                m_len = len(mesh.faces) if self.matching_method == 'faces' \
+                    else len(mesh.vertices)
+                mesh.colors = colors[prev_i:prev_i + m_len]
+                prev_i += m_len
+                elements.append(DisplayMesh2D.mesh2d_to_svg(mesh, self.display_mode))
+        else:  # translate the AnalysisGeometry using other display classes
+            sample_geo = self.geometry[0]
+            conv_info = DISPLAY_MAP[sample_geo.__class__]
+            dis_class, conv_args = conv_info[0], list(conv_info[1:])
+            if len(conv_args) == 2:
+                conv_args[1] = self.display_mode
+            for geo, col in zip(self.geometry, colors):
+                dis_args = [geo] + conv_args
+                dis_args[1] = col
+                display_geo = dis_class(*dis_args)
+                elements.append(display_geo.to_svg())
+        # combine everything into a final SVG object
+        canvas = svg.SVG(width=width, height=height)
+        canvas.elements = elements
+        return canvas
 
     def _check_data_set(self, data_set):
         """Check that a data set is compatible with the geometry."""

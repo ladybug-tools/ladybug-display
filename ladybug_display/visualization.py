@@ -9,12 +9,14 @@ try:  # check if we are in IronPython
 except ImportError:  # wea are in cPython
     import pickle
 
+from ladybug_geometry.geometry3d import Vector3D
 from ladybug_geometry.bounding import bounding_box
 
 from ._base import _VisualizationBase
 from .analysis import GEOMETRY_UNION, AnalysisGeometry, \
     VisualizationData, VisualizationMetaData
 from .context import DISPLAY_UNION, ContextGeometry
+import ladybug_display.svg as svg
 
 
 class VisualizationSet(_VisualizationBase):
@@ -446,6 +448,52 @@ class VisualizationSet(_VisualizationBase):
         with open(vs_file, 'wb') as fp:
             pickle.dump(vs_dict, fp)
         return vs_file
+
+    def to_svg(self, width=800, height=600, margin=None):
+        """Get this VisualizationSet as an editable SVG object.
+
+        Casting the SVG object to string will give the file contents of a SVG.
+
+        All contents of the VisualizationSet will automatically scaled to fit
+        within the specified pixel width and height of the SVG
+
+        Args:
+            width: The screen width in pixels.
+            height: The screen height in pixels.
+            margin: An optional number to set the size of the margins around the
+                base graphic in the final image. If None, this is automatically
+                set to be 10% of whatever the constraining dimension is (either
+                width or height). (Default: None).
+        """
+        # compute the scene width and height
+        if margin is None:
+            scene_width, scene_height = width * 0.8, height * 0.8
+        else:
+            scene_width, scene_height = width - (2 * margin), height - (2 * margin)
+        # compute the bounding box dimensions around all of the VisualizationSet geometry
+        min_pt, max_pt = self.min_point, self.max_point
+        move_vec = Vector3D(-min_pt.x, -max_pt.y)
+        x_dim, y_dim = max_pt.x - min_pt.x, max_pt.y - min_pt.y
+        x_factor, y_factor = scene_width / x_dim, scene_height / y_dim
+        scale_fac = min(x_factor, y_factor)
+        if scale_fac == x_factor:  # center the geometry in the Y dimension
+            scene_height = y_dim * scale_fac
+        else:
+            scene_width = x_dim * scale_fac
+        center_vec = Vector3D((width - scene_width) / 2,  -(height - scene_height) / 2)
+        # transform all of the visualization set geometry to be in the lower quadrant
+        svg_elements = []
+        for geo in reversed(self.geometry):
+            geo = geo.duplicate()  # duplicate to avoid mutating the input
+            geo.move(move_vec)
+            geo.scale(scale_fac)
+            geo.move(center_vec)
+            svg_data = geo.to_svg()
+            svg_elements.extend(svg_data.elements)
+        # combine everything into a final SVG object
+        canvas = svg.SVG(width=width, height=height)
+        canvas.elements = svg_elements
+        return canvas
 
     def _check_geometry(self, geo):
         """Check that the geometry object is valid."""

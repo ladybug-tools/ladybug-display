@@ -235,7 +235,7 @@ class DisplayText3D(_SingleColorBase3D):
         """Return DisplayText3D as an SVG Element."""
         t_pt = self.plane.o
         element = svg.Text(x=t_pt.x, y=-t_pt.y)
-        element.text = self.text
+        element.text = self.text.replace('\n', ' ')
         element.font_size = self.height
         element.font_family = self.font
         if self.horizontal_alignment == 'Left':
