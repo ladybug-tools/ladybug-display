@@ -1,4 +1,7 @@
 """Class for the entire SVG object."""
+import os
+from ladybug.config import folders
+
 from . import _mixins as m
 from ._types import PreserveAspectRatio, ViewBoxSpec, _number, _number_or_length, \
     _str, _str_enum, _obj, _list_of_objs
@@ -242,3 +245,27 @@ class SVG(
     @onzoom.setter
     def onzoom(self, value):
         self._onzoom = _str(value, 'onzoom', True)
+
+    def to_file(self, name='Unnamed', folder=None):
+        """Write SVG object to a file.
+
+        Args:
+            name: A text string for the name of the SVG file. (Default: Unnamed).
+            folder: A text string for the directory where the file will be written.
+                If unspecified, a svg subdirectory with default_epw_folder will
+                be used. This is usually at
+                "C:\\Users\\USERNAME\\APPDATA\\Roaming\\ladybug_tools\\weather."
+        """
+        # set up a name and folder for the SVG
+        if name is None:
+            name = self.identifier
+        file_name = name if name.lower().endswith('.svg') else '{}.svg'.format(name)
+        folder = folder if folder is not None else \
+            os.path.join(folders.default_epw_folder, 'svg')
+        if not os.path.isdir(folder):
+            os.makedirs(folder)
+        svg_file = os.path.join(folder, file_name)
+        # write SVG
+        with open(svg_file, 'w') as fp:
+            fp.write(str(self))
+        return svg_file

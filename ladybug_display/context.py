@@ -5,32 +5,16 @@ Such properties can include color, line_width, line_type, and display_mode.
 """
 from __future__ import division
 
-from ladybug_geometry.geometry2d import Vector2D, Point2D, Ray2D, LineSegment2D, \
-    Polyline2D, Arc2D, Polygon2D, Mesh2D
-from ladybug_geometry.geometry3d import Vector3D, Point3D, Ray3D, Plane, LineSegment3D, \
-    Polyline3D, Arc3D, Face3D, Mesh3D, Polyface3D, Sphere, Cone, Cylinder
+from ladybug_geometry.geometry2d import Vector2D, Point2D
 from ladybug_geometry.bounding import bounding_box
 
-from .geometry2d import DisplayVector2D, DisplayPoint2D, \
-    DisplayRay2D, DisplayLineSegment2D, DisplayPolyline2D, DisplayArc2D, \
-    DisplayPolygon2D, DisplayMesh2D
-from .geometry3d import DisplayVector3D, DisplayPoint3D, \
-    DisplayRay3D, DisplayPlane, DisplayLineSegment3D, DisplayPolyline3D, DisplayArc3D, \
-    DisplayFace3D, DisplayMesh3D, DisplayPolyface3D, DisplaySphere, DisplayCone, \
-    DisplayCylinder, DisplayText3D
 from .geometry2d._base import _DisplayBase2D
 from .geometry3d._base import _DisplayBase3D
 from .dictutil import dict_to_object
 
+import ladybug_display.svg as svg
 from ._base import _VisualizationBase
-from .analysis import GEOMETRY_UNION
-DISPLAY_UNION = (
-    DisplayVector2D, DisplayPoint2D, DisplayRay2D, DisplayLineSegment2D,
-    DisplayPolyline2D, DisplayArc2D, DisplayPolygon2D, DisplayMesh2D,
-    DisplayVector3D, DisplayPoint3D, DisplayRay3D, DisplayPlane, DisplayLineSegment3D,
-    DisplayPolyline3D, DisplayArc3D, DisplayFace3D, DisplayMesh3D,
-    DisplayPolyface3D, DisplaySphere, DisplayCone, DisplayCylinder, DisplayText3D
-)
+from .analysis import GEOMETRY_UNION, DISPLAY_UNION, DISPLAY_MAP
 
 
 class ContextGeometry(_VisualizationBase):
@@ -57,30 +41,6 @@ class ContextGeometry(_VisualizationBase):
         * user_data
     """
     __slots__ = ('_geometry', '_min_point', '_max_point', '_hidden')
-
-    WIREFRAME_MAP = {
-        Vector2D: (DisplayVector2D, None),
-        Point2D: (DisplayPoint2D, None),
-        Ray2D: (DisplayRay2D, None),
-        LineSegment2D: (DisplayLineSegment2D, None),
-        Polyline2D: (DisplayPolyline2D, None),
-        Arc2D: (DisplayArc2D, None),
-        Polygon2D: (DisplayPolygon2D, None, 'Wireframe'),
-        Mesh2D: (DisplayMesh2D, None, 'Wireframe'),
-        Vector3D: (DisplayVector3D, None),
-        Point3D: (DisplayPoint3D, None),
-        Ray3D: (DisplayRay3D, None),
-        Plane: (DisplayPlane, None),
-        LineSegment3D: (DisplayLineSegment3D, None),
-        Polyline3D: (DisplayPolyline3D, None),
-        Arc3D: (DisplayArc3D, None),
-        Face3D: (DisplayFace3D, None, 'Wireframe'),
-        Mesh3D: (DisplayMesh3D, None, 'Wireframe'),
-        Polyface3D: (DisplayPolyface3D, None, 'Wireframe'),
-        Sphere: (DisplaySphere, None, 'Wireframe'),
-        Cone: (DisplayCone, None, 'Wireframe'),
-        Cylinder: (DisplayCylinder, None, 'Wireframe')
-    }
 
     def __init__(self, identifier, geometry, hidden=False):
         """Initialize ContextGeometry."""
@@ -226,6 +186,26 @@ class ContextGeometry(_VisualizationBase):
             base['user_data'] = self.user_data
         return base
 
+    def to_svg(self, width=800, height=600):
+        """Get this ContextGeometry as an editable SVG object.
+
+        Casting the resulting SVG object to string will give the file contents of a SVG.
+
+        Note that it is expected that the ContextGeometry has been scaled to
+        fit in the specified width and height dimensions and it exists within
+        the lower-right quadrant of the world coordinate system (Quadrant 4)
+        in oder to be translated correctly into the XY coordinate system of
+        the screen.
+
+        Args:
+            width: The screen width in pixels.
+            height: The screen height in pixels.
+        """
+        elements = [geo.to_svg() for geo in self.geometry]
+        canvas = svg.SVG(width=width, height=height)
+        canvas.elements = elements
+        return canvas
+
     @staticmethod
     def geometry_to_wireframe(geometry):
         """Convert a raw ladybug-geometry object into a wireframe ladybug-display object.
@@ -234,7 +214,7 @@ class ContextGeometry(_VisualizationBase):
             geometry: A raw ladybug-geometry object to be converted to a wireframe
                 ladybug-display object.
         """
-        conv_info = ContextGeometry.WIREFRAME_MAP[geometry.__class__]
+        conv_info = DISPLAY_MAP[geometry.__class__]
         new_class, wire_args = conv_info[0], list(conv_info[1:])
         wire_args.insert(0, geometry)
         return new_class(*wire_args)
