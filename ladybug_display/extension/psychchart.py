@@ -211,6 +211,20 @@ def psychrometric_chart_to_vis_set(
             vis_data.append(vd)
     # create the analysis geometry
     mesh_3d = Mesh3D.from_mesh2d(psych_chart.colored_mesh, bp)
+    flat_face_pts = [p for f in mesh_3d.face_vertices for p in f]
+    min_pt = [flat_face_pts[0].x, flat_face_pts[0].y]
+    max_pt = [flat_face_pts[0].x, flat_face_pts[0].y]
+    for v in flat_face_pts[1:]:
+        if v.x < min_pt[0]:
+            min_pt[0] = v.x
+        elif v.x > max_pt[0]:
+            max_pt[0] = v.x
+        if v.y < min_pt[1]:
+            min_pt[1] = v.y
+        elif v.y > max_pt[1]:
+            max_pt[1] = v.y
+    mesh_3d._min = Point3D(min_pt[0], min_pt[1], z)
+    mesh_3d._max = Point3D(max_pt[0], max_pt[1], z)
     mesh_geo = AnalysisGeometry(
         'Analysis_Data', [mesh_3d], vis_data, active_data=len(vis_data) - 1)
     mesh_geo.display_name = 'Analysis Data'

@@ -8,9 +8,9 @@ import ladybug_display.svg as svg
 DISPLAY_MODES = ('Surface', 'SurfaceWithEdges', 'Wireframe', 'Points')
 LINE_TYPES = ('Continuous', 'Dashed', 'Dotted', 'DashDot')
 DASH_ARRAYS = {
-    'Dashed': [8, 8],
+    'Dashed': [6, 6],
     'Dotted': [2, 2],
-    'DashDot': [8, 8, 2, 8]
+    'DashDot': [6, 6, 2, 6]
 }
 
 

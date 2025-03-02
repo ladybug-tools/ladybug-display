@@ -45,10 +45,13 @@ class VisualizationSet(_VisualizationBase):
         * geometry
         * min_point
         * max_point
+        * min_point_with_legend
+        * max_point_with_legend
         * units
         * user_data
     """
-    __slots__ = ('_geometry', '_min_point', '_max_point', '_units')
+    __slots__ = ('_geometry', '_min_point', '_max_point', '_min_point_with_legend',
+                 '_max_point_with_legend', '_units')
 
     UNITS = ('Meters', 'Millimeters', 'Feet', 'Inches', 'Centimeters')
     GEOMETRY_UNION = GEOMETRY_UNION
@@ -62,6 +65,8 @@ class VisualizationSet(_VisualizationBase):
         self.units = units
         self._min_point = None
         self._max_point = None
+        self._min_point_with_legend = None
+        self._max_point_with_legend = None
 
     @classmethod
     def from_dict(cls, data):
@@ -209,6 +214,20 @@ class VisualizationSet(_VisualizationBase):
         return self._max_point
 
     @property
+    def min_point_with_legend(self):
+        """A Point3D for the minimum around all geometry, including 3D legends."""
+        if self._min_point_with_legend is None:
+            self._calculate_min_max(True)
+        return self._min_point_with_legend
+
+    @property
+    def max_point_with_legend(self):
+        """A Point3D for the maximum around all geometry, including 3D legends."""
+        if self._max_point_with_legend is None:
+            self._calculate_min_max(True)
+        return self._max_point_with_legend
+
+    @property
     def units(self):
         """Get or set Text for the units system in which the geometry exists."""
         return self._units
@@ -248,6 +267,8 @@ class VisualizationSet(_VisualizationBase):
             self._geometry = tuple(geos_list)
         self._min_point = None
         self._max_point = None
+        self._min_point_with_legend = None
+        self._max_point_with_legend = None
 
     def remove_geometry(self, geo_index):
         """Remove a geometry object from this VisualizationSet.
@@ -263,6 +284,8 @@ class VisualizationSet(_VisualizationBase):
         self._geometry = tuple(geos_list)
         self._min_point = None
         self._max_point = None
+        self._min_point_with_legend = None
+        self._max_point_with_legend = None
 
     def check_duplicate_identifiers(self, raise_exception=True, detailed=False):
         """Check that there are no duplicate geometry object identifiers in the set.
@@ -343,6 +366,10 @@ class VisualizationSet(_VisualizationBase):
         """
         for geo in self.geometry:
             geo.move(moving_vec)
+        self._min_point = None
+        self._max_point = None
+        self._min_point_with_legend = None
+        self._max_point_with_legend = None
 
     def rotate_xy(self, angle, origin):
         """Rotate this VisualizationSet counterclockwise in the world XY plane.
@@ -354,6 +381,10 @@ class VisualizationSet(_VisualizationBase):
         """
         for geo in self.geometry:
             geo.rotate_xy(angle, origin)
+        self._min_point = None
+        self._max_point = None
+        self._min_point_with_legend = None
+        self._max_point_with_legend = None
 
     def scale(self, factor, origin=None):
         """Scale this VisualizationSet by a factor from an origin point.
@@ -365,6 +396,10 @@ class VisualizationSet(_VisualizationBase):
         """
         for geo in self._geometry:
             geo.scale(factor, origin)
+        self._min_point = None
+        self._max_point = None
+        self._min_point_with_legend = None
+        self._max_point_with_legend = None
 
     def convert_to_units(self, units):
         """Convert all of the geometry in this VisualizationSet to certain units.
@@ -449,7 +484,8 @@ class VisualizationSet(_VisualizationBase):
             pickle.dump(vs_dict, fp)
         return vs_file
 
-    def to_svg(self, width=800, height=600, margin=None):
+    def to_svg(self, width=800, height=600, margin=None,
+               render_3d_legend=False, render_2d_legend=False):
         """Get this VisualizationSet as an editable SVG object.
 
         Casting the SVG object to string will give the file contents of a SVG.
@@ -462,18 +498,29 @@ class VisualizationSet(_VisualizationBase):
             height: The screen height in pixels.
             margin: An optional number to set the size of the margins around the
                 base graphic in the final image. If None, this is automatically
-                set to be 10% of whatever the constraining dimension is (either
+                set to be 2% of whatever the constraining dimension is (either
                 width or height). (Default: None).
+            render_3d_legend: Boolean to note whether a 3D version of the legend
+                for any AnalysisGeometry should be included in the SVG (following
+                the 3D dimensions specified in the LegendParameters).
+            render_2d_legend: Boolean to note whether a 2D version of the legend
+                for any AnalysisGeometry should be included in the SVG (following
+                the 2D dimensions specified in the LegendParameters).
         """
         # compute the scene width and height
         if margin is None:
-            scene_width, scene_height = width * 0.8, height * 0.8
+            scene_width, scene_height = width * 0.96, height * 0.96
         else:
             scene_width, scene_height = width - (2 * margin), height - (2 * margin)
+        default_leg_pos = [0, 10, 50]
         # compute the bounding box dimensions around all of the VisualizationSet geometry
-        min_pt, max_pt = self.min_point, self.max_point
+        if render_3d_legend:
+            min_pt, max_pt = self.min_point_with_legend, self.max_point_with_legend
+        else:
+            min_pt, max_pt = self.min_point, self.max_point
         move_vec = Vector3D(-min_pt.x, -max_pt.y)
         x_dim, y_dim = max_pt.x - min_pt.x, max_pt.y - min_pt.y
+
         x_factor, y_factor = scene_width / x_dim, scene_height / y_dim
         scale_fac = min(x_factor, y_factor)
         if scale_fac == x_factor:  # center the geometry in the Y dimension
@@ -484,12 +531,19 @@ class VisualizationSet(_VisualizationBase):
         # transform all of the visualization set geometry to be in the lower quadrant
         svg_elements = []
         for geo in reversed(self.geometry):
-            geo = geo.duplicate()  # duplicate to avoid mutating the input
-            geo.move(move_vec)
-            geo.scale(scale_fac)
-            geo.move(center_vec)
-            svg_data = geo.to_svg()
-            svg_elements.extend(svg_data.elements)
+            if not geo.hidden:
+                geo = geo.duplicate()  # duplicate to avoid mutating the input
+                geo.move(move_vec)
+                geo.scale(scale_fac)
+                geo.move(center_vec)
+                if isinstance(geo, AnalysisGeometry):
+                    svg_data = geo.to_svg(render_3d_legend=render_3d_legend,
+                                          render_2d_legend=render_2d_legend,
+                                          default_leg_pos=default_leg_pos)
+                    default_leg_pos = list(svg_data.elements[-1].content)
+                else:
+                    svg_data = geo.to_svg()
+                svg_elements.extend(svg_data.elements)
         # combine everything into a final SVG object
         canvas = svg.SVG(width=width, height=height)
         canvas.elements = svg_elements
@@ -501,14 +555,22 @@ class VisualizationSet(_VisualizationBase):
             'AnalysisGeometry or ContextGeometry for VisualizationSet geometry. ' \
             'Got {}.'.format(type(geo))
 
-    def _calculate_min_max(self):
+    def _calculate_min_max(self, with_legend=False):
         """Calculate maximum and minimum Point3D for this object."""
         all_geo = []
         for geo_obj in self.geometry:
-            all_geo.append(geo_obj.min_point)
-            all_geo.append(geo_obj.max_point)
+            if with_legend and isinstance(geo_obj, AnalysisGeometry):
+                all_geo.append(geo_obj.min_point_with_legend)
+                all_geo.append(geo_obj.max_point_with_legend)
+            else:
+                all_geo.append(geo_obj.min_point)
+                all_geo.append(geo_obj.max_point)
         if len(all_geo) != 0:
-            self._min_point, self._max_point = bounding_box(all_geo)
+            if with_legend:
+                self._min_point_with_legend, self._max_point_with_legend = \
+                    bounding_box(all_geo)
+            else:
+                self._min_point, self._max_point = bounding_box(all_geo)
 
     def _conversion_factor_to_meters(self, units):
         """Get the conversion factor to meters based on input units.

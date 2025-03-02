@@ -67,7 +67,7 @@ def wind_rose_to_vis_set(windrose, z=0, frequency_labels=True):
     if frequency_labels:
         b_pln_x = Vector3D(1, 0, 0) if windrose.north == 0 else \
             Vector3D(1, 0, 0).rotate_xy(math.radians(windrose.north))
-        f_int = windrose.frequency_hours
+        f_int = int(windrose.frequency_hours)
         txt_h = min((windrose.frequency_spacing_distance / 4, txt_h))
         freqs = range(0, f_int * windrose.frequency_intervals_compass, f_int)
         for i, (lin, val) in enumerate(zip(freq_line, freqs)):
@@ -84,8 +84,8 @@ def wind_rose_to_vis_set(windrose, z=0, frequency_labels=True):
     msh = Mesh3D.from_mesh2d(windrose.colored_mesh, wr_pln)
     data_header = windrose.analysis_data_collection.header
     data_type, unit = data_header.data_type, data_header.unit
-    vis_data = VisualizationData(
-        windrose._color_array, windrose.legend_parameters, data_type, unit)
+    l_par = windrose.legend_parameters
+    vis_data = VisualizationData(windrose._color_array, l_par, data_type, unit)
     mesh_geo = AnalysisGeometry('Analysis_Data', [msh], [vis_data])
     mesh_geo.display_name = data_type.name
     mesh_geo.display_mode = 'SurfaceWithEdges'

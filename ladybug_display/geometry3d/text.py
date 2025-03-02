@@ -1,7 +1,9 @@
 """Class for specifying text within the 3D scene."""
 from __future__ import division
+import math
 
-from ladybug_geometry.geometry3d import Plane, Point3D
+from ladybug_geometry.geometry2d import Vector2D
+from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane
 from ladybug.color import Color
 
 from ._base import _SingleColorBase3D
@@ -176,10 +178,10 @@ class DisplayText3D(_SingleColorBase3D):
         if self.vertical_alignment == 'Top':
             min_y = v_len * self.height
         elif self.vertical_alignment == 'Middle':
-            min_y = (v_len * self.height) / 2
+            min_y = (v_len - 0.5) * self.height
         else:
-            min_y = 0
-        min_y = self.plane.o.y + min_y
+            min_y = (v_len - 1) * self.height
+        min_y = self.plane.o.y - min_y
         return Point3D(min_x, min_y, self.plane.o.z)
 
     @property
@@ -187,7 +189,6 @@ class DisplayText3D(_SingleColorBase3D):
         """Get a Point3D for the maximum of the bounding box around the object."""
         sep_text = self.text.split('\n')
         h_len = max([len(txt) for txt in sep_text])
-        v_len = len(sep_text)
 
         if self.horizontal_alignment == 'Left':
             max_x = h_len * self.height
@@ -198,11 +199,11 @@ class DisplayText3D(_SingleColorBase3D):
         max_x = self.plane.o.x + max_x
 
         if self.vertical_alignment == 'Bottom':
-            max_y = v_len * self.height
-        elif self.vertical_alignment == 'Middle':
-            max_y = (v_len * self.height) / 2
-        else:
             max_y = self.height
+        elif self.vertical_alignment == 'Middle':
+            max_y = self.height / 2
+        else:
+            max_y = 0
         max_y = self.plane.o.y + max_y
         return Point3D(max_x, max_y, self.plane.o.z)
 
@@ -232,10 +233,33 @@ class DisplayText3D(_SingleColorBase3D):
         return base
 
     def to_svg(self):
-        """Return DisplayText3D as an SVG Element."""
+        """Return DisplayText3D as an SVG group with text Elements.
+        """
+        split_text = self.text.split('\n')
+        if len(split_text) == 1:
+            element = self.text_line_to_svg(self.text)
+        else:  # group the text lines together and return them
+            geo = []
+            for i, txt in enumerate(split_text):
+                geo.append(self.text_line_to_svg(txt, i))
+            element = svg.G()
+            element.elements = geo
+        if self.plane.x.angle(Vector3D(1, 0, 0)) > math.radians(1):
+            x_ax, origin = self.plane.x, self.plane.o
+            ang = Vector2D(x_ax.x, x_ax.y).angle_counterclockwise(Vector2D(1, 0))
+            element.transform = [svg.Rotate(math.degrees(ang), x=origin.x, y=-origin.y)]
+        return element
+
+    def text_line_to_svg(self, text_line, line_number=0):
+        """Convert a single line of text to SVG using the properties of this object.
+
+        Args:
+            text_line: Text string for the line to be converted to an SVG element.
+            line_number: Integer for the line number that the text represents.
+        """
         t_pt = self.plane.o
-        element = svg.Text(x=t_pt.x, y=-t_pt.y)
-        element.text = self.text.replace('\n', ' ')
+        element = svg.Text(x=t_pt.x, y=-t_pt.y + (line_number * self.height * 1.25))
+        element.text = text_line
         element.font_size = self.height
         element.font_family = self.font
         if self.horizontal_alignment == 'Left':
@@ -245,12 +269,11 @@ class DisplayText3D(_SingleColorBase3D):
         elif self.horizontal_alignment == 'Right':
             element.text_anchor = 'end'
         if self.vertical_alignment == 'Top':
-            element.dominant_baseline = 'auto'
+            element.dominant_baseline = 'hanging'
         elif self.vertical_alignment == 'Middle':
             element.dominant_baseline = 'middle'
         elif self.vertical_alignment == 'Bottom':
-            element.dominant_baseline = 'hanging'
-
+            element.dominant_baseline = 'auto'
         element.fill = self.color.to_hex()
         if self.color.a != 255:
             element.opacity = self.color.a / 255
