@@ -10,6 +10,7 @@ from ladybug_geometry.bounding import bounding_box
 
 from .geometry2d._base import _DisplayBase2D
 from .geometry3d._base import _DisplayBase3D
+from .geometry3d import DisplayText3D
 from .dictutil import dict_to_object
 
 import ladybug_display.svg as svg
@@ -221,7 +222,13 @@ class ContextGeometry(_VisualizationBase):
 
     def _calculate_min_max(self):
         """Calculate maximum and minimum Point3D for this object."""
-        lb_geos = [d_geo.geometry for d_geo in self.geometry]
+        lb_geos = []
+        for d_geo in self.geometry:
+            if isinstance(d_geo, DisplayText3D):
+                lb_geos.append(d_geo.min)
+                lb_geos.append(d_geo.max)
+            else:
+                lb_geos.append(d_geo.geometry)
         self._min_point, self._max_point = bounding_box(lb_geos)
 
     def __copy__(self):

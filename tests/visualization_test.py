@@ -8,12 +8,20 @@ from ladybug_geometry.geometry3d import Point3D, Plane, Mesh3D, Polyface3D
 from ladybug.futil import nukedir
 from ladybug.graphic import GraphicContainer
 from ladybug.legend import Legend, LegendParameters
+from ladybug.color import Colorset
+from ladybug.dt import DateTime
 from ladybug.epw import EPW
 from ladybug.hourlyplot import HourlyPlot
+from ladybug.sunpath import Sunpath
+from ladybug.windrose import WindRose
+from ladybug.psychchart import PsychrometricChart
 
 from ladybug_display.visualization import VisualizationSet, ContextGeometry, \
     AnalysisGeometry, VisualizationData
 from ladybug_display.extension.hourlyplot import hourly_plot_to_vis_set
+from ladybug_display.extension.sunpath import sunpath_to_vis_set
+from ladybug_display.extension.windrose import wind_rose_to_vis_set
+from ladybug_display.extension.psychchart import psychrometric_chart_to_vis_set
 
 
 def test_init_visualization_set():
@@ -158,7 +166,54 @@ def test_hourly_plot_to_svg():
     hourly_plot = HourlyPlot(dbt, legend_parameters=l_par)
     vis_set = hourly_plot_to_vis_set(hourly_plot)
 
-    svg_data = vis_set.to_svg(1600, 500, 50)
+    svg_data = vis_set.to_svg(1300, 500, render_3d_legend=True)
     svg_file = svg_data.to_file(name='HourlyPlot', folder='./tests/svg')
+    assert os.path.isfile(svg_file)
+    os.remove(svg_file)
+
+
+def test_sunpath_to_svg():
+    """Test the translation of an Sunpath VisualizationSet to SVG."""
+    path = './tests/epw/chicago.epw'
+    epw = EPW(path)
+    sunpath = Sunpath.from_location(epw.location)
+    hoys = [DateTime(3, 2, i).hoy for i in range(24)]
+    vis_set = sunpath_to_vis_set(sunpath, hoys=hoys, projection='Stereographic')
+
+    svg_data = vis_set.to_svg(900, 900)
+    svg_file = svg_data.to_file(name='Sunpath', folder='./tests/svg')
+    assert os.path.isfile(svg_file)
+    os.remove(svg_file)
+
+
+def test_wind_rose_to_svg():
+    """Test the translation of an WindRose VisualizationSet to SVG."""
+    path = './tests/epw/chicago.epw'
+    epw = EPW(path)
+    speed, direction = epw.wind_speed, epw.wind_direction
+    wind_rose = WindRose(direction, speed, 36)
+    wind_rose.frequency_hours = 50
+    wind_rose.show_zeros = True
+    l_par = LegendParameters(min=0, max=10, colors=Colorset.parula())
+    wind_rose.legend_parameters = l_par
+    vis_set = wind_rose_to_vis_set(wind_rose)
+
+    svg_data = vis_set.to_svg(900, 750, render_3d_legend=True)
+    svg_file = svg_data.to_file(name='WindRose', folder='./tests/svg')
+    assert os.path.isfile(svg_file)
+    os.remove(svg_file)
+
+
+def test_psych_chart_to_svg():
+    """Test the translation of an Psy VisualizationSet to SVG."""
+    path = './tests/epw/chicago.epw'
+    epw = EPW(path)
+    dbt, rh = epw.dry_bulb_temperature, epw.relative_humidity
+    psych_chart = PsychrometricChart(
+        dbt, rh, max_temperature=40, max_humidity_ratio=0.025)
+    vis_set = psychrometric_chart_to_vis_set(psych_chart)
+
+    svg_data = vis_set.to_svg(1200, 700, render_3d_legend=True)
+    svg_file = svg_data.to_file(name='PsychChart', folder='./tests/svg')
     assert os.path.isfile(svg_file)
     os.remove(svg_file)

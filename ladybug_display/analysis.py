@@ -102,12 +102,15 @@ class AnalysisGeometry(_VisualizationBase):
         * hidden
         * min_point
         * max_point
+        * min_point_with_legend
+        * max_point_with_legend
         * matching_method
         * user_data
     """
     __slots__ = (
         '_geometry', '_data_sets', '_active_data', '_display_mode', '_hidden',
-        '_min_point', '_max_point', '_possible_lengths', '_matching_method')
+        '_min_point', '_max_point', '_min_point_with_legend', '_max_point_with_legend',
+        '_possible_lengths', '_matching_method')
     T_FORMABLE_2D = (Point2D, Ray2D, LineSegment2D, Polyline2D, Arc2D, Polygon2D, Mesh2D)
 
     def __init__(self, identifier, geometry, data_sets,
@@ -129,6 +132,8 @@ class AnalysisGeometry(_VisualizationBase):
         self.hidden = hidden
         self._min_point = None
         self._max_point = None
+        self._min_point_with_legend = None
+        self._max_point_with_legend = None
 
     @classmethod
     def from_dict(cls, data):
@@ -227,6 +232,20 @@ class AnalysisGeometry(_VisualizationBase):
         if self._max_point is None:
             self._calculate_min_max()
         return self._max_point
+
+    @property
+    def min_point_with_legend(self):
+        """A Point3D for the minimum around all geometry, including 3D legends."""
+        if self._min_point_with_legend is None:
+            self._calculate_min_max(True)
+        return self._min_point_with_legend
+
+    @property
+    def max_point_with_legend(self):
+        """A Point3D for the maximum around all geometry, including 3D legends."""
+        if self._max_point_with_legend is None:
+            self._calculate_min_max(True)
+        return self._max_point_with_legend
 
     @property
     def matching_method(self):
@@ -328,7 +347,18 @@ class AnalysisGeometry(_VisualizationBase):
                     new_geo.append(geo.move(moving_vec_2d))
                 else:  # object like a vector for which the transform is meaningless
                     new_geo.append(geo)
+        for v_data in self.data_sets:
+            l_par = v_data.legend.legend_parameters
+            if not l_par.is_base_plane_default:
+                l_par.base_plane = l_par.base_plane.move(moving_vec)
+            else:
+                l_par.properties_3d._base_plane = \
+                    l_par.properties_3d._base_plane.move(moving_vec)
         self._geometry = tuple(new_geo)
+        self._min_point = None
+        self._max_point = None
+        self._min_point_with_legend = None
+        self._max_point_with_legend = None
 
     def rotate_xy(self, angle, origin):
         """Rotate this AnalysisGeometry counterclockwise in the world XY plane.
@@ -348,7 +378,18 @@ class AnalysisGeometry(_VisualizationBase):
                     new_geo.append(geo.rotate(angle, origin_2d))
                 else:  # object like a vector for which the transform is meaningless
                     new_geo.append(geo)
+        for v_data in self.data_sets:
+            l_par = v_data.legend.legend_parameters
+            if not l_par.is_base_plane_default:
+                l_par.base_plane = l_par.base_plane.rotate_xy(angle, origin)
+            else:
+                l_par.properties_3d._base_plane = \
+                    l_par.properties_3d._base_plane.rotate_xy(angle, origin)
         self._geometry = tuple(new_geo)
+        self._min_point = None
+        self._max_point = None
+        self._min_point_with_legend = None
+        self._max_point_with_legend = None
 
     def scale(self, factor, origin=None):
         """Scale this AnalysisGeometry by a factor from an origin point.
@@ -368,7 +409,31 @@ class AnalysisGeometry(_VisualizationBase):
                     new_geo.append(geo.scale(factor, origin_2d))
                 else:  # object like a vector for which the transform is meaningless
                     new_geo.append(geo)
+        for v_data in self.data_sets:
+            l_par = v_data.legend.legend_parameters
+            if not l_par.is_segment_height_default:
+                l_par.segment_height = l_par.segment_height * factor
+            elif l_par.properties_3d._segment_height != 1:
+                l_par.properties_3d._segment_height = \
+                    l_par.properties_3d._segment_height * factor
+            if not l_par.is_segment_width_default:
+                l_par.segment_width = l_par.segment_width * factor
+            elif l_par.properties_3d._segment_height != 1:
+                l_par.properties_3d._segment_width = \
+                    l_par.properties_3d._segment_width * factor
+            if not l_par.is_text_height_default:
+                l_par.text_height = l_par.text_height * factor
+            elif l_par.properties_3d._text_height is not None:
+                l_par.properties_3d._text_height = \
+                    l_par.properties_3d._text_height * factor
+            l_par.properties_3d._base_plane = \
+                l_par.properties_3d._base_plane.scale(factor)
+            v_data._legend._legend_par = l_par
         self._geometry = tuple(new_geo)
+        self._min_point = None
+        self._max_point = None
+        self._min_point_with_legend = None
+        self._max_point_with_legend = None
 
     def to_dict(self):
         """Get AnalysisGeometry as a dictionary."""
@@ -387,7 +452,8 @@ class AnalysisGeometry(_VisualizationBase):
             base['user_data'] = self.user_data
         return base
 
-    def to_svg(self, width=800, height=600):
+    def to_svg(self, width=800, height=600,
+               render_3d_legend=False, render_2d_legend=False, default_leg_pos=None):
         """Get this AnalysisGeometry as an editable SVG object.
 
         Casting the SVG object to string will give the file contents of a SVG.
@@ -401,9 +467,22 @@ class AnalysisGeometry(_VisualizationBase):
         Args:
             width: The screen width in pixels.
             height: The screen height in pixels.
+            render_3d_legend: Boolean to note whether a 3D version of the legend
+                for any AnalysisGeometry should be included in the SVG (following
+                the 3D dimensions specified in the LegendParameters).
+            render_2d_legend: Boolean to note whether a 2D version of the legend
+                for any AnalysisGeometry should be included in the SVG (following
+                the 2D dimensions specified in the LegendParameters).
+            default_leg_pos: An optional tuple of 3 numbers that can be used to
+                customize the default legend positions such that they are not on top
+                of one another when multiple AnalysisGeometries exist in a
+                VisualizationSet. (Default: None).
         """
-        elements = []
-        colors = self.data_sets[self.active_data].value_colors
+        elements = []  # list to hold all of the generated SVG elements
+        # translate the geometry to SVG
+        data_set = self.data_sets[self.active_data]
+        l_par = data_set.legend_parameters
+        colors = data_set.value_colors
         if self.matching_method in ('faces', 'vertices'):
             # translate the AnalysisGeometry using DisplayMesh2D
             prev_i = 0
@@ -424,10 +503,99 @@ class AnalysisGeometry(_VisualizationBase):
                 dis_args[1] = col
                 display_geo = dis_class(*dis_args)
                 elements.append(display_geo.to_svg())
+        # translate the legend to SVG if requested
+        if default_leg_pos is None:
+            default_leg_x3d, default_leg_x2d, default_leg_y2d = 0, 10, 50
+        else:
+            default_leg_x3d, default_leg_x2d, default_leg_y2d = default_leg_pos
+        if render_3d_legend:
+            # ensure multiple legends are not on top of each other
+            if l_par.is_base_plane_default:
+                m_vec = Vector3D(default_leg_x3d, 0, 0)
+                l_par.base_plane = l_par.base_plane.move(m_vec)
+                l_par.properties_3d._is_base_plane_default = True
+                leg_width = l_par.segment_width + 6 * l_par.text_height \
+                    if l_par.vertical else \
+                    l_par.segment_width * (l_par.segment_count + 2)
+                default_leg_x3d += leg_width
+            elements.extend(self.legend_3d_to_svg(data_set.legend))
+        if render_2d_legend:
+            # ensure multiple legends are not on top of each other
+            if l_par.vertical and l_par.is_origin_x_default:
+                l_par.origin_x = '{}px'.format(default_leg_x2d)
+                l_par.properties_2d._is_origin_x_default = True
+                sw = data_set.legend.parse_dim_2d(
+                    l_par.segment_width_2d, width)
+                th = data_set.legend.parse_dim_2d(
+                    l_par.text_height_2d, height)
+                leg_width = sw + 6 * th
+                default_leg_x2d += leg_width
+            elif not l_par.vertical and l_par.is_origin_y_default:
+                l_par.origin_y = '{}px'.format(default_leg_y2d)
+                l_par.properties_2d._is_origin_y_default = True
+                sh = data_set.legend.parse_dim_2d(
+                    l_par.segment_height_2d, height)
+                th = data_set.legend.parse_dim_2d(
+                    l_par.text_height_2d, height)
+                leg_height = sh + 4 * th
+                default_leg_y2d += leg_height
+            leg_svg = VisualizationData.legend_2d_to_svg(data_set.legend, width, height)
+            elements.extend(leg_svg.elements)
+        # add a description with the default legend dims if they were edited
+        default_leg_pos = [default_leg_x3d, default_leg_x2d, default_leg_y2d]
+        dim_desc = svg.Desc(content=str(default_leg_pos))
+        elements.append(dim_desc)
         # combine everything into a final SVG object
         canvas = svg.SVG(width=width, height=height)
         canvas.elements = elements
         return canvas
+
+    @staticmethod
+    def legend_3d_to_svg(legend):
+        """Translate a 3D Legend geometry into an SVG.
+
+        Args:
+            legend: A Ladybug Legend object to be converted to SVG.
+
+        Returns:
+            A list of SVG elements in the following order.
+
+            -   legend_mesh -- A colored mesh for the legend.
+
+            -   legend_title -- A text object for the legend title.
+
+            -   legend_text -- Text objects for the rest of the legend text.
+        """
+        legend_mesh = DisplayMesh3D.mesh3d_to_svg(legend.segment_mesh, 'SurfaceWithEdges')
+        legend_text = AnalysisGeometry.legend_text_objects(legend)
+        svg_text = [txt.to_svg() for txt in legend_text]
+        return [legend_mesh] + svg_text
+
+    @staticmethod
+    def legend_text_objects(legend):
+        """Get DisplayText3D objects that correspond with a 3D legend."""
+        _height = legend.legend_parameters.text_height
+        _font = legend.legend_parameters.font
+        legend_title = DisplayText3D(legend.title, legend.title_location,
+                                     _height, font=_font)
+        if not legend.legend_parameters.continuous_legend:
+            legend_text = [
+                DisplayText3D(txt, loc, _height, font=_font, horizontal_alignment='Left',
+                              vertical_alignment='Bottom')
+                for txt, loc in zip(legend.segment_text, legend.segment_text_location)
+            ]
+        elif legend.legend_parameters.vertical is True:
+            legend_text = [
+                DisplayText3D(txt, loc, _height, font=_font, horizontal_alignment='Left',
+                              vertical_alignment='Middle')
+                for txt, loc in zip(legend.segment_text, legend.segment_text_location)
+            ]
+        else:
+            legend_text = [
+                DisplayText3D(txt, loc, _height, font=_font,
+                              horizontal_alignment='Center', vertical_alignment='Bottom')
+                for txt, loc in zip(legend.segment_text, legend.segment_text_location)]
+        return [legend_title] + legend_text
 
     def _check_data_set(self, data_set):
         """Check that a data set is compatible with the geometry."""
@@ -466,9 +634,15 @@ class AnalysisGeometry(_VisualizationBase):
         if len(dat_set) == vert_len:
             return 'vertices', vert_len
 
-    def _calculate_min_max(self):
+    def _calculate_min_max(self, with_legend=False):
         """Calculate maximum and minimum Point3D for this object."""
-        self._min_point, self._max_point = bounding_box(self.geometry)
+        if with_legend:
+            legend = self.data_sets[self.active_data].legend
+            leg_geo = (legend.segment_mesh,) + tuple(self.legend_text_objects(legend))
+            self._min_point_with_legend, self._max_point_with_legend = \
+                bounding_box(self.geometry + leg_geo)
+        else:
+            self._min_point, self._max_point = bounding_box(self.geometry)
 
     @staticmethod
     def _possible_data_lengths(geometry):
@@ -775,7 +949,7 @@ class VisualizationData(VisualizationMetaData):
                 for the graphic container.
         """
         return GraphicContainer(
-            self.values, min_point, max_point, self._legend_parameters,
+            self.values, min_point, max_point, self._legend._legend_par,
             self._data_type, self._unit)
 
     def convert_to_unit(self, unit, convert_min_max=False):
@@ -883,7 +1057,28 @@ class VisualizationData(VisualizationMetaData):
                 dimensions specified in the percent of the screen. (Default: 600).
         """
         # get the legend properties of this object
-        legend = self.legend
+        return self.legend_2d_to_svg(self.legend, width, height)
+
+    @staticmethod
+    def legend_2d_to_svg(legend, width=800, height=600):
+        """Translate a 2D Legend geometry into an SVG.
+
+        Args:
+            legend: A Ladybug Legend object to be converted to SVG.
+            width: The screen width in pixels, which is needed to interpret
+                dimensions specified in the percent of the screen. (Default: 800).
+            height: The screen height in pixels, which is needed to interpret
+                dimensions specified in the percent of the screen. (Default: 600).
+
+        Returns:
+            A list of SVG elements in the following order.
+
+            -   legend_mesh -- A colored mesh for the legend.
+
+            -   legend_title -- A text object for the legend title.
+
+            -   legend_text -- Text objects for the rest of the legend text.
+        """
         l_par = legend.legend_parameters
         or_x, or_y, sh, sw, th = legend._pixel_dims_2d(width, height)
         elements = []  # list to hold all of the elements of the legend
