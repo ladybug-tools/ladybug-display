@@ -1,3 +1,4 @@
+# coding=utf-8
 """Classes for representing Transforms."""
 from ._types import _number
 

@@ -1,3 +1,4 @@
+# coding=utf-8
 """Method to draw an AdaptiveChart as a VisualizationSet."""
 from ladybug_geometry.geometry2d import Polyline2D
 from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane, LineSegment3D, \

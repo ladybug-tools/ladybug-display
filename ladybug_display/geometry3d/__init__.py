@@ -1,3 +1,4 @@
+# coding=utf-8
 """Geometry objects for display in 3D space."""
 
 from .vector import DisplayVector3D

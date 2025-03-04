@@ -1,3 +1,4 @@
+# coding=utf-8
 """Method to draw a ViewSphere as a VisualizationSet."""
 from ladybug_geometry.geometry3d import Point3D, Ray3D, Mesh3D
 from ladybug.legend import LegendParameters

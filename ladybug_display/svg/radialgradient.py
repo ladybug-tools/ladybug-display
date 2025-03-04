@@ -1,3 +1,4 @@
+# coding=utf-8
 """SVG RadialGradient class."""
 from . import _mixins as m
 from ._types import _number_or_length

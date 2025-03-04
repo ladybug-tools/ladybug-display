@@ -1,3 +1,4 @@
+# coding=utf-8
 """SVG Style class."""
 from . import _mixins as m
 from ._types import _str, _list_of_objs

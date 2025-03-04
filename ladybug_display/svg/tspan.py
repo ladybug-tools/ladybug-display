@@ -1,3 +1,4 @@
+# coding=utf-8
 """SVG TSpan class."""
 from ._types import _number, _number_or_length, _str_enum
 from .element import Element, _TextElement, \

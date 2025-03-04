@@ -1,3 +1,4 @@
+# coding=utf-8
 """A vector that can be displayed in 3D space."""
 from __future__ import division
 import math

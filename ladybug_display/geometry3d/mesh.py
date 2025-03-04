@@ -1,3 +1,4 @@
+# coding=utf-8
 """A mesh in 3D space with display properties."""
 from __future__ import division
 

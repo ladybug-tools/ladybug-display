@@ -502,8 +502,8 @@ class VisualizationSet(_VisualizationBase):
         within the specified pixel width and height of the SVG
 
         Args:
-            width: The screen width in pixels.
-            height: The screen height in pixels.
+            width: The screen width in pixels. (Default: 800).
+            height: The screen height in pixels. (Default: 600).
             margin: An optional number to set the size of the margins around the
                 base graphic in the final image. If None, this is automatically
                 set to be 2% of whatever the constraining dimension is (either
@@ -528,7 +528,7 @@ class VisualizationSet(_VisualizationBase):
 
                 * Top
                 * Left
-                * Right:
+                * Right
                 * Front
                 * Back
                 * NE

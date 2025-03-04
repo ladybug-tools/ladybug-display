@@ -1,3 +1,4 @@
+# coding=utf-8
 """Method to draw a WindRose as a VisualizationSet."""
 import math
 

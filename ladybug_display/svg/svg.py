@@ -1,3 +1,4 @@
+# coding=utf-8
 """Class for the entire SVG object."""
 import os
 from ladybug.config import folders

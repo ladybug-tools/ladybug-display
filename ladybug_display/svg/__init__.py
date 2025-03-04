@@ -1,3 +1,4 @@
+# coding=utf-8
 """Classes for rendering ladybug-display objects as SVG.
 
 All classes in this SVG sub-package are derived from the svg.py package.

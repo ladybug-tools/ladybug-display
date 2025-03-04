@@ -1,3 +1,4 @@
+# coding=utf-8
 """SVG Stop class for gradients."""
 from . import _mixins as m
 from ._types import _number, _number_or_length, _str, _list_of_objs

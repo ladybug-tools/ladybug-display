@@ -1,3 +1,4 @@
+# coding=utf-8
 """SVG Symbol class."""
 from . import _mixins as m
 from ._types import PreserveAspectRatio, ViewBoxSpec, \

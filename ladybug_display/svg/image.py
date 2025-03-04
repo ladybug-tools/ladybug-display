@@ -1,3 +1,4 @@
+# coding=utf-8
 """SVG Image class."""
 from . import _mixins as m
 from ._transforms import Transform

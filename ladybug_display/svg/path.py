@@ -1,3 +1,4 @@
+# coding=utf-8
 """SVG Path class."""
 from ._path import PathData
 from ._transforms import Transform

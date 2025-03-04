@@ -1,3 +1,4 @@
+# coding=utf-8
 """Method to draw an PsychrometricChart as a VisualizationSet."""
 from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane, LineSegment3D, \
     Polyline3D, Mesh3D

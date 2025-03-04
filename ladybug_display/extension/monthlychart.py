@@ -1,3 +1,4 @@
+# coding=utf-8
 """Method to draw an MonthlyChart as a VisualizationSet."""
 from ladybug_geometry.geometry3d import Point3D, Plane, LineSegment3D, Polyline3D, \
     Mesh3D

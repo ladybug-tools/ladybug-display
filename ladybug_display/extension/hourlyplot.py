@@ -1,3 +1,4 @@
+# coding=utf-8
 """Method to draw an HourlyPlot as a VisualizationSet."""
 from ladybug_geometry.geometry3d import Plane
 
