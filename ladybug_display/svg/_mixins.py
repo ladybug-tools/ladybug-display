@@ -1,3 +1,4 @@
+# coding=utf-8
 """Base classes from which many SVG elements inherit properties."""
 from ._types import Length, Number, _number, _number_or_length, _str_enum, _str
 

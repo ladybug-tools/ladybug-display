@@ -1,3 +1,4 @@
+# coding=utf-8
 """A polyline that can be displayed in 2D space."""
 from __future__ import division
 
@@ -157,7 +158,7 @@ class DisplayPolyline2D(_LineCurveBase2D):
     @staticmethod
     def _polyline2d_to_cubic_bezier_svg(polyline):
         """SVG Path from ladybug-geometry Polyline2D."""
-        alpha = 0.5  # for a centripetal Catmull–Rom spline
+        alpha = 0.5  # for a centripetal Catmull-Rom spline
         # https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline
 
         def tj(ti, pi, pj):

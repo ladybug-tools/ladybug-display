@@ -1,3 +1,4 @@
+# coding=utf-8
 """Classes for special types relating to SVG."""
 Number = (float, int)
 

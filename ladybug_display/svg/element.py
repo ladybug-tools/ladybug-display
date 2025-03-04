@@ -1,3 +1,4 @@
+# coding=utf-8
 """Base class for all SVG elements."""
 from . import _mixins as m
 from ._transforms import Transform

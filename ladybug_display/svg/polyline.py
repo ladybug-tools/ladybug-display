@@ -1,3 +1,4 @@
+# coding=utf-8
 """SVG Polyline class."""
 from ._transforms import Transform
 from ._types import Number, _number, _str, _str_enum, _list_of_objs

@@ -1,3 +1,4 @@
+# coding=utf-8
 """Method to draw a SkyDome as a VisualizationSet."""
 from ladybug_geometry.geometry3d.pointvector import Point3D
 

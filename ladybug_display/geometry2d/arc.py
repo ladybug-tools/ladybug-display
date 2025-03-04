@@ -1,3 +1,4 @@
+# coding=utf-8
 """An arc that can be displayed in 2D space."""
 from __future__ import division
 import math

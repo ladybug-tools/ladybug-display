@@ -1,3 +1,4 @@
+# coding=utf-8
 """SVG Ellipse class."""
 from ._transforms import Transform
 from ._types import _number, _number_or_length, _str, _list_of_objs

@@ -1,3 +1,4 @@
+# coding=utf-8
 """Objects used as alternatives to various numerical properties."""
 
 

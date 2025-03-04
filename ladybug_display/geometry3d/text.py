@@ -1,3 +1,4 @@
+# coding=utf-8
 """Class for specifying text within the 3D scene."""
 from __future__ import division
 import math

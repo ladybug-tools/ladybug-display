@@ -1,3 +1,4 @@
+# coding=utf-8
 """SVG Marker class."""
 from . import _mixins as m
 from ._types import PreserveAspectRatio, ViewBoxSpec, \

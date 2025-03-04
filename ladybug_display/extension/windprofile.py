@@ -1,3 +1,4 @@
+# coding=utf-8
 """Method to draw a WindProfile as a VisualizationSet."""
 from ladybug_geometry.geometry3d import Point3D
 
