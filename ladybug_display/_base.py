@@ -106,6 +106,7 @@ class _MeshBase(object):
             for point in mesh.face_centroids:
                 pt = svg.Circle(cx=point.x, cy=-point.y, r=5)
                 pt.fill = 'black'
+                pt.class_ = ['a_geo']
                 geo.append(pt)
             if colors is not None:
                 for pt, col in zip(geo, mesh.colors):
@@ -116,7 +117,9 @@ class _MeshBase(object):
                 for pt in face:
                     points.append(pt.x)
                     points.append(-pt.y)
-                geo.append(svg.Polygon(points=points))
+                poly = svg.Polygon(points=points)
+                poly.class_ = ['a_geo']
+                geo.append(poly)
             if display_mode == 'Wireframe':
                 for face in geo:
                     face.fill = 'none'

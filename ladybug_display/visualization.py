@@ -492,7 +492,7 @@ class VisualizationSet(_VisualizationBase):
             pickle.dump(vs_dict, fp)
         return vs_file
 
-    def to_svg(self, width=800, height=600, margin=None,
+    def to_svg(self, width=800, height=600, margin=None, interactive=False,
                render_3d_legend=False, render_2d_legend=False, view='Top'):
         """Get this VisualizationSet as an editable SVG object.
 
@@ -508,6 +508,13 @@ class VisualizationSet(_VisualizationBase):
                 base graphic in the final image. If None, this is automatically
                 set to be 2% of whatever the constraining dimension is (either
                 width or height). (Default: None).
+            interactive: A boolean to note whether AnalysisGeometry in the
+                VisualizationSet should be rendered with interactive hover
+                effects (True) or they should be rendered as static (False).
+                If hover effects are included, then objects that are a part of
+                AnalysisGeometries will be highlighted with a thick black border
+                when hovered over and hover text will appear with the value
+                associated with the geometry. (Default: False).
             render_3d_legend: Boolean to note whether a 3D version of the legend
                 for any AnalysisGeometry should be included in the SVG (following
                 the 3D dimensions specified in the LegendParameters).
@@ -573,7 +580,8 @@ class VisualizationSet(_VisualizationBase):
             geo.scale(scale_fac)
             geo.move(center_vec)
             if isinstance(geo, AnalysisGeometry):
-                svg_data = geo.to_svg(render_3d_legend=render_3d_legend,
+                svg_data = geo.to_svg(interactive=interactive,
+                                      render_3d_legend=render_3d_legend,
                                       render_2d_legend=render_2d_legend,
                                       default_leg_pos=default_leg_pos)
                 default_leg_pos = list(svg_data.elements[-1].content)

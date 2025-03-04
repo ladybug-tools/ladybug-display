@@ -4,6 +4,7 @@ from ladybug_geometry.geometry3d import Point3D, Plane, Polyline3D, Sphere
 from ladybug.dt import Date
 from ladybug.color import Color
 from ladybug.legend import LegendParameters
+from ladybug.graphic import GraphicContainer
 from ladybug.compass import Compass
 
 from ..geometry3d import DisplayPoint3D, DisplayArc3D, DisplayPolyline3D, DisplaySphere
@@ -183,8 +184,14 @@ def sunpath_to_vis_set(
                 legend_parameters = [legend_parameters] * len(data)
             all_data = []
             for i, dat_c in enumerate(data):
-                l_par = legend_parameters[i] if legend_parameters is not None else None
                 n_data = dat_c.filter_by_moys(moys)  # filter data by sun-up hours
+                if legend_parameters is not None:
+                    l_par = legend_parameters[i]
+                else:  # create default legend parameters from the geometry and data
+                    graphic = GraphicContainer(
+                        n_data.values, compass.min_point3d(0), compass.max_point3d(0),
+                        None, n_data.header.data_type, n_data.header.unit)
+                    l_par = graphic.legend_parameters
                 v_data = VisualizationData(
                     n_data.values, l_par, dat_c.header.data_type, dat_c.header.unit)
                 all_data.append(v_data)

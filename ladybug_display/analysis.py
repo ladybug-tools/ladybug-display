@@ -114,6 +114,7 @@ class AnalysisGeometry(_VisualizationBase):
         '_min_point', '_max_point', '_min_point_with_legend', '_max_point_with_legend',
         '_possible_lengths', '_matching_method')
     T_FORMABLE_2D = (Point2D, Ray2D, LineSegment2D, Polyline2D, Arc2D, Polygon2D, Mesh2D)
+    HOVER_STYLE = '.a_geo:hover {stroke:black;stroke_width:1;opacity:0.5;}'
 
     def __init__(self, identifier, geometry, data_sets,
                  active_data=0, display_mode='Surface', hidden=False):
@@ -475,7 +476,7 @@ class AnalysisGeometry(_VisualizationBase):
             base['user_data'] = self.user_data
         return base
 
-    def to_svg(self, width=800, height=600,
+    def to_svg(self, width=800, height=600, interactive=False,
                render_3d_legend=False, render_2d_legend=False, default_leg_pos=None):
         """Get this AnalysisGeometry as an editable SVG object.
 
@@ -490,6 +491,12 @@ class AnalysisGeometry(_VisualizationBase):
         Args:
             width: The screen width in pixels.
             height: The screen height in pixels.
+            interactive: A boolean to note whether this AnalysisGeometry should
+                be rendered with interactive hover effects (True) or they should
+                be rendered as static (False). If hover effects are included,
+                then colored SVG objects will be highlighted with a thick black border
+                when hovered over and hover text will appear with the value
+                associated with the geometry. (Default: False).
             render_3d_legend: Boolean to note whether a 3D version of the legend
                 for any AnalysisGeometry should be included in the SVG (following
                 the 3D dimensions specified in the LegendParameters).
@@ -508,13 +515,23 @@ class AnalysisGeometry(_VisualizationBase):
         colors = data_set.value_colors
         if self.matching_method in ('faces', 'vertices'):
             # translate the AnalysisGeometry using DisplayMesh2D
-            prev_i = 0
+            prev_i, data_vals = 0, data_set.values
             for mesh in self.geometry:
                 m_len = len(mesh.faces) if self.matching_method == 'faces' \
                     else len(mesh.vertices)
                 mesh.colors = colors[prev_i:prev_i + m_len]
                 prev_i += m_len
-                elements.append(DisplayMesh2D.mesh2d_to_svg(mesh, self.display_mode))
+                mesh_element = DisplayMesh2D.mesh2d_to_svg(mesh, self.display_mode)
+                elements.append(mesh_element)
+                if interactive and self.matching_method == 'faces':
+                    for val, element in zip(data_vals, mesh_element.elements):
+                        title = svg.Title()
+                        title.text = val
+                        element.elements = [title]
+                    data_vals = data_vals[len(mesh_element.elements):]
+                    a_sty = svg.Style()
+                    a_sty.text = self.HOVER_STYLE
+                    mesh_element.elements.insert(0, a_sty)
         else:  # translate the AnalysisGeometry using other display classes
             sample_geo = self.geometry[0]
             conv_info = DISPLAY_MAP[sample_geo.__class__]
@@ -526,6 +543,15 @@ class AnalysisGeometry(_VisualizationBase):
                 dis_args[1] = col
                 display_geo = dis_class(*dis_args)
                 elements.append(display_geo.to_svg())
+            if interactive:
+                for val, ele in zip(data_set.values, elements):
+                    title = svg.Title()
+                    title.text = val
+                    ele.elements = [title]
+                    ele.class_ = ['a_geo']
+                a_sty = svg.Style()
+                a_sty.text = self.HOVER_STYLE
+                elements.insert(0, a_sty)
         # translate the legend to SVG if requested
         if default_leg_pos is None:
             default_leg_x3d, default_leg_x2d, default_leg_y2d = 0, 10, 50
