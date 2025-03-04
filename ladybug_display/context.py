@@ -7,6 +7,7 @@ from __future__ import division
 
 from ladybug_geometry.geometry2d import Vector2D, Point2D
 from ladybug_geometry.bounding import bounding_box
+from ladybug_geometry.projection import project_geometry_2d
 
 from .geometry2d._base import _DisplayBase2D
 from .geometry3d._base import _DisplayBase3D
@@ -172,6 +173,28 @@ class ContextGeometry(_VisualizationBase):
                 geo.scale(factor, origin)
             elif isinstance(geo, _DisplayBase2D):
                 geo.scale(factor, origin_2d)
+
+    def project_2d(self, plane):
+        """"Project this AnalysisGeometry into a plane to get it in the plane's 2D system.
+
+        This is useful as a pre-step before converting to SVG to get the geometry
+        from a certain view.
+
+        Args:
+            plane: The Plane into which the AnalysisGeometry will be projected.
+        """
+        proj_geos = []
+        for geo in self._geometry:
+            p_geo = project_geometry_2d(plane, [geo.geometry])[0]
+            if not isinstance(p_geo, geo.geometry.__class__):
+                p_geo_class = DISPLAY_MAP[p_geo.__class__][0]
+                new_geo = p_geo_class(p_geo)
+                new_geo._transfer_attributes(geo)
+            else:
+                geo._geometry = p_geo
+                new_geo = geo
+            proj_geos.append(new_geo)
+        self._geometry = tuple(proj_geos)
 
     def to_dict(self):
         """Get ContextGeometry as a dictionary."""

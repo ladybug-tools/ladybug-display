@@ -1,6 +1,7 @@
 # coding=utf-8
 """Class for representing geometry colored with data according to legend parameters."""
 from __future__ import division
+import math
 import uuid
 
 from ladybug_geometry.geometry2d import Vector2D, Point2D, Ray2D, LineSegment2D, \
@@ -9,6 +10,7 @@ from ladybug_geometry.geometry3d import Vector3D, Point3D, Ray3D, Plane, LineSeg
     Polyline3D, Arc3D, Face3D, Mesh3D, Polyface3D, Sphere, Cone, Cylinder
 from ladybug_geometry.bounding import bounding_box
 from ladybug_geometry.dictutil import geometry_dict_to_object
+from ladybug_geometry.projection import project_geometry_2d
 
 from ladybug.legend import Legend, LegendParameters, LegendParametersCategorized
 from ladybug.graphic import GraphicContainer
@@ -369,6 +371,7 @@ class AnalysisGeometry(_VisualizationBase):
                 object will be rotated.
         """
         new_geo = []
+        angle = math.radians(angle)
         origin_2d = Point2D(origin.x, origin.y)
         for geo in self._geometry:
             try:
@@ -427,9 +430,29 @@ class AnalysisGeometry(_VisualizationBase):
                 l_par.properties_3d._text_height = \
                     l_par.properties_3d._text_height * factor
             l_par.properties_3d._base_plane = \
-                l_par.properties_3d._base_plane.scale(factor)
-            v_data._legend._legend_par = l_par
+                l_par.properties_3d._base_plane.scale(factor, origin)
         self._geometry = tuple(new_geo)
+        self._min_point = None
+        self._max_point = None
+        self._min_point_with_legend = None
+        self._max_point_with_legend = None
+
+    def project_2d(self, plane):
+        """"Project this AnalysisGeometry into a plane to get it in the plane's 2D system.
+
+        This is useful as a pre-step before converting to SVG to get the geometry
+        from a certain view.
+
+        Args:
+            plane: The Plane into which the AnalysisGeometry will be projected.
+        """
+        self._geometry = tuple(project_geometry_2d(plane, self.geometry))
+        for v_data in self.data_sets:
+            l_par = v_data.legend.legend_parameters
+            l_plane = l_par.properties_3d._base_plane
+            origin = plane.xyz_to_xy(plane.project_point(l_plane.o))
+            l_par.properties_3d._base_plane = \
+                Plane(n=l_plane.n, o=Point3D(origin.x, origin.y), x=l_plane.x)
         self._min_point = None
         self._max_point = None
         self._min_point_with_legend = None
@@ -1154,7 +1177,7 @@ class VisualizationData(VisualizationMetaData):
 
     def __copy__(self):
         new_obj = VisualizationData(
-            self.values, self._legend_parameters, self._data_type, self._unit)
+            self.values, self.legend_parameters, self._data_type, self._unit)
         new_obj._user_data = None if self.user_data is None else self.user_data.copy()
         return new_obj
 

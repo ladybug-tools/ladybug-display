@@ -65,6 +65,10 @@ class _DisplayBase2D(_DisplayBase):
         """
         self._geometry = self.geometry.scale(factor, origin)
 
+    def _transfer_attributes(self, other_obj):
+        """Transfer attributes from another object to this one."""
+        pass
+
     def __repr__(self):
         return 'Ladybug Display 2D Base Object'
 
@@ -102,6 +106,10 @@ class _SingleColorBase2D(_DisplayBase2D):
             assert isinstance(value, Color), 'Expected Color for ladybug_display ' \
                 'object color. Got {}.'.format(type(value))
         self._color = value
+
+    def _transfer_attributes(self, other_obj):
+        """Transfer attributes from another object to this one."""
+        self._color = other_obj._color
 
 
 class _SingleColorModeBase2D(_SingleColorBase2D):
@@ -144,6 +152,11 @@ class _SingleColorModeBase2D(_SingleColorBase2D):
                 'display_mode {} is not recognized.\nChoose from the '
                 'following:\n{}'.format(value, DISPLAY_MODES))
         self._display_mode = value
+
+    def _transfer_attributes(self, other_obj):
+        """Transfer attributes from another object to this one."""
+        self._color = other_obj._color
+        self._display_mode = other_obj._display_mode
 
 
 class _LineCurveBase2D(_SingleColorBase2D):
@@ -210,3 +223,9 @@ class _LineCurveBase2D(_SingleColorBase2D):
                 'line_type {} is not recognized.\nChoose from the '
                 'following:\n{}'.format(value, LINE_TYPES))
         self._line_type = value
+
+    def _transfer_attributes(self, other_obj):
+        """Transfer attributes from another object to this one."""
+        self._color = other_obj._color
+        self._line_width = other_obj._line_width
+        self._line_type = other_obj._line_type
