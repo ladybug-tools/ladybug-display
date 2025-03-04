@@ -1,0 +1,7 @@
+ladybug\_display.svg.rect module
+================================
+
+.. automodule:: ladybug_display.svg.rect
+   :members:
+   :undoc-members:
+   :show-inheritance:

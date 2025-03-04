@@ -1,0 +1,19 @@
+ladybug\_display.extension.study package
+========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ladybug_display.extension.study.directsun
+   ladybug_display.extension.study.radiation
+
+Module contents
+---------------
+
+.. automodule:: ladybug_display.extension.study
+   :members:
+   :undoc-members:
+   :show-inheritance:

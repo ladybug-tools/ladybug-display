@@ -1,0 +1,7 @@
+ladybug\_display.svg.tspan module
+=================================
+
+.. automodule:: ladybug_display.svg.tspan
+   :members:
+   :undoc-members:
+   :show-inheritance:

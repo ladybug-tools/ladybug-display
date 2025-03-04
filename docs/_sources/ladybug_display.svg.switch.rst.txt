@@ -1,0 +1,7 @@
+ladybug\_display.svg.switch module
+==================================
+
+.. automodule:: ladybug_display.svg.switch
+   :members:
+   :undoc-members:
+   :show-inheritance:
