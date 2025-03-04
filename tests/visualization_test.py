@@ -186,6 +186,22 @@ def test_sunpath_to_svg():
     os.remove(svg_file)
 
 
+def test_interactive_sunpath_to_svg():
+    """Test the translation of an Sunpath VisualizationSet to interactive SVG."""
+    path = './tests/epw/chicago.epw'
+    epw = EPW(path)
+    dbt = epw.dry_bulb_temperature
+    sunpath = Sunpath.from_location(epw.location)
+    hoys = [DateTime(3, 2, i).hoy for i in range(24)]
+    vis_set = sunpath_to_vis_set(sunpath, hoys=hoys, data=[dbt],
+                                 projection='Stereographic')
+
+    svg_data = vis_set.to_svg(900, 900, interactive=True, render_3d_legend=True)
+    svg_file = svg_data.to_file(name='Sunpath_Interact', folder='./tests/svg')
+    assert os.path.isfile(svg_file)
+    os.remove(svg_file)
+
+
 def test_wind_rose_to_svg():
     """Test the translation of an WindRose VisualizationSet to SVG."""
     path = './tests/epw/chicago.epw'
@@ -213,7 +229,7 @@ def test_psych_chart_to_svg():
         dbt, rh, max_temperature=40, max_humidity_ratio=0.025)
     vis_set = psychrometric_chart_to_vis_set(psych_chart)
 
-    svg_data = vis_set.to_svg(1200, 700, render_3d_legend=True)
+    svg_data = vis_set.to_svg(1200, 700, interactive=True, render_3d_legend=True)
     svg_file = svg_data.to_file(name='PsychChart', folder='./tests/svg')
     assert os.path.isfile(svg_file)
     os.remove(svg_file)
@@ -244,7 +260,8 @@ def test_daylight_study_to_svg():
     vis_set.geometry[-1][data_i].legend_parameters.title = \
         'Useful Daylight Illuminance (%)'
 
-    svg_data = vis_set.to_svg(1200, 1000, view='SE', render_2d_legend=True)
+    svg_data = vis_set.to_svg(1200, 1000, interactive=True,
+                              view='SE', render_2d_legend=True)
     svg_file = svg_data.to_file(name='Daylight_Study', folder='./tests/svg')
     assert os.path.isfile(svg_file)
     os.remove(svg_file)
