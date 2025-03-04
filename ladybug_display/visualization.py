@@ -1,7 +1,7 @@
 # coding=utf-8
 from __future__ import division
 import os
-import sys
+import io
 import json
 import collections
 try:  # check if we are in IronPython
@@ -9,7 +9,7 @@ try:  # check if we are in IronPython
 except ImportError:  # wea are in cPython
     import pickle
 
-from ladybug_geometry.geometry3d import Vector3D
+from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane
 from ladybug_geometry.bounding import bounding_box
 
 from ._base import _VisualizationBase
@@ -57,6 +57,17 @@ class VisualizationSet(_VisualizationBase):
     GEOMETRY_UNION = GEOMETRY_UNION
     DISPLAY_UNION = DISPLAY_UNION
     ANALYSIS_CLASSES = (AnalysisGeometry, VisualizationData, VisualizationMetaData)
+    VIEW_MAP = {
+        'Top': Plane(n=Vector3D(0, 0, 1)),
+        'Left': Plane(n=Vector3D(1, 0, 0)),
+        'Right': Plane(n=Vector3D(-1, 0, 0)),
+        'Front': Plane(n=Vector3D(0, 1, 0)),
+        'Back': Plane(n=Vector3D(0, -1, 0)),
+        'NE': Plane(n=Vector3D(1, 1, 1)),
+        'NW': Plane(n=Vector3D(-1, 1, 1)),
+        'SE': Plane(n=Vector3D(1, -1, 1)),
+        'SW': Plane(n=Vector3D(-1, -1, 1))
+    }
 
     def __init__(self, identifier, geometry, units=None):
         """Initialize VisualizationSet."""
@@ -111,10 +122,11 @@ class VisualizationSet(_VisualizationBase):
         """
         # sense the file type from the first character to avoid maxing memory with JSON
         # this is needed since queenbee overwrites all file extensions
-        with open(vis_set_file) as inf:
+        with io.open(vis_set_file, encoding='utf-8') as inf:
             try:
                 first_char = inf.read(1)
-                is_json = True if first_char == '{' else False
+                second_char = inf.read(1)
+                is_json = True if first_char == '{' or second_char == '{' else False
             except UnicodeDecodeError:  # definitely a pkl file
                 is_json = False
         # load the file using either JSON pathway or pkl
@@ -130,12 +142,8 @@ class VisualizationSet(_VisualizationBase):
             json_file: Path to VisualizationSet JSON file.
         """
         assert os.path.isfile(json_file), 'Failed to find %s' % json_file
-        if (sys.version_info < (3, 0)):
-            with open(json_file) as inf:
-                data = json.load(inf)
-        else:
-            with open(json_file, encoding='utf-8') as inf:
-                data = json.load(inf)
+        with io.open(json_file, encoding='utf-8') as inf:
+            data = json.load(inf)
         return cls.from_dict(data)
 
     @classmethod
@@ -485,7 +493,7 @@ class VisualizationSet(_VisualizationBase):
         return vs_file
 
     def to_svg(self, width=800, height=600, margin=None,
-               render_3d_legend=False, render_2d_legend=False):
+               render_3d_legend=False, render_2d_legend=False, view='Top'):
         """Get this VisualizationSet as an editable SVG object.
 
         Casting the SVG object to string will give the file contents of a SVG.
@@ -506,6 +514,20 @@ class VisualizationSet(_VisualizationBase):
             render_2d_legend: Boolean to note whether a 2D version of the legend
                 for any AnalysisGeometry should be included in the SVG (following
                 the 2D dimensions specified in the LegendParameters).
+            view: An optional text string for the view for which the SVG will be
+                generated. This can also be a ladybug-geometry Plane object for
+                the plane in which an axonometric view will be generated. Choose
+                from the common options below when using a text string.
+
+                * Top
+                * Left
+                * Right:
+                * Front
+                * Back
+                * NE
+                * NW
+                * SE
+                * SW
         """
         # compute the scene width and height
         if margin is None:
@@ -513,6 +535,22 @@ class VisualizationSet(_VisualizationBase):
         else:
             scene_width, scene_height = width - (2 * margin), height - (2 * margin)
         default_leg_pos = [0, 10, 50]
+        # project the geometry into a plane if requested
+        vis_geometry = [geo.duplicate() for geo in self.geometry if not geo.hidden]
+        if view != 'Top' and view != Plane():
+            if isinstance(view, str):
+                try:
+                    view = self.VIEW_MAP[view]
+                except KeyError:
+                    msg = 'Unrecognized view type "{}". Choose from: {}'.format(
+                        view, ' '.join(list(self.VIEW_MAP.keys())))
+                    raise ValueError(msg)
+            else:
+                assert isinstance(view, Plane), 'Input view must be a string or ' \
+                    'Plane. Got {}.'.format(type(view))
+            for geo in vis_geometry:
+                geo.project_2d(view)
+                geo.rotate_xy(180, Point3D())
         # compute the bounding box dimensions around all of the VisualizationSet geometry
         if render_3d_legend:
             min_pt, max_pt = self.min_point_with_legend, self.max_point_with_legend
@@ -530,20 +568,18 @@ class VisualizationSet(_VisualizationBase):
         center_vec = Vector3D((width - scene_width) / 2,  -(height - scene_height) / 2)
         # transform all of the visualization set geometry to be in the lower quadrant
         svg_elements = []
-        for geo in reversed(self.geometry):
-            if not geo.hidden:
-                geo = geo.duplicate()  # duplicate to avoid mutating the input
-                geo.move(move_vec)
-                geo.scale(scale_fac)
-                geo.move(center_vec)
-                if isinstance(geo, AnalysisGeometry):
-                    svg_data = geo.to_svg(render_3d_legend=render_3d_legend,
-                                          render_2d_legend=render_2d_legend,
-                                          default_leg_pos=default_leg_pos)
-                    default_leg_pos = list(svg_data.elements[-1].content)
-                else:
-                    svg_data = geo.to_svg()
-                svg_elements.extend(svg_data.elements)
+        for geo in reversed(vis_geometry):
+            geo.move(move_vec)
+            geo.scale(scale_fac)
+            geo.move(center_vec)
+            if isinstance(geo, AnalysisGeometry):
+                svg_data = geo.to_svg(render_3d_legend=render_3d_legend,
+                                      render_2d_legend=render_2d_legend,
+                                      default_leg_pos=default_leg_pos)
+                default_leg_pos = list(svg_data.elements[-1].content)
+            else:
+                svg_data = geo.to_svg()
+            svg_elements.extend(svg_data.elements)
         # combine everything into a final SVG object
         canvas = svg.SVG(width=width, height=height)
         canvas.elements = svg_elements

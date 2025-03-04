@@ -217,3 +217,34 @@ def test_psych_chart_to_svg():
     svg_file = svg_data.to_file(name='PsychChart', folder='./tests/svg')
     assert os.path.isfile(svg_file)
     os.remove(svg_file)
+
+
+def test_sunpath_axon_to_svg():
+    """Test the translation of an Sunpath VisualizationSet to SVG with an Axon view."""
+    path = './tests/epw/chicago.epw'
+    epw = EPW(path)
+    sunpath = Sunpath.from_location(epw.location)
+    hoys = [DateTime(3, 2, i).hoy for i in range(24)]
+    vis_set = sunpath_to_vis_set(sunpath, hoys=hoys)
+
+    svg_data = vis_set.to_svg(1200, 1000, view='SE')
+    svg_file = svg_data.to_file(name='Sunpath_Axon', folder='./tests/svg')
+    assert os.path.isfile(svg_file)
+    os.remove(svg_file)
+
+
+def test_daylight_study_to_svg():
+    """Test the translation of an a daylight VisualizationSet to SVG with an Axon view."""
+    path = './tests/vsf/classroom.vsf'
+    vis_set = VisualizationSet.from_file(path)
+    vis_set.geometry = (vis_set[-1],) + vis_set[:-1]
+    data_i = vis_set.geometry[-1].active_data
+    vis_set.geometry[-1][data_i].legend_parameters.vertical = False
+    vis_set.geometry[-1][data_i].legend_parameters.decimal_count = 0
+    vis_set.geometry[-1][data_i].legend_parameters.title = \
+        'Useful Daylight Illuminance (%)'
+
+    svg_data = vis_set.to_svg(1200, 1000, view='SE', render_2d_legend=True)
+    svg_file = svg_data.to_file(name='Daylight_Study', folder='./tests/svg')
+    assert os.path.isfile(svg_file)
+    os.remove(svg_file)
