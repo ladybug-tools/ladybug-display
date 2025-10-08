@@ -559,14 +559,25 @@ class VisualizationSet(_VisualizationBase):
                 geo.project_2d(view)
                 geo.rotate_xy(180, Point3D())
         # compute the bounding box dimensions around all of the VisualizationSet geometry
+        all_geo = []
+        for geo_obj in vis_geometry:
+            if render_3d_legend and isinstance(geo_obj, AnalysisGeometry):
+                all_geo.append(geo_obj.min_point_with_legend)
+                all_geo.append(geo_obj.max_point_with_legend)
+            else:
+                all_geo.append(geo_obj.min_point)
+                all_geo.append(geo_obj.max_point)
         if render_3d_legend:
-            min_pt, max_pt = self.min_point_with_legend, self.max_point_with_legend
+            min_pt, max_pt = bounding_box(all_geo)
         else:
-            min_pt, max_pt = self.min_point, self.max_point
-        move_vec = Vector3D(-min_pt.x, -max_pt.y)
-        x_dim, y_dim = max_pt.x - min_pt.x, max_pt.y - min_pt.y
+            min_pt, max_pt = bounding_box(all_geo)
 
-        x_factor, y_factor = scene_width / x_dim, scene_height / y_dim
+        move_vec = Vector3D(-min_pt.x, -max_pt.y)
+        x_dim = max_pt.x - min_pt.x
+        y_dim = max_pt.y - min_pt.y
+
+        x_factor = scene_width / x_dim if x_dim != 0 else float('+inf')
+        y_factor = scene_height / y_dim if y_dim != 0 else float('+inf')
         scale_fac = min(x_factor, y_factor)
         if scale_fac == x_factor:  # center the geometry in the Y dimension
             scene_height = y_dim * scale_fac
