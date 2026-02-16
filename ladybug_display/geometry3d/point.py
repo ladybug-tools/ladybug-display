@@ -89,6 +89,25 @@ class DisplayPoint3D(_SingleColorBase3D):
         """Get the distance from this point to another DisplayPoint3D."""
         return self.geometry.distance_to_point(point.geometry)
 
+    def distance_to_plane(self, plane):
+        """Get the distance between this object and the input plane.
+
+        Args:
+            plane: A Plane object to which the minimum distance will be computed.
+        """
+        return self.geometry.distance_to_plane(plane)
+
+    def furthest_distance_to_plane(self, plane):
+        """Get the distance between this object and the input plane.
+
+        Equivalent to distance_to_plane. Provided for consistency with other
+        geometry classes.
+
+        Args:
+            plane: A Plane object to which the maximum distance will be computed.
+        """
+        return self.geometry.furthest_distance_to_plane(plane)
+
     def to_dict(self):
         """Return DisplayPoint3D as a dictionary."""
         base = {'type': 'DisplayPoint3D'}

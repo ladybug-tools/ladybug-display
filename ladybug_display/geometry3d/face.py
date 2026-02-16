@@ -121,6 +121,22 @@ class DisplayFace3D(_SingleColorModeBase3D):
         """
         return math.degrees(self._geometry.azimuth)
 
+    def distance_to_plane(self, plane):
+        """Get the minimum distance between this object and the input plane.
+
+        Args:
+            plane: A Plane object to which the minimum distance will be computed.
+        """
+        return self.geometry.distance_to_plane(plane)
+
+    def furthest_distance_to_plane(self, plane):
+        """Get the maximum distance between this object and the input plane.
+
+        Args:
+            plane: A Plane object to which the maximum distance will be computed.
+        """
+        return self.geometry.furthest_distance_to_plane(plane)
+
     def to_dict(self, include_plane=True):
         """Return DisplayFace3D as a dictionary.
 
@@ -167,8 +183,23 @@ class DisplayFace3D(_SingleColorModeBase3D):
                 geo.append(pt)
         else:  # render the face with polygons
             if display_mode.startswith('Surface'):
-                points = [p for pt in face.vertices for p in (pt.x, -pt.y)]
-                fp = svg.Polygon(points=points)
+                if not face.has_holes:
+                    points = [p for pt in face.boundary for p in (pt.x, -pt.y)]
+                    fp = svg.Polygon(points=points)
+                else:
+                    start_pt = face.boundary[0]
+                    path_d = [svg.MoveTo(x=start_pt.x, y=-start_pt.y)]
+                    for pt in face.boundary:
+                        path_d.append(svg.LineTo(x=pt.x, y=-pt.y))
+                    for hole in face.holes:
+                        hole_face = Face3D(hole, plane=face.plane)
+                        hole_verts = list(reversed(hole_face))
+                        start_pt = hole_verts[0]
+                        path_d.append(svg.MoveTo(x=start_pt.x, y=-start_pt.y))
+                        for pt in hole_verts:
+                            path_d.append(svg.LineTo(x=pt.x, y=-pt.y))
+                    fp = svg.Path(d=path_d)
+                    fp.fill_rule = 'evenodd'
                 fp.fill = 'grey'
                 geo.append(fp)
             if display_mode in ('Wireframe', 'SurfaceWithEdges'):

@@ -115,6 +115,22 @@ class DisplayPolyline3D(_LineCurveBase3D):
         """Get a Point3D for the maximum of the bounding box around the object."""
         return self._geometry.max
 
+    def distance_to_plane(self, plane):
+        """Get the minimum distance between this object and the input plane.
+
+        Args:
+            plane: A Plane object to which the minimum distance will be computed.
+        """
+        return self.geometry.distance_to_plane(plane)
+
+    def furthest_distance_to_plane(self, plane):
+        """Get the maximum distance between this object and the input plane.
+
+        Args:
+            plane: A Plane object to which the maximum distance will be computed.
+        """
+        return self.geometry.furthest_distance_to_plane(plane)
+
     def to_dict(self):
         """Return DisplayPolyline3D as a dictionary."""
         base = {'type': 'DisplayPolyline3D'}

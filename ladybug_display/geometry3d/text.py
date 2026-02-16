@@ -208,6 +208,25 @@ class DisplayText3D(_SingleColorBase3D):
         max_y = self.plane.o.y + max_y
         return Point3D(max_x, max_y, self.plane.o.z)
 
+    def distance_to_plane(self, plane):
+        """Get the distance between this object and the input plane.
+
+        Args:
+            plane: A Plane object to which the minimum distance will be computed.
+        """
+        return self.plane.o.distance_to_plane(plane)
+
+    def furthest_distance_to_plane(self, plane):
+        """Get the distance between this object and the input plane.
+
+        Equivalent to distance_to_plane. Provided for consistency with other
+        geometry classes.
+
+        Args:
+            plane: A Plane object to which the maximum distance will be computed.
+        """
+        return self.plane.o.furthest_distance_to_plane(plane)
+
     def scale(self, factor, origin=None):
         """Scale this geometry by a factor from an origin point.
 

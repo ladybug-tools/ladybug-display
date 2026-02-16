@@ -542,8 +542,19 @@ class VisualizationSet(_VisualizationBase):
         else:
             scene_width, scene_height = width - (2 * margin), height - (2 * margin)
         default_leg_pos = [0, 10, 50]
-        # project the geometry into a plane if requested
-        vis_geometry = [geo.duplicate() for geo in self.geometry if not geo.hidden]
+
+        # get the diagonal distance of the bounding box around the shape
+        vis_geometry, geo_3d = [], []
+        for geo in self.geometry:
+            if not geo.hidden:
+                geo_3d.append(geo.min_point)
+                geo_3d.append(geo.max_point)
+                vis_geometry.append(geo.duplicate())
+        min_pt, max_pt = bounding_box(geo_3d)
+        diag_dist = min_pt.distance_to_point(max_pt)
+
+        # get the plane in which to project the geometry
+        is_top = False
         if view != 'Top' and view != Plane():
             if isinstance(view, str):
                 try:
@@ -555,9 +566,31 @@ class VisualizationSet(_VisualizationBase):
             else:
                 assert isinstance(view, Plane), 'Input view must be a string or ' \
                     'Plane. Got {}.'.format(type(view))
-            for geo in vis_geometry:
+            proj_view = view.move(view.n * diag_dist)
+        else:
+            proj_view = Plane().move(Vector3D(0, 0, 1) * diag_dist)
+            is_top = True
+
+        # project the geometry to 2D and track distances to the plane for sorting
+        distances = []
+        for geo in vis_geometry:
+            if isinstance(geo, ContextGeometry):
+                sub_dists = []
+                for sub_geo in geo.geometry:
+                    try:
+                        plane_dist = sub_geo.furthest_distance_to_plane(proj_view)
+                        if hasattr(sub_geo, 'normal'):
+                            v_ang = sub_geo.normal.angle(proj_view.n)
+                            sub_dists.append(plane_dist * v_ang)  # prioritize facing
+                        else:
+                            sub_dists.append(plane_dist)
+                    except AttributeError:  # 2D geometry; just put it at top
+                        sub_dists.append(0)
+                distances.append(sub_dists)
+            if not is_top:
                 geo.project_2d(view)
                 geo.rotate_xy(180, Point3D())
+
         # compute the bounding box dimensions around all of the VisualizationSet geometry
         all_geo = []
         for geo_obj in vis_geometry:
@@ -567,10 +600,7 @@ class VisualizationSet(_VisualizationBase):
             else:
                 all_geo.append(geo_obj.min_point)
                 all_geo.append(geo_obj.max_point)
-        if render_3d_legend:
-            min_pt, max_pt = bounding_box(all_geo)
-        else:
-            min_pt, max_pt = bounding_box(all_geo)
+        min_pt, max_pt = bounding_box(all_geo)
 
         move_vec = Vector3D(-min_pt.x, -max_pt.y)
         x_dim = max_pt.x - min_pt.x
@@ -584,8 +614,10 @@ class VisualizationSet(_VisualizationBase):
         else:
             scene_width = x_dim * scale_fac
         center_vec = Vector3D((width - scene_width) / 2,  -(height - scene_height) / 2)
+
         # transform all of the visualization set geometry to be in the lower quadrant
         svg_elements = []
+        sorted_elements, sorted_dists, context_count = [], [], 1
         for geo in reversed(vis_geometry):
             geo.move(move_vec)
             geo.scale(scale_fac)
@@ -596,10 +628,19 @@ class VisualizationSet(_VisualizationBase):
                                       render_2d_legend=render_2d_legend,
                                       default_leg_pos=default_leg_pos)
                 default_leg_pos = list(svg_data.elements[-1].content)
+                svg_elements.extend(svg_data.elements)
             else:
-                svg_data = geo.to_svg()
-            svg_elements.extend(svg_data.elements)
+                rel_dists = distances[-context_count]
+                context_count += 1
+                for g, dist in zip(geo.geometry, rel_dists):
+                    sorted_elements.append(g.to_svg())
+                    sorted_dists.append(dist)
+
         # combine everything into a final SVG object
+        zip_obj = zip(sorted_dists, sorted_elements)
+        tups = sorted(zip_obj, key=lambda pair: pair[0])
+        sorted_dists, sorted_elements = zip(*tups)
+        svg_elements = svg_elements + list(reversed(sorted_elements))
         canvas = svg.SVG(width=width, height=height)
         canvas.elements = svg_elements
         return canvas

@@ -173,7 +173,7 @@ def test_hourly_plot_to_svg():
 
 
 def test_sunpath_to_svg():
-    """Test the translation of an Sunpath VisualizationSet to SVG."""
+    """Test the translation of a Sunpath VisualizationSet to SVG."""
     path = './tests/epw/chicago.epw'
     epw = EPW(path)
     sunpath = Sunpath.from_location(epw.location)
@@ -187,7 +187,7 @@ def test_sunpath_to_svg():
 
 
 def test_interactive_sunpath_to_svg():
-    """Test the translation of an Sunpath VisualizationSet to interactive SVG."""
+    """Test the translation of a Sunpath VisualizationSet to interactive SVG."""
     path = './tests/epw/chicago.epw'
     epw = EPW(path)
     dbt = epw.dry_bulb_temperature
@@ -203,7 +203,7 @@ def test_interactive_sunpath_to_svg():
 
 
 def test_wind_rose_to_svg():
-    """Test the translation of an WindRose VisualizationSet to SVG."""
+    """Test the translation of a WindRose VisualizationSet to SVG."""
     path = './tests/epw/chicago.epw'
     epw = EPW(path)
     speed, direction = epw.wind_speed, epw.wind_direction
@@ -221,7 +221,7 @@ def test_wind_rose_to_svg():
 
 
 def test_psych_chart_to_svg():
-    """Test the translation of an Psy VisualizationSet to SVG."""
+    """Test the translation of a Psy VisualizationSet to SVG."""
     path = './tests/epw/chicago.epw'
     epw = EPW(path)
     dbt, rh = epw.dry_bulb_temperature, epw.relative_humidity
@@ -236,7 +236,7 @@ def test_psych_chart_to_svg():
 
 
 def test_sunpath_axon_to_svg():
-    """Test the translation of an Sunpath VisualizationSet to SVG with an Axon view."""
+    """Test the translation of a Sunpath VisualizationSet to SVG with an Axon view."""
     path = './tests/epw/chicago.epw'
     epw = EPW(path)
     sunpath = Sunpath.from_location(epw.location)
@@ -250,7 +250,7 @@ def test_sunpath_axon_to_svg():
 
 
 def test_daylight_study_to_svg():
-    """Test the translation of an a daylight VisualizationSet to SVG with an Axon view."""
+    """Test the translation of a daylight VisualizationSet to SVG with an Axon view."""
     path = './tests/vsf/classroom.vsf'
     vis_set = VisualizationSet.from_file(path)
     vis_set.geometry = (vis_set[-1],) + vis_set[:-1]
@@ -260,8 +260,18 @@ def test_daylight_study_to_svg():
     vis_set.geometry[-1][data_i].legend_parameters.title = \
         'Useful Daylight Illuminance (%)'
 
-    svg_data = vis_set.to_svg(1200, 1000, interactive=True,
+    svg_data = vis_set.to_svg(1200, 800, interactive=True,
                               view='SE', render_2d_legend=True)
     svg_file = svg_data.to_file(name='Daylight_Study', folder='./tests/svg')
+    assert os.path.isfile(svg_file)
+    os.remove(svg_file)
+
+
+def test_honeybee_model_to_svg():
+    """Test the translation of a Honeybee Model VisualizationSet to SVG."""
+    path = './tests/vsf/full_honeybee_model.vsf'
+    vis_set = VisualizationSet.from_file(path)
+    svg_data = vis_set.to_svg(1200, 800, view='SW')
+    svg_file = svg_data.to_file(name='Honeybee_Model', folder='./tests/svg')
     assert os.path.isfile(svg_file)
     os.remove(svg_file)

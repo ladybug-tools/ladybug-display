@@ -116,6 +116,22 @@ class DisplayArc3D(_LineCurveBase3D):
         """Get a boolean for whether the arc is a circle."""
         return self._geometry.is_circle
 
+    def distance_to_plane(self, plane):
+        """Get the minimum distance between this object and the input plane.
+
+        Args:
+            plane: A Plane object to which the minimum distance will be computed.
+        """
+        return self.geometry.distance_to_plane(plane)
+
+    def furthest_distance_to_plane(self, plane):
+        """Get the maximum distance between this object and the input plane.
+
+        Args:
+            plane: A Plane object to which the maximum distance will be computed.
+        """
+        return self.geometry.furthest_distance_to_plane(plane)
+
     def to_dict(self):
         """Return DisplayArc3D as a dictionary."""
         base = {'type': 'DisplayArc3D'}
