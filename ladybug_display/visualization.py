@@ -9,13 +9,14 @@ try:  # check if we are in IronPython
 except ImportError:  # wea are in cPython
     import pickle
 
-from ladybug_geometry.geometry3d import Vector3D, Point3D, Plane
+from ladybug_geometry.geometry3d import Vector3D, Point3D, Ray3D, Plane, Face3D
 from ladybug_geometry.bounding import bounding_box
 
 from ._base import _VisualizationBase
 from .analysis import GEOMETRY_UNION, AnalysisGeometry, \
     VisualizationData, VisualizationMetaData
 from .context import DISPLAY_UNION, ContextGeometry
+from .geometry3d.face import DisplayFace3D
 import ladybug_display.svg as svg
 
 
@@ -552,6 +553,7 @@ class VisualizationSet(_VisualizationBase):
                 vis_geometry.append(geo.duplicate())
         min_pt, max_pt = bounding_box(geo_3d)
         diag_dist = min_pt.distance_to_point(max_pt)
+        tol = diag_dist / 100000
 
         # get the plane in which to project the geometry
         is_top = False
@@ -572,21 +574,33 @@ class VisualizationSet(_VisualizationBase):
             is_top = True
 
         # project the geometry to 2D and track distances to the plane for sorting
-        distances = []
+        distances, cast_faces, cast_rays = [], [], []
         for geo in vis_geometry:
             if isinstance(geo, ContextGeometry):
-                sub_dists = []
+                sub_dists, faces, rays = [], [], []
                 for sub_geo in geo.geometry:
                     try:
                         plane_dist = sub_geo.furthest_distance_to_plane(proj_view)
-                        if hasattr(sub_geo, 'normal'):
-                            v_ang = sub_geo.normal.angle(proj_view.n)
-                            sub_dists.append(plane_dist * v_ang)  # prioritize facing
+                        sub_dists.append(plane_dist)
+                        if isinstance(sub_geo, (DisplayFace3D, Face3D)):
+                            f_geo = sub_geo if isinstance(sub_geo, Face3D) else \
+                                sub_geo.geometry
+                            faces.append(f_geo)
+                            f_rays = []
+                            for pt2 in f_geo.boundary_polygon2d.offset(tol):
+                                ray_pt = f_geo.plane.xy_to_xyz(pt2)
+                                f_rays.append(Ray3D(ray_pt, proj_view.n))
+                            rays.append(f_rays)
                         else:
-                            sub_dists.append(plane_dist)
+                            faces.append(None)
+                            rays.append(None)
                     except AttributeError:  # 2D geometry; just put it at top
                         sub_dists.append(0)
+                        faces.append(None)
+                        rays.append(None)
                 distances.append(sub_dists)
+                cast_faces.append(faces)
+                cast_rays.append(rays)
             if not is_top:
                 geo.project_2d(view)
                 geo.rotate_xy(180, Point3D())
@@ -617,7 +631,8 @@ class VisualizationSet(_VisualizationBase):
 
         # transform all of the visualization set geometry to be in the lower quadrant
         svg_elements = []
-        sorted_elements, sorted_dists, context_count = [], [], 1
+        sorted_elements, sorted_dists, sorted_faces, sorted_rays = [], [], [], []
+        context_count = 1
         for geo in reversed(vis_geometry):
             geo.move(move_vec)
             geo.scale(scale_fac)
@@ -631,15 +646,38 @@ class VisualizationSet(_VisualizationBase):
                 svg_elements.extend(svg_data.elements)
             else:
                 rel_dists = distances[-context_count]
+                rel_faces = cast_faces[-context_count]
+                rel_rays = cast_rays[-context_count]
                 context_count += 1
-                for g, dist in zip(geo.geometry, rel_dists):
+                for g, d, f, r in zip(geo.geometry, rel_dists, rel_faces, rel_rays):
                     sorted_elements.append(g.to_svg())
-                    sorted_dists.append(dist)
+                    sorted_dists.append(d)
+                    sorted_faces.append(f)
+                    sorted_rays.append(r)
 
-        # combine everything into a final SVG object
+        # sort the objects based on occlusion
+        # first sort them by distance from the view plane
+        zip_obj = zip(sorted_dists, sorted_elements, sorted_faces, sorted_rays)
+        tups = sorted(zip_obj, key=lambda pair: pair[0])
+        sorted_dists, sorted_elements, sorted_faces, sorted_rays = zip(*tups)
+        # next, use ray casting to perform final occlusion sorting
+        sorted_dists = list(sorted_dists)
+        for i, test_rays in enumerate(sorted_rays):
+            if test_rays is None:
+                continue
+            for j, face in enumerate(sorted_faces[i + 1:]):
+                if face is None:
+                    continue
+                if any(face.intersect_line_ray(r) for r in test_rays):
+                    # change the distance to be behind occluding one
+                    new_dist = sorted_dists[i + j + 1] + tol
+                    if new_dist > sorted_dists[i]:
+                        sorted_dists[i] = new_dist
         zip_obj = zip(sorted_dists, sorted_elements)
         tups = sorted(zip_obj, key=lambda pair: pair[0])
         sorted_dists, sorted_elements = zip(*tups)
+
+        # combine everything into a final SVG object
         svg_elements = svg_elements + list(reversed(sorted_elements))
         canvas = svg.SVG(width=width, height=height)
         canvas.elements = svg_elements
