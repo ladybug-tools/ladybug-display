@@ -587,9 +587,17 @@ class VisualizationSet(_VisualizationBase):
                                 sub_geo.geometry
                             faces.append(f_geo)
                             f_rays = []
-                            for pt2 in f_geo.boundary_polygon2d.offset(tol):
-                                ray_pt = f_geo.plane.xy_to_xyz(pt2)
-                                f_rays.append(Ray3D(ray_pt, proj_view.n))
+                            off_poly = f_geo.boundary_polygon2d.offset(tol)
+                            off_poly_3d = [f_geo.plane.xy_to_xyz(pt) for pt in off_poly]
+                            for i, pt1 in enumerate(off_poly_3d):
+                                pt2 = off_poly_3d[i - 1]
+                                pt3 = Point3D(
+                                    pt1.x + pt2.x / 2,
+                                    pt1.y + pt2.y / 2,
+                                    pt1.z + pt2.z / 2
+                                )
+                                f_rays.append(Ray3D(pt1, proj_view.n))
+                                f_rays.append(Ray3D(pt3, proj_view.n))
                             rays.append(f_rays)
                         else:
                             faces.append(None)

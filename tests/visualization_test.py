@@ -267,6 +267,16 @@ def test_daylight_study_to_svg():
     os.remove(svg_file)
 
 
+def test_honeybee_room_to_svg():
+    """Test the translation of a Honeybee Model VisualizationSet to SVG."""
+    path = './tests/vsf/test_room.vsf'
+    vis_set = VisualizationSet.from_file(path)
+    svg_data = vis_set.to_svg(1200, 800, view='SW')
+    svg_file = svg_data.to_file(name='Honeybee_Room', folder='./tests/svg')
+    assert os.path.isfile(svg_file)
+    os.remove(svg_file)
+
+
 def test_honeybee_model_to_svg():
     """Test the translation of a Honeybee Model VisualizationSet to SVG."""
     path = './tests/vsf/full_honeybee_model.vsf'
