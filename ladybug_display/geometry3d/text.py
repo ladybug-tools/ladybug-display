@@ -279,7 +279,7 @@ class DisplayText3D(_SingleColorBase3D):
         """
         t_pt = self.plane.o
         element = svg.Text(x=t_pt.x, y=-t_pt.y + (line_number * self.height * 1.25))
-        element.text = text_line
+        element.text = text_line.replace('<', '&lt;')
         element.font_size = self.height
         element.font_family = self.font
         if self.horizontal_alignment == 'Left':
