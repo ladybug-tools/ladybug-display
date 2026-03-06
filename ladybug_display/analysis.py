@@ -512,27 +512,35 @@ class AnalysisGeometry(_VisualizationBase):
         # translate the geometry to SVG
         data_set = self.data_sets[self.active_data]
         l_par = data_set.legend_parameters
-        colors = data_set.value_colors
         if self.matching_method in ('faces', 'vertices'):
             # translate the AnalysisGeometry using DisplayMesh2D
             prev_i, data_vals = 0, data_set.values
             for mesh in self.geometry:
                 m_len = len(mesh.faces) if self.matching_method == 'faces' \
                     else len(mesh.vertices)
-                mesh.colors = colors[prev_i:prev_i + m_len]
+                if self.matching_method == 'faces':
+                    face_values = data_vals[prev_i:prev_i + m_len]
+                else:
+                    face_values = []
+                    m_values = data_vals[prev_i:prev_i + m_len]
+                    for face in mesh.faces:
+                        fv = [m_values[i] for i in face]
+                        face_values.append(sum(fv) / len(fv))
+                _color_range = data_set._legend.color_range
+                mesh.colors = tuple(_color_range.color(val) for val in face_values)
                 prev_i += m_len
                 mesh_element = DisplayMesh2D.mesh2d_to_svg(mesh, self.display_mode)
                 elements.append(mesh_element)
-                if interactive and self.matching_method == 'faces':
-                    for val, element in zip(data_vals, mesh_element.elements):
+                if interactive:
+                    for val, element in zip(face_values, mesh_element.elements):
                         title = svg.Title()
                         title.text = val
                         element.elements = [title]
-                    data_vals = data_vals[len(mesh_element.elements):]
                     a_sty = svg.Style()
                     a_sty.text = self.HOVER_STYLE
                     mesh_element.elements.insert(0, a_sty)
         else:  # translate the AnalysisGeometry using other display classes
+            colors = data_set.value_colors
             sample_geo = self.geometry[0]
             conv_info = DISPLAY_MAP[sample_geo.__class__]
             dis_class, conv_args = conv_info[0], list(conv_info[1:])
@@ -557,6 +565,9 @@ class AnalysisGeometry(_VisualizationBase):
             default_leg_x3d, default_leg_x2d, default_leg_y2d = 0, 10, 50
         else:
             default_leg_x3d, default_leg_x2d, default_leg_y2d = default_leg_pos
+        # always use 2D legend for categorized
+        if isinstance(l_par, LegendParametersCategorized):
+            render_3d_legend, render_2d_legend = False, True
         if render_3d_legend:
             # ensure multiple legends are not on top of each other
             if l_par.is_base_plane_default:
@@ -1184,7 +1195,7 @@ class VisualizationData(VisualizationMetaData):
         txt_pts = legend.segment_text_location_2d(width, height)
         for txt, loc in zip(legend.segment_text, txt_pts):
             svg_txt = svg.Text(x=loc.x, y=loc.y)
-            svg_txt.text = txt
+            svg_txt.text = txt.replace('<', '&lt;')
             svg_txt.font_size = th
             svg_txt.font_family = l_par.font
             svg_txt.dominant_baseline = 'hanging'

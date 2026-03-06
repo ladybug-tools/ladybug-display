@@ -664,26 +664,27 @@ class VisualizationSet(_VisualizationBase):
                     sorted_rays.append(r)
 
         # sort the objects based on occlusion
-        # first sort them by distance from the view plane
-        zip_obj = zip(sorted_dists, sorted_elements, sorted_faces, sorted_rays)
-        tups = sorted(zip_obj, key=lambda pair: pair[0])
-        sorted_dists, sorted_elements, sorted_faces, sorted_rays = zip(*tups)
-        # next, use ray casting to perform final occlusion sorting
-        sorted_dists = list(sorted_dists)
-        for i, test_rays in enumerate(sorted_rays):
-            if test_rays is None:
-                continue
-            for j, face in enumerate(sorted_faces[i + 1:]):
-                if face is None:
+        if len(sorted_dists) != 0:
+            # first sort them by distance from the view plane
+            zip_obj = zip(sorted_dists, sorted_elements, sorted_faces, sorted_rays)
+            tups = sorted(zip_obj, key=lambda pair: pair[0])
+            sorted_dists, sorted_elements, sorted_faces, sorted_rays = zip(*tups)
+            # next, use ray casting to perform final occlusion sorting
+            sorted_dists = list(sorted_dists)
+            for i, test_rays in enumerate(sorted_rays):
+                if test_rays is None:
                     continue
-                if any(face.intersect_line_ray(r) for r in test_rays):
-                    # change the distance to be behind occluding one
-                    new_dist = sorted_dists[i + j + 1] + tol
-                    if new_dist > sorted_dists[i]:
-                        sorted_dists[i] = new_dist
-        zip_obj = zip(sorted_dists, sorted_elements)
-        tups = sorted(zip_obj, key=lambda pair: pair[0])
-        sorted_dists, sorted_elements = zip(*tups)
+                for j, face in enumerate(sorted_faces[i + 1:]):
+                    if face is None:
+                        continue
+                    if any(face.intersect_line_ray(r) for r in test_rays):
+                        # change the distance to be behind occluding one
+                        new_dist = sorted_dists[i + j + 1] + tol
+                        if new_dist > sorted_dists[i]:
+                            sorted_dists[i] = new_dist
+            zip_obj = zip(sorted_dists, sorted_elements)
+            tups = sorted(zip_obj, key=lambda pair: pair[0])
+            sorted_dists, sorted_elements = zip(*tups)
 
         # combine everything into a final SVG object
         svg_elements = svg_elements + list(reversed(sorted_elements))
