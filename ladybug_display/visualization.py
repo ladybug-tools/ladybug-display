@@ -3,20 +3,23 @@ from __future__ import division
 import os
 import io
 import json
+import math
 import collections
 try:  # check if we are in IronPython
     import cPickle as pickle
 except ImportError:  # wea are in cPython
     import pickle
 
-from ladybug_geometry.geometry3d import Vector3D, Point3D, Ray3D, Plane, Face3D
-from ladybug_geometry.bounding import bounding_box
+from ladybug_geometry.geometry3d import Vector3D, Point3D, LineSegment3D, \
+    Ray3D, Plane, Face3D
+from ladybug_geometry.bounding import bounding_box, bounding_domain_x, \
+    bounding_domain_y, bounding_domain_z
 
 from ._base import _VisualizationBase
 from .analysis import GEOMETRY_UNION, AnalysisGeometry, \
     VisualizationData, VisualizationMetaData
 from .context import DISPLAY_UNION, ContextGeometry
-from .geometry3d.face import DisplayFace3D
+from .geometry3d import DisplayFace3D, DisplayText3D, DisplayLineSegment3D
 import ladybug_display.svg as svg
 
 
@@ -68,6 +71,20 @@ class VisualizationSet(_VisualizationBase):
         'NW': Plane(n=Vector3D(-1, 1, 1)),
         'SE': Plane(n=Vector3D(1, -1, 1)),
         'SW': Plane(n=Vector3D(-1, -1, 1))
+    }
+    UNITS_ABBREVIATIONS = {
+        'Meters': 'm',
+        'Millimeters': 'mm',
+        'Feet': 'ft',
+        'Inches': 'in',
+        'Centimeters': 'cm'
+    }
+    UNIT_DECIMALS = {
+        'Meters': 2,
+        'Millimeters': 0,
+        'Feet': 2,
+        'Inches': 0,
+        'Centimeters': 0
     }
 
     def __init__(self, identifier, geometry, units=None):
@@ -249,6 +266,18 @@ class VisualizationSet(_VisualizationBase):
                 'Choose from the following: {}'.format(value, self.UNITS)
         self._units = value
 
+    def geometry_3d(self):
+        """Get the 3D ladybug-geometry associated with this object."""
+        all_geo = []
+        for geo_obj in self.geometry:
+            for geo in geo_obj.geometry:
+                if hasattr(geo, 'rotate_xy'):
+                    if hasattr(geo, 'geometry'):
+                        all_geo.append(geo.geometry)
+                    else:
+                        all_geo.append(geo)
+        return all_geo
+
     def add_vis_set(self, vis_set):
         """Add all geometry objects of another VisualizationSet to this one.
 
@@ -295,42 +324,6 @@ class VisualizationSet(_VisualizationBase):
         self._max_point = None
         self._min_point_with_legend = None
         self._max_point_with_legend = None
-
-    def check_duplicate_identifiers(self, raise_exception=True, detailed=False):
-        """Check that there are no duplicate geometry object identifiers in the set.
-
-        Args:
-            raise_exception: Boolean to note whether a ValueError should be raised
-                if duplicate identifiers are found. (Default: True).
-            detailed: Boolean for whether the returned object is a detailed list of
-                dicts with error info or a string with a message. (Default: False).
-
-        Returns:
-            A string with the message or a list with a dictionary if detailed is True.
-        """
-        detailed = False if raise_exception else detailed
-        obj_id_iter = (obj.identifier for obj in self.geometry)
-        dup = [t for t, c in collections.Counter(obj_id_iter).items() if c > 1]
-        if len(dup) != 0:
-            if detailed:
-                err_list = []
-                for dup_id in dup:
-                    msg = 'There is a duplicated geometry identifier: {}'.format(dup_id)
-                    dup_dict = {
-                        'type': 'ValidationError',
-                        'element_type': 'Geometry',
-                        'element_id': dup_id,
-                        'element_name': dup_id,
-                        'message': msg
-                    }
-                    err_list.append(dup_dict)
-                return err_list
-            msg = 'The following duplicated Geometry identifiers were found:\n{}'.format(
-                '\n'.join(dup))
-            if raise_exception:
-                raise ValueError(msg)
-            return msg
-        return [] if detailed else ''
 
     def graphic_container(self, geo_index=0, data_index=None,
                           min_point=None, max_point=None):
@@ -432,6 +425,112 @@ class VisualizationSet(_VisualizationBase):
             scale_fac = scale_fac1 / scale_fac2
             self.scale(scale_fac)
             self.units = units
+
+    def add_dimension_annotations(self, axis_angle=0, annotation_scale=0.1):
+        """Add a ContextGeometry for dimensions of the box around the VisualizationSet.
+
+        Args:
+            axis_angle: The counter-clockwise rotation angle in degrees in the XY plane
+                to represent the orientation of the bounding box extents. (Default: 0).
+            annotation_scale: A decimal number to express the fraction of the
+                bounding box diagonal length that the annotation end segments
+                and text size will be derived from. (Default: 0.1).
+        """
+        # get the min, max and diagonal length to appropriately size dimensions
+        geometries = self.geometry_3d()
+        if len(geometries) == 0:
+            return  # no 3D geometry to evaluate
+        if axis_angle != 0:  # rotate geometry to the bounding box
+            rot_ang = math.radians(axis_angle)
+            cpt = geometries[0].vertices[0]
+            geometries = [geom.rotate_xy(-rot_ang, cpt) for geom in geometries]
+        xx = bounding_domain_x(geometries)
+        yy = bounding_domain_y(geometries)
+        zz = bounding_domain_z(geometries)
+        min_pt = Point3D(xx[0], yy[0], zz[0])
+        max_pt = Point3D(xx[1], yy[1], zz[1])
+        diag_dist = min_pt.distance_to_point(max_pt)
+        dim_len = diag_dist * annotation_scale
+        x_len = xx[1] - xx[0]
+        z_len = zz[1] - zz[0]
+
+        # create the context geometry lines for the edges of the annotations
+        dim_vec = Vector3D(0, -1, 0) * dim_len
+        st_pt = min_pt.move(dim_vec)
+        line1 = LineSegment3D(st_pt, dim_vec)
+        line2 = LineSegment3D(st_pt.move(Vector3D(1, 0, 0) * x_len), dim_vec)
+        line3 = LineSegment3D(line2.p1.move(Vector3D(0, 0, 1) * z_len), dim_vec)
+        linex = LineSegment3D.from_end_points(line1.midpoint, line2.midpoint)
+        linez = LineSegment3D.from_end_points(line2.midpoint, line3.midpoint)
+
+        # create the context geometry lines for the middle of the annotations
+        tx_vec = Vector3D(1, 0, 0) * (dim_len * 0.5)
+        line4 = LineSegment3D.from_end_points(linex.p1, linex.midpoint.move(-tx_vec))
+        line5 = LineSegment3D.from_end_points(linex.midpoint.move(tx_vec), linex.p2)
+        tz_vec = Vector3D(0, 0, 1) * (dim_len * 0.5)
+        line6 = LineSegment3D.from_end_points(linez.p1, linez.midpoint.move(-tz_vec))
+        line7 = LineSegment3D.from_end_points(linez.midpoint.move(tz_vec), linez.p2)
+
+        # add the text labels for the annotations
+        if self.UNIT_DECIMALS[self.units] != 0:
+            x_val = round(x_len, self.UNIT_DECIMALS[self.units])
+            z_val = round(z_len, self.UNIT_DECIMALS[self.units])
+        else:
+            x_val, z_val = int(x_len), int(z_len)
+        text_objs = []
+        for dim_val, dim_line in zip([x_val, z_val], [linex, linez]):
+            text_str = '{}{}'.format(dim_val, self.UNITS_ABBREVIATIONS[self.units])
+            text_obj = DisplayText3D(text_str, Plane(o=dim_line.midpoint), dim_len / 4)
+            text_obj.horizontal_alignment = 'Center'
+            text_obj.vertical_alignment = 'Middle'
+            text_objs.append(text_obj)
+
+        # bring everything of the lines together into a ContextGeometry
+        all_lines = [line1, line2, line3, line4, line5, line6, line7]
+        dis_lines = [DisplayLineSegment3D(lin, line_width=3) for lin in all_lines]
+        con_geo = ContextGeometry('Dimension_Annotations', dis_lines + text_objs)
+        con_geo.display_name = 'Dimension Annotations'
+
+        # rotate the new context geometry back if the angle is not zero
+        if axis_angle != 0:
+            con_geo.rotate_xy(axis_angle, cpt)
+        self.add_geometry(con_geo)
+
+    def check_duplicate_identifiers(self, raise_exception=True, detailed=False):
+        """Check that there are no duplicate geometry object identifiers in the set.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if duplicate identifiers are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        detailed = False if raise_exception else detailed
+        obj_id_iter = (obj.identifier for obj in self.geometry)
+        dup = [t for t, c in collections.Counter(obj_id_iter).items() if c > 1]
+        if len(dup) != 0:
+            if detailed:
+                err_list = []
+                for dup_id in dup:
+                    msg = 'There is a duplicated geometry identifier: {}'.format(dup_id)
+                    dup_dict = {
+                        'type': 'ValidationError',
+                        'element_type': 'Geometry',
+                        'element_id': dup_id,
+                        'element_name': dup_id,
+                        'message': msg
+                    }
+                    err_list.append(dup_dict)
+                return err_list
+            msg = 'The following duplicated Geometry identifiers were found:\n{}'.format(
+                '\n'.join(dup))
+            if raise_exception:
+                raise ValueError(msg)
+            return msg
+        return [] if detailed else ''
 
     def to_dict(self):
         """Get VisualizationSet as a dictionary."""
