@@ -157,6 +157,7 @@ def test_analysis_geometry_to_svg():
     data_type, unit = dbt.header.data_type, dbt.header.unit
     base_pt = Point3D(20, -300)
     hourly_plot = HourlyPlot(dbt, base_point=base_pt, x_dim=2, y_dim=8)
+    hourly_plot.legend_parameters.title = 'Dry Bulb\nTemperature [C]'
     vis_data = VisualizationData(
         hourly_plot.values, hourly_plot.legend_parameters, data_type, unit)
     mesh_geo = AnalysisGeometry(
@@ -164,7 +165,7 @@ def test_analysis_geometry_to_svg():
     mesh_geo.display_name = data_type.name
     mesh_geo.display_mode = 'Surface'
 
-    svg_data = mesh_geo.to_svg()
+    svg_data = mesh_geo.to_svg(render_2d_legend=True)
     assert len(str(svg_data)) > 3000
     svg_file = svg_data.to_file(name='DryBulb', folder='./tests/svg')
     assert os.path.isfile(svg_file)

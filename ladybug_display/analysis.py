@@ -1183,13 +1183,18 @@ class VisualizationData(VisualizationMetaData):
 
         # translate the legend title
         t_pt = legend.title_location_2d(width, height)
-        svg_txt = svg.Text(x=t_pt.x, y=t_pt.y)
-        svg_txt.text = legend.title
-        svg_txt.font_size = th
-        svg_txt.font_family = l_par.font
-        svg_txt.text_anchor = 'start'
-        svg_txt.dominant_baseline = 'middle'
-        elements.append(svg_txt)
+        split_text = legend.title.split('\n')
+        row_count = len(split_text)
+        offset = (row_count - 1) * th * 3
+        ypt = t_pt.y - offset
+        for i, title_txt in enumerate(split_text):
+            svg_txt = svg.Text(x=t_pt.x, y=ypt + (th * i * 1.5))
+            svg_txt.text = title_txt
+            svg_txt.font_size = th
+            svg_txt.font_family = l_par.font
+            svg_txt.text_anchor = 'start'
+            svg_txt.dominant_baseline = 'middle'
+            elements.append(svg_txt)
 
         # translate the legend text for the values in the legend
         txt_pts = legend.segment_text_location_2d(width, height)
