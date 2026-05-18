@@ -1,0 +1,7 @@
+ladybug\_display.svg.polygon module
+===================================
+
+.. automodule:: ladybug_display.svg.polygon
+   :members:
+   :undoc-members:
+   :show-inheritance:

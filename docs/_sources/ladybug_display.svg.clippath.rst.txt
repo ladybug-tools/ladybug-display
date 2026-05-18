@@ -1,0 +1,7 @@
+ladybug\_display.svg.clippath module
+====================================
+
+.. automodule:: ladybug_display.svg.clippath
+   :members:
+   :undoc-members:
+   :show-inheritance:

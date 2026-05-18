@@ -1,0 +1,43 @@
+ladybug\_display.svg package
+============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ladybug_display.svg.circle
+   ladybug_display.svg.clippath
+   ladybug_display.svg.defs
+   ladybug_display.svg.desc
+   ladybug_display.svg.element
+   ladybug_display.svg.ellipse
+   ladybug_display.svg.g
+   ladybug_display.svg.image
+   ladybug_display.svg.line
+   ladybug_display.svg.lineargradient
+   ladybug_display.svg.marker
+   ladybug_display.svg.mask
+   ladybug_display.svg.path
+   ladybug_display.svg.polygon
+   ladybug_display.svg.polyline
+   ladybug_display.svg.radialgradient
+   ladybug_display.svg.rect
+   ladybug_display.svg.stop
+   ladybug_display.svg.style
+   ladybug_display.svg.svg
+   ladybug_display.svg.switch
+   ladybug_display.svg.symbol
+   ladybug_display.svg.text
+   ladybug_display.svg.textpath
+   ladybug_display.svg.title
+   ladybug_display.svg.tspan
+
+Module contents
+---------------
+
+.. automodule:: ladybug_display.svg
+   :members:
+   :undoc-members:
+   :show-inheritance:

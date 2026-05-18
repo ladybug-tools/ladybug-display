@@ -1,0 +1,37 @@
+ladybug\_display.extension package
+==================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ladybug_display.extension.study
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ladybug_display.extension.adaptivechart
+   ladybug_display.extension.compass
+   ladybug_display.extension.hourlyplot
+   ladybug_display.extension.monthlychart
+   ladybug_display.extension.psychchart
+   ladybug_display.extension.raddome
+   ladybug_display.extension.radrose
+   ladybug_display.extension.skydome
+   ladybug_display.extension.sunpath
+   ladybug_display.extension.viewsphere
+   ladybug_display.extension.windprofile
+   ladybug_display.extension.windrose
+
+Module contents
+---------------
+
+.. automodule:: ladybug_display.extension
+   :members:
+   :undoc-members:
+   :show-inheritance:

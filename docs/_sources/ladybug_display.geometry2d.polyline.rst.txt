@@ -1,0 +1,7 @@
+ladybug\_display.geometry2d.polyline module
+===========================================
+
+.. automodule:: ladybug_display.geometry2d.polyline
+   :members:
+   :undoc-members:
+   :show-inheritance:
