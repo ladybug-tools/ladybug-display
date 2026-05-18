@@ -47,6 +47,8 @@ def sunpath_to_vis_set(
 
             * Orthographic
             * Stereographic
+            * Equidistant
+            * Equisolid
 
         sun_spheres: Boolean to note whether sun positions should be drawn as points
             or as fully-detailed spheres. Note that this option should only be

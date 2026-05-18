@@ -23,6 +23,8 @@ def compass_to_vis_set(compass, z=0, custom_angles=None, projection=None, font='
 
             * Orthographic
             * Stereographic
+            * Equidistant
+            * Equisolid
 
         font: Optional text for the font to be used in creating the text.
             (Default: 'Arial')
@@ -95,26 +97,26 @@ def compass_to_vis_set(compass, z=0, custom_angles=None, projection=None, font='
             d_t = DisplayText3D(str(txt), t_pln, maj_txt, None, font, 'Center', 'Middle')
             result.append(d_t)
 
-    # generate the labels and tick marks for the altitudes
+    # generate the labels and circles for the altitudes
     if projection is not None:
-        if projection.title() == 'Orthographic':
-            for circle in compass.orthographic_altitude_circles:
+        circle_attr = '{}_altitude_circles'.format(projection.lower())
+        try:
+            altitude_circles = getattr(compass, circle_attr)
+            for circle in altitude_circles:
                 arc_geo = Arc3D.from_arc2d(circle, z)
                 result.append(DisplayArc3D(arc_geo, line_width=1, line_type='Dotted'))
-            for txt, pt in zip(compass.ALTITUDES, compass.orthographic_altitude_points):
+        except Exception:
+            pass  # the circle attribute has not been implemented
+        points_attr = '{}_altitude_points'.format(projection.lower())
+        try:
+            altitude_points = getattr(compass, points_attr)
+            for txt, pt in zip(compass.ALTITUDES, altitude_points):
                 txt_pln = Plane(o=Point3D(pt.x, pt.y, z + 0.01), x=xaxis)
                 d_txt = DisplayText3D(
                     str(txt), txt_pln, min_txt, None, font, 'Center', 'Top')
                 result.append(d_txt)
-        elif projection.title() == 'Stereographic':
-            for circle in compass.stereographic_altitude_circles:
-                arc_geo = Arc3D.from_arc2d(circle, z)
-                result.append(DisplayArc3D(arc_geo, line_width=1, line_type='Dotted'))
-            for txt, pt in zip(compass.ALTITUDES, compass.stereographic_altitude_points):
-                txt_pln = Plane(o=Point3D(pt.x, pt.y, z + 0.01), x=xaxis)
-                d_txt = DisplayText3D(
-                    str(txt), txt_pln, min_txt, None, font, 'Center', 'Top')
-                result.append(d_txt)
+        except Exception:
+            pass  # the points attribute has not been implemented
 
     # assemble everything into a ContextGeometry and VisualizationSet
     con_geo = ContextGeometry('Compass', result)
