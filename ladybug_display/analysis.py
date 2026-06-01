@@ -626,10 +626,43 @@ class AnalysisGeometry(_VisualizationBase):
 
             -   legend_text -- Text objects for the rest of the legend text.
         """
-        legend_mesh = DisplayMesh3D.mesh3d_to_svg(legend.segment_mesh, 'SurfaceWithEdges')
+        elements = []  # list to hold all of the elements of the legend
+        seg_mesh = legend.segment_mesh
+        if not legend.legend_parameters.continuous_legend:
+            elements.append(DisplayMesh3D.mesh3d_to_svg(seg_mesh, 'SurfaceWithEdges'))
+        else:
+            l_par = legend.legend_parameters
+            # create an outline around the Mesh3D
+            pts = seg_mesh.vertices
+            if l_par.vertical:
+                mi = int(len(pts) / 2)
+                bound_verts = [pts[0], pts[mi - 1], pts[-1], pts[mi]]
+            else:
+                bound_verts = [pts[0], pts[1], pts[-1], pts[-2]]
+            points = [p for pt in bound_verts for p in (pt.x, -pt.y)]
+            legend_mesh = svg.Polygon(points=points)
+            legend_mesh.stroke = 'black'
+            legend_mesh.stroke_width = 1
+            # fill it with a gradient
+            colors = list(reversed(legend.segment_colors)) \
+                if l_par.vertical else legend.segment_colors
+            gradient = svg.LinearGradient()
+            gradient.gradientUnits = 'objectBoundingBox'
+            gradient.id = 'legend_gradient_{}'.format(str(uuid.uuid4())[:8])
+            if l_par.vertical:
+                gradient.gradientTransform = [svg.Rotate(90)]
+            stop_colors = []
+            for i, col in enumerate(colors):
+                stop = svg.Stop(stop_color=col.to_hex())
+                stop.offset = svg.Length(int((i / len(colors)) * 100), '%')
+                stop_colors.append(stop)
+            gradient.elements = stop_colors
+            elements.append(gradient)
+            legend_mesh.fill = "url('#{}')".format(gradient.id)
+            elements.append(legend_mesh)
         legend_text = AnalysisGeometry.legend_text_objects(legend)
-        svg_text = [txt.to_svg() for txt in legend_text]
-        return [legend_mesh] + svg_text
+        elements.extend([txt.to_svg() for txt in legend_text])
+        return elements
 
     @staticmethod
     def legend_text_objects(legend):
