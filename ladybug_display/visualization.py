@@ -5,13 +5,14 @@ import io
 import json
 import math
 import collections
+from itertools import groupby
 try:  # check if we are in IronPython
     import cPickle as pickle
 except ImportError:  # wea are in cPython
     import pickle
 
 from ladybug_geometry.geometry3d import Vector3D, Point3D, LineSegment3D, \
-    Ray3D, Plane, Face3D
+    Plane
 from ladybug_geometry.bounding import bounding_box, bounding_domain_x, \
     bounding_domain_y, bounding_domain_z
 
@@ -20,6 +21,7 @@ from .analysis import GEOMETRY_UNION, AnalysisGeometry, \
     VisualizationData, VisualizationMetaData
 from .context import DISPLAY_UNION, ContextGeometry
 from .geometry3d import DisplayFace3D, DisplayText3D, DisplayLineSegment3D
+from ._svg_order import geometry_elements, ordered_geometry, geometry_clip
 import ladybug_display.svg as svg
 
 
@@ -601,6 +603,12 @@ class VisualizationSet(_VisualizationBase):
         All contents of the VisualizationSet will automatically scaled to fit
         within the specified pixel width and height of the SVG
 
+        Planar faces, mesh faces and straight edges are ordered in 3D. Geometry
+        crossing another face's plane may be split into SVG clipping regions;
+        original fills, holes, boundary strokes and hover values are retained.
+        Coplanar fills retain input paint order, with edges on top. Curves and text use
+        reference-point depth, while 2D graphics and legends remain overlays.
+
         Args:
             width: The screen width in pixels. (Default: 800).
             height: The screen height in pixels. (Default: 600).
@@ -652,7 +660,6 @@ class VisualizationSet(_VisualizationBase):
                 vis_geometry.append(geo.duplicate())
         min_pt, max_pt = bounding_box(geo_3d)
         diag_dist = min_pt.distance_to_point(max_pt)
-        tol = diag_dist / 100000
 
         # get the plane in which to project the geometry
         is_top = False
@@ -672,42 +679,12 @@ class VisualizationSet(_VisualizationBase):
             proj_view = Plane().move(Vector3D(0, 0, 1) * diag_dist)
             is_top = True
 
-        # project the geometry to 2D and track distances to the plane for sorting
-        distances, cast_faces, cast_rays = [], [], []
+        # Retain world-space geometry before projection discards its depth.
+        source_geometry = [
+            tuple(g.duplicate() for g in geo.geometry)
+            if isinstance(geo, ContextGeometry) else geo.geometry
+            for geo in vis_geometry]
         for geo in vis_geometry:
-            if isinstance(geo, ContextGeometry):
-                sub_dists, faces, rays = [], [], []
-                for sub_geo in geo.geometry:
-                    try:
-                        plane_dist = sub_geo.furthest_distance_to_plane(proj_view)
-                        sub_dists.append(plane_dist)
-                        if isinstance(sub_geo, (DisplayFace3D, Face3D)):
-                            f_geo = sub_geo if isinstance(sub_geo, Face3D) else \
-                                sub_geo.geometry
-                            faces.append(f_geo)
-                            f_rays = []
-                            off_poly = f_geo.boundary_polygon2d.offset(tol)
-                            off_poly_3d = [f_geo.plane.xy_to_xyz(pt) for pt in off_poly]
-                            for i, pt1 in enumerate(off_poly_3d):
-                                pt2 = off_poly_3d[i - 1]
-                                pt3 = Point3D(
-                                    pt1.x + pt2.x / 2,
-                                    pt1.y + pt2.y / 2,
-                                    pt1.z + pt2.z / 2
-                                )
-                                f_rays.append(Ray3D(pt1, proj_view.n))
-                                f_rays.append(Ray3D(pt3, proj_view.n))
-                            rays.append(f_rays)
-                        else:
-                            faces.append(None)
-                            rays.append(None)
-                    except AttributeError:  # 2D geometry; just put it at top
-                        sub_dists.append(0)
-                        faces.append(None)
-                        rays.append(None)
-                distances.append(sub_dists)
-                cast_faces.append(faces)
-                cast_rays.append(rays)
             if not is_top:
                 geo.project_2d(view)
                 geo.rotate_xy(180, Point3D())
@@ -736,11 +713,9 @@ class VisualizationSet(_VisualizationBase):
             scene_width = x_dim * scale_fac
         center_vec = Vector3D((width - scene_width) / 2,  -(height - scene_height) / 2)
 
-        # transform all of the visualization set geometry to be in the lower quadrant
-        svg_elements = []
-        sorted_elements, sorted_dists, sorted_faces, sorted_rays = [], [], [], []
-        context_count = 1
-        for geo in reversed(vis_geometry):
+        # Transform SVG geometry while retaining the corresponding 3D surfaces.
+        scene_items, overlay_elements, legend_elements = [], [], []
+        for geo, originals in reversed(list(zip(vis_geometry, source_geometry))):
             geo.move(move_vec)
             geo.scale(scale_fac)
             geo.move(center_vec)
@@ -749,46 +724,51 @@ class VisualizationSet(_VisualizationBase):
                                       render_3d_legend=render_3d_legend,
                                       render_2d_legend=render_2d_legend,
                                       default_leg_pos=default_leg_pos)
-                default_leg_pos = list(svg_data.elements[-1].content)
-                svg_elements.extend(svg_data.elements)
+                # The final description records the next available legend position.
+                default_leg_pos = json.loads(svg_data.elements[-1].content)
+                elements = list(svg_data.elements[:-1])
+                if elements and isinstance(elements[0], svg.Style):
+                    overlay_elements.append(elements.pop(0))
+                svg_geometry = elements[:len(originals)]
+                legend_elements.extend(elements[len(originals):])
             else:
-                rel_dists = distances[-context_count]
-                rel_faces = cast_faces[-context_count]
-                rel_rays = cast_rays[-context_count]
-                context_count += 1
-                for g, d, f, r in zip(geo.geometry, rel_dists, rel_faces, rel_rays):
-                    sorted_elements.append(g.to_svg())
-                    sorted_dists.append(d)
-                    sorted_faces.append(f)
-                    sorted_rays.append(r)
+                svg_geometry = [g.to_svg() for g in geo.geometry]
+            for original, element in zip(originals, svg_geometry):
+                mode = geo.display_mode if isinstance(geo, AnalysisGeometry) else None
+                items, overlays = geometry_elements(original, element, mode)
+                scene_items.extend(items)
+                overlay_elements.extend(overlays)
 
-        # sort the objects based on occlusion
-        if len(sorted_dists) != 0:
-            # first sort them by distance from the view plane
-            zip_obj = zip(sorted_dists, sorted_elements, sorted_faces, sorted_rays)
-            tups = sorted(zip_obj, key=lambda pair: pair[0])
-            sorted_dists, sorted_elements, sorted_faces, sorted_rays = zip(*tups)
-            # next, use ray casting to perform final occlusion sorting
-            sorted_dists = list(sorted_dists)
-            for i, test_rays in enumerate(sorted_rays):
-                if test_rays is None:
-                    continue
-                for j, face in enumerate(sorted_faces[i + 1:]):
-                    if face is None:
-                        continue
-                    if any(face.intersect_line_ray(r) for r in test_rays):
-                        # change the distance to be behind occluding one
-                        new_dist = sorted_dists[i + j + 1] + tol
-                        if new_dist > sorted_dists[i]:
-                            sorted_dists[i] = new_dist
-            zip_obj = zip(sorted_dists, sorted_elements)
-            tups = sorted(zip_obj, key=lambda pair: pair[0])
-            sorted_dists, sorted_elements = zip(*tups)
+        def project_point(point):
+            if is_top:
+                x, y = point.x, point.y
+            else:
+                pt = view.xyz_to_xy(point)
+                x, y = -pt.x, -pt.y
+            return ((x + move_vec.x) * scale_fac + center_vec.x,
+                    -((y + move_vec.y) * scale_fac + center_vec.y))
 
-        # combine everything into a final SVG object
-        svg_elements = svg_elements + list(reversed(sorted_elements))
+        # Use clips only for split faces; original strokes never acquire cut edges.
+        svg_elements, clips = [], []
+        tolerance = max(diag_dist * 1e-9, 1e-12)
+        ordered = list(ordered_geometry(scene_items, proj_view.n, tolerance))
+        counts = collections.Counter(id(item[1]) for item in ordered)
+        for element, group in groupby(ordered, key=lambda item: item[1]):
+            parts = list(group)
+            # Consecutive pieces can share a clip, avoiding seams at internal cuts.
+            # When all pieces are consecutive, draw the original without any clip.
+            if len(parts) != counts[id(element)]:
+                clip_id = 'svg-face-clip-{}'.format(len(clips))
+                clips.append(geometry_clip(
+                    [p[0] for p in parts], element, project_point, clip_id))
+                group = svg.G(clip_path='url(#{})'.format(clip_id))
+                group.elements = [element]
+                element = group
+            svg_elements.append(element)
         canvas = svg.SVG(width=width, height=height)
-        canvas.elements = svg_elements
+        definitions = svg.Defs()
+        definitions.elements = clips
+        canvas.elements = [definitions] + svg_elements + overlay_elements + legend_elements
         return canvas
 
     def _check_geometry(self, geo):

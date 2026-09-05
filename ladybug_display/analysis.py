@@ -555,7 +555,7 @@ class AnalysisGeometry(_VisualizationBase):
                 for val, ele in zip(data_set.values, elements):
                     title = svg.Title()
                     title.text = val
-                    ele.elements = [title]
+                    ele.elements = (ele.elements or []) + [title]
                     ele.class_ = ['a_geo']
                 a_sty = svg.Style()
                 a_sty.text = self.HOVER_STYLE
