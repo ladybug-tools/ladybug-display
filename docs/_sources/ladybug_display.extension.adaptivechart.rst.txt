@@ -1,0 +1,7 @@
+ladybug\_display.extension.adaptivechart module
+===============================================
+
+.. automodule:: ladybug_display.extension.adaptivechart
+   :members:
+   :undoc-members:
+   :show-inheritance:

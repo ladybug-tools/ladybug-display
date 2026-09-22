@@ -1,0 +1,7 @@
+ladybug\_display.geometry3d.polyface module
+===========================================
+
+.. automodule:: ladybug_display.geometry3d.polyface
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,31 @@
+ladybug\_display.geometry3d package
+===================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ladybug_display.geometry3d.arc
+   ladybug_display.geometry3d.cone
+   ladybug_display.geometry3d.cylinder
+   ladybug_display.geometry3d.face
+   ladybug_display.geometry3d.line
+   ladybug_display.geometry3d.mesh
+   ladybug_display.geometry3d.plane
+   ladybug_display.geometry3d.point
+   ladybug_display.geometry3d.polyface
+   ladybug_display.geometry3d.polyline
+   ladybug_display.geometry3d.ray
+   ladybug_display.geometry3d.sphere
+   ladybug_display.geometry3d.text
+   ladybug_display.geometry3d.vector
+
+Module contents
+---------------
+
+.. automodule:: ladybug_display.geometry3d
+   :members:
+   :undoc-members:
+   :show-inheritance:

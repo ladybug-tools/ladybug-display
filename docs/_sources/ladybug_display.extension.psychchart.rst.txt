@@ -1,0 +1,7 @@
+ladybug\_display.extension.psychchart module
+============================================
+
+.. automodule:: ladybug_display.extension.psychchart
+   :members:
+   :undoc-members:
+   :show-inheritance:

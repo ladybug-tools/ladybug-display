@@ -1,0 +1,7 @@
+ladybug\_display.extension.monthlychart module
+==============================================
+
+.. automodule:: ladybug_display.extension.monthlychart
+   :members:
+   :undoc-members:
+   :show-inheritance:
