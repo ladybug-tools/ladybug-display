@@ -20,7 +20,7 @@ from ._base import _VisualizationBase
 from .analysis import GEOMETRY_UNION, AnalysisGeometry, \
     VisualizationData, VisualizationMetaData
 from .context import DISPLAY_UNION, ContextGeometry
-from .geometry3d import DisplayFace3D, DisplayText3D, DisplayLineSegment3D
+from .geometry3d import DisplayText3D, DisplayLineSegment3D
 from ._svg_order import geometry_elements, ordered_geometry, geometry_clip
 import ladybug_display.svg as svg
 
@@ -428,7 +428,9 @@ class VisualizationSet(_VisualizationBase):
             self.scale(scale_fac)
             self.units = units
 
-    def add_dimension_annotations(self, axis_angle=0, annotation_scale=0.1):
+    def add_dimension_annotations(
+        self, axis_angle=0, annotation_scale=0.1, three_axis=False
+    ):
         """Add a ContextGeometry for dimensions of the box around the VisualizationSet.
 
         Args:
@@ -437,6 +439,13 @@ class VisualizationSet(_VisualizationBase):
             annotation_scale: A decimal number to express the fraction of the
                 bounding box diagonal length that the annotation end segments
                 and text size will be derived from. (Default: 0.1).
+            three_axis: A boolean to note whether dimensions for all 3 axes should
+                be included in the result (True) or only the width and height
+                dimensions should be included (False). Note that dimensions
+                smaller than the annotation_scale are automatically removed
+                in order to reduce the noise of the resulting visuals. So setting
+                this to True does not always guarantee that three axes will appear
+                in the result
         """
         # get the min, max and diagonal length to appropriately size dimensions
         geometries = self.geometry_3d()
@@ -454,33 +463,43 @@ class VisualizationSet(_VisualizationBase):
         diag_dist = min_pt.distance_to_point(max_pt)
         dim_len = diag_dist * annotation_scale
         x_len = xx[1] - xx[0]
+        y_len = yy[1] - yy[0]
         z_len = zz[1] - zz[0]
 
         # create the context geometry lines for the edges of the annotations
         dim_vec = Vector3D(0, -1, 0) * dim_len
         st_pt = min_pt.move(dim_vec)
-        line1 = LineSegment3D(st_pt, dim_vec)
-        line2 = LineSegment3D(st_pt.move(Vector3D(1, 0, 0) * x_len), dim_vec)
-        line3 = LineSegment3D(line2.p1.move(Vector3D(0, 0, 1) * z_len), dim_vec)
-        linex = LineSegment3D.from_end_points(line1.midpoint, line2.midpoint)
-        linez = LineSegment3D.from_end_points(line2.midpoint, line3.midpoint)
+        line1x = LineSegment3D(st_pt, dim_vec)
+        line1xz = LineSegment3D(st_pt.move(Vector3D(1, 0, 0) * x_len), dim_vec)
+        line1z = LineSegment3D(line1xz.p1.move(Vector3D(0, 0, 1) * z_len), dim_vec)
+        linex = LineSegment3D.from_end_points(line1x.midpoint, line1xz.midpoint)
+        linez = LineSegment3D.from_end_points(line1xz.midpoint, line1z.midpoint)
+        dim_vec_y = Vector3D(-1, 0, 0) * dim_len
+        st_pt_y = min_pt.move(dim_vec_y)
+        line1y = LineSegment3D(st_pt_y, dim_vec_y)
+        line1yy = LineSegment3D(st_pt_y.move(Vector3D(0, 1, 0) * y_len), dim_vec_y)
+        liney = LineSegment3D.from_end_points(line1y.midpoint, line1yy.midpoint)
 
         # create the context geometry lines for the middle of the annotations
         tx_vec = Vector3D(1, 0, 0) * (dim_len * 0.5)
-        line4 = LineSegment3D.from_end_points(linex.p1, linex.midpoint.move(-tx_vec))
-        line5 = LineSegment3D.from_end_points(linex.midpoint.move(tx_vec), linex.p2)
+        line2x = LineSegment3D.from_end_points(linex.p1, linex.midpoint.move(-tx_vec))
+        line3x = LineSegment3D.from_end_points(linex.midpoint.move(tx_vec), linex.p2)
         tz_vec = Vector3D(0, 0, 1) * (dim_len * 0.5)
-        line6 = LineSegment3D.from_end_points(linez.p1, linez.midpoint.move(-tz_vec))
-        line7 = LineSegment3D.from_end_points(linez.midpoint.move(tz_vec), linez.p2)
+        line2z = LineSegment3D.from_end_points(linez.p1, linez.midpoint.move(-tz_vec))
+        line3z = LineSegment3D.from_end_points(linez.midpoint.move(tz_vec), linez.p2)
+        ty_vec = Vector3D(0, 1, 0) * (dim_len * 0.5)
+        line2y = LineSegment3D.from_end_points(liney.p1, liney.midpoint.move(-ty_vec))
+        line3y = LineSegment3D.from_end_points(liney.midpoint.move(ty_vec), liney.p2)
 
         # add the text labels for the annotations
         if self.UNIT_DECIMALS[self.units] != 0:
             x_val = round(x_len, self.UNIT_DECIMALS[self.units])
+            y_val = round(y_len, self.UNIT_DECIMALS[self.units])
             z_val = round(z_len, self.UNIT_DECIMALS[self.units])
         else:
-            x_val, z_val = int(x_len), int(z_len)
+            x_val, y_val, z_val = int(x_len), int(y_len), int(z_len)
         text_objs = []
-        for dim_val, dim_line in zip([x_val, z_val], [linex, linez]):
+        for dim_val, dim_line in zip([x_val, y_val, z_val], [linex, liney, linez]):
             text_str = '{}{}'.format(dim_val, self.UNITS_ABBREVIATIONS[self.units])
             text_obj = DisplayText3D(text_str, Plane(o=dim_line.midpoint), dim_len / 4)
             text_obj.horizontal_alignment = 'Center'
@@ -488,9 +507,19 @@ class VisualizationSet(_VisualizationBase):
             text_objs.append(text_obj)
 
         # bring everything of the lines together into a ContextGeometry
-        all_lines = [line1, line2, line3, line4, line5, line6, line7]
-        dis_lines = [DisplayLineSegment3D(lin, line_width=3) for lin in all_lines]
-        con_geo = ContextGeometry('Dimension_Annotations', dis_lines + text_objs)
+        all_lines, all_text = [], []
+        readable_threshold = dim_len
+        if x_len > readable_threshold:
+            all_lines.extend([line1x, line1xz, line2x, line3x])
+            all_text.append(text_objs[0])
+        if z_len > readable_threshold:
+            all_lines.extend([line1xz, line1z, line2z, line3z])
+            all_text.append(text_objs[2])
+        if three_axis and y_len > readable_threshold:
+            all_lines.extend([line1y, line1yy, line2y, line3y])
+            all_text.append(text_objs[1])
+        all_lines = [DisplayLineSegment3D(lin, line_width=3) for lin in all_lines]
+        con_geo = ContextGeometry('Dimension_Annotations', all_lines + all_text)
         con_geo.display_name = 'Dimension Annotations'
 
         # rotate the new context geometry back if the angle is not zero
